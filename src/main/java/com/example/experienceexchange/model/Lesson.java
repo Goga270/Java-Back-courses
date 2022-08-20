@@ -25,9 +25,9 @@ public class Lesson extends Product {
     private String homeworkLink;
     @Column(name = "link_video")
     private String linkVideo;
-    @OneToOne
-    @JoinColumn(name = "current_session_id")
-    private Session session;
+//    @OneToOne
+//    @JoinColumn(name = "current_session_id")
+//    private Session session;
     // TODO : где хранить данные для дз где хранить возможную ссылку для видеоазписи
     @OneToMany(mappedBy = "lesson")
     private Set<Session> sessions = new HashSet<>();

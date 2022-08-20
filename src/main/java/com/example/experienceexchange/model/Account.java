@@ -20,6 +20,9 @@ public abstract class Account {
     @Column(name = "first_name")
     private String firstName;
 
+    @Column(name = "patronymic")
+    private String patronymic;
+
     @Column(name = "numberPhone")
     private String numberPhone;
 

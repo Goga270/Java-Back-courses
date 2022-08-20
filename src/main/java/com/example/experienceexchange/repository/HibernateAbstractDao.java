@@ -1,6 +1,8 @@
 package com.example.experienceexchange.repository;
 
 
+import com.example.experienceexchange.repository.interfaceRepo.GenericDao;
+
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

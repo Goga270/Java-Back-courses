@@ -1,7 +1,7 @@
 package com.example.experienceexchange.repository;
 
-import com.example.experienceexchange.model.Account;
 import com.example.experienceexchange.model.User;
+import com.example.experienceexchange.repository.interfaceRepo.IUserRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.criteria.CriteriaBuilder;

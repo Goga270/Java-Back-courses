@@ -14,6 +14,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 public class User extends Account {
+
     // TODO: УДАЛЕНИЕ ПРИ MANY TO MANY
     @Id
     @SequenceGenerator(name = "seq_user", sequenceName = "sequence_id_user", allocationSize = 1)
@@ -23,5 +24,14 @@ public class User extends Account {
     @OneToMany(mappedBy = "author")
     private Set<Product> myProducts = new HashSet<>();
 
-
+    @ManyToMany
+    @JoinTable(
+            name = "user_lesson",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "lesson_id")}
+    )
+    private Set<Lesson> lessons = new HashSet<>();
 }
+/*
+* */
+

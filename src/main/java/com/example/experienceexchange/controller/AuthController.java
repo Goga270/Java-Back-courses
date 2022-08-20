@@ -3,7 +3,7 @@ package com.example.experienceexchange.controller;
 import com.example.experienceexchange.dto.AccountDto;
 import com.example.experienceexchange.dto.LoginDto;
 import com.example.experienceexchange.dto.TokenDto;
-import com.example.experienceexchange.service.IAuthService;
+import com.example.experienceexchange.service.interfaceService.IAuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

@@ -1,7 +1,7 @@
 package com.example.experienceexchange.security.userDetailsService;
 
 import com.example.experienceexchange.model.User;
-import com.example.experienceexchange.repository.IUserRepository;
+import com.example.experienceexchange.repository.interfaceRepo.IUserRepository;
 import com.example.experienceexchange.util.mapper.UserMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

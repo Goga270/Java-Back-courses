@@ -1,4 +1,4 @@
-package com.example.experienceexchange.repository;
+package com.example.experienceexchange.repository.interfaceRepo;
 
 import java.io.Serializable;
 import java.util.List;

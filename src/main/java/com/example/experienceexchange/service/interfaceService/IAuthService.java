@@ -1,4 +1,4 @@
-package com.example.experienceexchange.service;
+package com.example.experienceexchange.service.interfaceService;
 
 import com.example.experienceexchange.dto.AccountDto;
 import com.example.experienceexchange.dto.LoginDto;

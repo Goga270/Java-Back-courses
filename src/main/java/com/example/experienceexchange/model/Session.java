@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -29,8 +30,10 @@ public class Session {
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
 
-    @Column(name = "is_current_session")
-    private Boolean isCurrentSession;
+//    @Column(name = "is_current_session")
+//    private Boolean isCurrentSession;
+/*
+    private Set<User>*/
 
     // TODO: ДОБАВИТЬ СЮДА ОТСЛЕЖИВАНИЕ ПОСЕЩЯЕМОСТИ?
 }

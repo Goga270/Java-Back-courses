@@ -1,8 +1,7 @@
 package com.example.experienceexchange.config;
 
-import com.example.experienceexchange.model.Account;
 import com.example.experienceexchange.model.User;
-import com.example.experienceexchange.repository.IUserRepository;
+import com.example.experienceexchange.repository.interfaceRepo.IUserRepository;
 import com.example.experienceexchange.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;

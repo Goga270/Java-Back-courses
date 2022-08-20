@@ -41,6 +41,9 @@ public abstract class Product {
     @JoinColumn(name = "author_id")
     private User author;
 
+    @Column(name = "capacity")
+    private Integer capacity;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "product_section",
@@ -49,6 +52,13 @@ public abstract class Product {
     )
     private Set<Section> sections = new HashSet<>();
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "product_directions",
+            joinColumns = {@JoinColumn(name = "product_id")},
+            inverseJoinColumns = {@JoinColumn(name = "direction_id")}
+    )
+    private Set<Direction> directions = new HashSet<>();
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(

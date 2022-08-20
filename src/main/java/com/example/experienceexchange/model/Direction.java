@@ -29,4 +29,7 @@ public class Direction {
     @JoinColumn(name = "direction_id", referencedColumnName = "id")
     private Set<Section> sections = new HashSet<>();
 
+    @ManyToMany(mappedBy = "directions")
+    private Set<Product> products = new HashSet<>();
+
 }

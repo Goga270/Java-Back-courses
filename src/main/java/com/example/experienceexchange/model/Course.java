@@ -27,4 +27,7 @@ public class Course extends Product {
 
     @Column(name = "date_end_course")
     private Date courseEnd;
+
+    @Column(name ="duration")
+    private Integer duration;
 }
