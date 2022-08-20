@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="experience-exchange:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>experience-exchange</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="experience-exchange-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="experience-exchange:war exploded" />
+    </root>
+  </artifact>
+</component>
