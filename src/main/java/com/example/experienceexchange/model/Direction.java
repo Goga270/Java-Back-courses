@@ -13,13 +13,13 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "Directions")
+@Table(name = "directions")
 public class Direction {
     // TODO: ДОБАВИТЬ ХАРАКТЕРИСТИКИ
 
     @Id
-    @SequenceGenerator(name = "seq_direction", sequenceName = "sequence_id_direction", allocationSize = 1)
-    @GeneratedValue(generator = "seq_direction", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "seq_directions", sequenceName = "sequence_id_directions", allocationSize = 1)
+    @GeneratedValue(generator = "seq_directions", strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(name = "header")

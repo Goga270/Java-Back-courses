@@ -27,22 +27,21 @@ public abstract class Product {
     private String description;
 
     // TODO : ОГРАНИЧИТЬ В ДТО
-    // TODO : SESSION - В ЗНАЧЕНИИ ПРОХОЖДЕНИЯ ЗАНЯТИЯ
     @Column(name = "skill_level")
     private Integer skillLevel;
 
     @Column(name = "purpose_of_knowledge")
     private Integer purposeKnowledge;
 
-    @Column(name = "course_duration")
-    private Integer courseDuration;
-
     @ManyToOne
     @JoinColumn(name = "author_id")
     private User author;
 
-    @Column(name = "capacity")
-    private Integer capacity;
+    @Column(name = "max_number_users")
+    private Integer maxNumberUsers;
+
+    @Column(name = "current_number_users")
+    private volatile Integer currentNumberUsers = 0;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
@@ -54,7 +53,7 @@ public abstract class Product {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-            name = "product_directions",
+            name = "product_direction",
             joinColumns = {@JoinColumn(name = "product_id")},
             inverseJoinColumns = {@JoinColumn(name = "direction_id")}
     )
@@ -67,6 +66,14 @@ public abstract class Product {
             inverseJoinColumns = {@JoinColumn(name = "skill_id")}
     )
     private Set<Skill> skills = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "product_user",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "product_id")}
+    )
+    private Set<User> usersCourse= new HashSet<>();
 
     @OneToMany
     @JoinColumn(name = "product_id", referencedColumnName = "id")

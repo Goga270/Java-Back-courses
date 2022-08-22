@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public enum Role {
     ADMIN(Arrays.asList(Permission.DELETE, Permission.WRITE, Permission.READ, Permission.REGISTRATION_ADMIN)),
-    USER(Arrays.asList(Permission.READ, Permission.DELETE));
+    USER(Arrays.asList(Permission.READ));
 
     private final List<Permission> permissions;
 

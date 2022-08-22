@@ -28,7 +28,10 @@ public class AuthService implements IAuthService {
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthService(AuthenticationManager manager, IJwtTokenProvider jwtTokenProvider, IUserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(AuthenticationManager manager,
+                       IJwtTokenProvider jwtTokenProvider,
+                       IUserRepository userRepository,
+                       PasswordEncoder passwordEncoder) {
         this.manager = manager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;

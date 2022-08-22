@@ -12,13 +12,16 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "Sections")
+@Table(name = "sections")
 public class Section {
 
     @Id
     @SequenceGenerator(name = "seq_sections", sequenceName = "sequence_id_sections", allocationSize = 1)
     @GeneratedValue(generator = "seq_sections", strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @Column(name = "name")
+    private String name;
 
     @ManyToMany(mappedBy = "sections")
     private Set<Product> products = new HashSet<>();

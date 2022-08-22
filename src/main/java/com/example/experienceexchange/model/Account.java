@@ -23,7 +23,7 @@ public abstract class Account {
     @Column(name = "patronymic")
     private String patronymic;
 
-    @Column(name = "numberPhone")
+    @Column(name = "number_phone")
     private String numberPhone;
 
     @Column(name = "email")

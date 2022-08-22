@@ -12,4 +12,19 @@ public class CourseService implements ICourseService {
     public Set<CourseDto> getCoursesByDirection() {
         return null;
     }
+
+    @Override
+    public void createCourse(CourseDto courseDto) {
+
+    }
+
+    @Override
+    public CourseDto editCourse(Long id, CourseDto courseDto) {
+        return null;
+    }
+
+    @Override
+    public void deleteCourse(Long id) {
+
+    }
 }

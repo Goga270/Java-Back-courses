@@ -2,11 +2,11 @@ package com.example.experienceexchange.controller;
 
 
 import com.example.experienceexchange.dto.CourseDto;
+import com.example.experienceexchange.dto.FilterDto;
 import com.example.experienceexchange.service.interfaceService.ICourseService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
@@ -20,19 +20,31 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    // TODO : all - для всех направлений
-    @GetMapping("'/{direction}/{section}")
-    public Set<CourseDto> getCoursesByDirectionSection(@PathVariable String direction,
-                                                       @PathVariable(required = false) String section) {
-        if (section == null) {
-            section = "all";
-        }
+
+    @GetMapping({"/{direction}"})
+    public Set<CourseDto> getCoursesByDirection(@PathVariable String direction,
+                                                @RequestBody FilterDto filterDto) {
         return courseService.getCoursesByDirection();
     }
 
-    @GetMapping("{direction}/{section}")
-    public Set<CourseDto> getCoursesInDirectionSection(@PathVariable String direction, @PathVariable String section) {
+    @GetMapping("")
+    public Set<CourseDto> getCourses(@RequestBody FilterDto filterDto) {
         return null;
     }
 
+    @PostMapping("new-course")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createCourse(@RequestBody @Validated(CourseDto.Create.class) CourseDto courseDto) {
+        courseService.createCourse(courseDto);
+    }
+
+    @PutMapping("{id}/settings")
+    public CourseDto editCourse(@PathVariable Long id, @RequestBody CourseDto courseDto) {
+        return courseService.editCourse(id, courseDto);
+    }
+
+    @DeleteMapping("{id}")
+    public void deleteCourse(@PathVariable Long id) {
+        courseService.deleteCourse(id);
+    }
 }

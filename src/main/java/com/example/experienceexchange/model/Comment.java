@@ -7,24 +7,21 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.Date;
 
+
+
 @Setter
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "Comments")
-// TODO : связь через доп таблицу ? наверно нет
-// TODO : У КУРСОВ И ЗАНЯТИЙ НЕ ДОДЖНО БЫТЬ ОДИНАКОВЫХ АЙДИ
+@Table(name = "comments")
 public class Comment {
-
     @Id
-    @SequenceGenerator(name = "seq_comment", sequenceName = "sequence_id_comment", allocationSize = 1)
-    @GeneratedValue(generator = "seq_comment", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "seq_comments", sequenceName = "sequence_id_comments", allocationSize = 1)
+    @GeneratedValue(generator = "seq_comments", strategy = GenerationType.SEQUENCE)
     private Long id;
     private String header;
     private String body;
     @Column(name = "date_created")
     private Date created;
-    @Column(name = "date_updated")
-    private Date updated;
     private Integer rating;
 }

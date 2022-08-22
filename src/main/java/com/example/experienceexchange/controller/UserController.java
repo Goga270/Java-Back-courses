@@ -6,10 +6,7 @@ import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.IUserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
@@ -25,7 +22,7 @@ public class UserController {
         return accountService.getAccount(userDetails);
     }
 
-    @PatchMapping("/profile-settings")
+    @PostMapping("/profile-settings")
     public AccountDto editProfile(@AuthenticationPrincipal JwtUserDetails userDetails,
                                   @RequestBody @Validated AccountDto accountDto) {
         return accountService.editAccount(userDetails, accountDto);

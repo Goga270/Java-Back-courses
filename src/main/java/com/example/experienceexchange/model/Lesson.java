@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,10 +26,15 @@ public class Lesson extends Product {
     private String homeworkLink;
     @Column(name = "link_video")
     private String linkVideo;
+    @Column(name = "date_start_lesson")
+    private Date startLesson;
+    @Column(name = "date_end_lesson")
+    private Date endLesson;
+
 //    @OneToOne
 //    @JoinColumn(name = "current_session_id")
 //    private Session session;
-    // TODO : где хранить данные для дз где хранить возможную ссылку для видеоазписи
+/*    // TODO : где хранить данные для дз где хранить возможную ссылку для видеоазписи
     @OneToMany(mappedBy = "lesson")
-    private Set<Session> sessions = new HashSet<>();
+    private Set<Session> sessions = new HashSet<>();*/
 }

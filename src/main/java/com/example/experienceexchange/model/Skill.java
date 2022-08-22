@@ -12,8 +12,9 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "Skills")
+@Table(name = "skills")
 public class Skill {
+
     @Id
     @SequenceGenerator(name = "seq_skills", sequenceName = "sequence_id_skills", allocationSize = 1)
     @GeneratedValue(generator = "seq_skills",strategy = GenerationType.SEQUENCE)

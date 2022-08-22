@@ -1,9 +1,6 @@
 package com.example.experienceexchange.dto;
 
-public class CourseDto {
-    // TODO: mapper + параметры
-
+public class LessonDto {
     public interface Create {
-
     }
 }

@@ -14,20 +14,20 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "Courses")
+@Table(name = "courses")
 public class Course extends Product {
 
-
+    // TODO : ПОКАЗАТЬ ЧТО УРОК ПРИНАДЛЕЖИТ КУРСУ
     @OneToMany
-    @JoinColumn(name = "courses_id", referencedColumnName = "id")
+    @JoinColumn(name = "course_id", referencedColumnName = "id")
     private Set<Lesson> lessons = new HashSet<>();
 
     @Column(name = "date_start_course")
-    private Date courseStart;
+    private Date dateStart;
 
     @Column(name = "date_end_course")
-    private Date courseEnd;
+    private Date dateEnd;
 
-    @Column(name ="duration")
-    private Integer duration;
+    @Column(name = "course_duration")
+    private Integer courseDuration;
 }
