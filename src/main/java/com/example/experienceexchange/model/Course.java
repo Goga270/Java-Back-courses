@@ -17,7 +17,6 @@ import java.util.Set;
 @Table(name = "courses")
 public class Course extends Product {
 
-    // TODO : ПОКАЗАТЬ ЧТО УРОК ПРИНАДЛЕЖИТ КУРСУ
     @OneToMany
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     private Set<Lesson> lessons = new HashSet<>();

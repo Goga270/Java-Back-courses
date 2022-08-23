@@ -1,10 +1,9 @@
 package com.example.experienceexchange.controller;
 
-import com.example.experienceexchange.dto.AccountDto;
-import com.example.experienceexchange.dto.LessonDto;
-import com.example.experienceexchange.dto.NewPasswordDto;
+import com.example.experienceexchange.dto.*;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.IUserService;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -15,32 +14,41 @@ import java.util.Set;
 @RestController
 public class UserController {
 
-    private final IUserService accountService;
+    private final IUserService userService;
 
-    public UserController(IUserService accountService) {
-        this.accountService = accountService;
+    public UserController(IUserService userService) {
+        this.userService = userService;
     }
 
+    @JsonView(AccountDto.Details.class)
     @GetMapping("/profile")
     public AccountDto getCurrentProfile(@AuthenticationPrincipal JwtUserDetails userDetails) {
-        return accountService.getAccount(userDetails);
+        return userService.getAccount(userDetails);
     }
-
+    // TODO: НАПИСАТЬ РАСПИСАНИЕ
     @GetMapping("/schedule")
     public Set<LessonDto> getSchedule(@AuthenticationPrincipal JwtUserDetails userDetails) {
-        return accountService.getSchedule(userDetails);
+        return userService.getSchedule(userDetails);
     }
 
+    @JsonView(AccountDto.Details.class)
     @PostMapping("/profile-settings")
     public AccountDto editProfile(@AuthenticationPrincipal JwtUserDetails userDetails,
                                   @RequestBody @Validated AccountDto accountDto) {
-        return accountService.editAccount(userDetails, accountDto);
+        return userService.editAccount(userDetails, accountDto);
     }
 
     @PatchMapping("/profile-settings/password")
     @ResponseStatus(HttpStatus.OK)
     public void changePassword(@AuthenticationPrincipal JwtUserDetails jwtUserDetails,
                                @RequestBody @Validated NewPasswordDto passwordDto) {
-        accountService.changePassword(jwtUserDetails, passwordDto);
+        userService.changePassword(jwtUserDetails, passwordDto);
+    }
+
+    @PatchMapping("/profile-settings/email")
+    @ResponseStatus(HttpStatus.OK)
+    public void changeEmail(@AuthenticationPrincipal JwtUserDetails jwtUserDetails,
+                               @RequestBody @Validated NewEmailDto newEmailDto) {
+        userService.changeEmail(jwtUserDetails, newEmailDto);
     }
 }

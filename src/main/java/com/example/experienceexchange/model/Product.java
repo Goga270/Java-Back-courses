@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,6 +40,9 @@ public abstract class Product {
 
     @Column(name = "max_number_users")
     private Integer maxNumberUsers;
+
+    @Column(name = "price")
+    private BigDecimal price;
 
     @Column(name = "current_number_users")
     private volatile Integer currentNumberUsers = 0;

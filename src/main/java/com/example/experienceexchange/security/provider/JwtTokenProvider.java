@@ -49,7 +49,7 @@ public class JwtTokenProvider implements IJwtTokenProvider {
     @Override
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(getUsername(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, userDetails, userDetails.getAuthorities());
     }
 
     @Override

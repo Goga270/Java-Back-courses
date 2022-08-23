@@ -14,11 +14,12 @@ public class UserRepository extends HibernateAbstractDao<User, Long> implements 
     @Override
     public User findByEmail(String email) {
         CriteriaBuilder cb = getCriteriaBuilder();
-        CriteriaQuery<User> criteriaQuery = cb.createQuery(getClassEntity());
-        Root<User> root = criteriaQuery.from(getClassEntity());
+        CriteriaQuery<User> cq = cb.createQuery(getClassEntity());
+        Root<User> root = cq.from(getClassEntity());
 
-        criteriaQuery.select(root).where(cb.equal(root.get("email"), email));
+        cq.select(root).where(cb.equal(root.get("email"), email));
 
-        return entityManager.createQuery(criteriaQuery).getSingleResult();
+        User user = entityManager.createQuery(cq).getSingleResult();
+        return user;
     }
 }

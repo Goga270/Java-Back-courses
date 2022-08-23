@@ -21,7 +21,7 @@ public class Skill {
     private Long id;
 
     private String name;
-        // TODO : competency - подходит для ообзначении профессии ( можно заменить на skill)
+
     @ManyToMany(mappedBy = "skills")
     private Set<Product> products = new HashSet<>();
 }

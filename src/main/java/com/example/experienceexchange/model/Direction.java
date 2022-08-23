@@ -15,7 +15,6 @@ import java.util.Set;
 @Entity
 @Table(name = "directions")
 public class Direction {
-    // TODO: ДОБАВИТЬ ХАРАКТЕРИСТИКИ
 
     @Id
     @SequenceGenerator(name = "seq_directions", sequenceName = "sequence_id_directions", allocationSize = 1)

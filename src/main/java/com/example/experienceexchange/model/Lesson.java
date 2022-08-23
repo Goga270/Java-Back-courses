@@ -7,8 +7,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -30,11 +28,4 @@ public class Lesson extends Product {
     private Date startLesson;
     @Column(name = "date_end_lesson")
     private Date endLesson;
-
-//    @OneToOne
-//    @JoinColumn(name = "current_session_id")
-//    private Session session;
-/*    // TODO : где хранить данные для дз где хранить возможную ссылку для видеоазписи
-    @OneToMany(mappedBy = "lesson")
-    private Set<Session> sessions = new HashSet<>();*/
 }

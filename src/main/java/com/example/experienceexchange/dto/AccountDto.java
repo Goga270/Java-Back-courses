@@ -16,7 +16,7 @@ import javax.validation.constraints.Null;
 @Getter
 @Setter
 public class AccountDto {
-
+    // TODO : НУЖЕН ЛИ AdminDetails?
     public interface Registration {
     }
 
@@ -24,30 +24,42 @@ public class AccountDto {
 
     }
 
+    public interface Details {
+
+    }
+
     @NotNull(groups = {Registration.class})
     @Email(groups = {Registration.class}, message = "email invalid", regexp = "^(.+)@(\\S+)$")
+    @JsonView(Details.class)
     private String email;
 
     @NotNull(groups = {Registration.class})
+    @JsonView(Details.class)
     private String lastName;
 
     @NotNull(groups = {Registration.class})
+    @JsonView(Details.class)
     private String firstName;
 
     @NotNull(groups = {Registration.class})
+    @JsonView(Details.class)
     private String patronymic;
 
     @NotNull(groups = {Registration.class})
+    @JsonView(Details.class)
     private String numberPhone;
 
     @NotNull(groups = {Registration.class})
+    @JsonView(Details.class)
     private Integer age;
 
     @NotNull(groups = {Registration.class})
+    @JsonView(Details.class)
     private String numberCard;
 
     @NotNull(groups = {Registration.class})
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonView(Details.class)
     private String password;
 
     @JsonView(AdminDetails.class)

@@ -14,10 +14,10 @@ import java.util.Date;
 @MappedSuperclass
 public abstract class Account {
 
-    @Column(name = "last_name")
+    @Column(name = "lastname")
     private String lastName;
 
-    @Column(name = "first_name")
+    @Column(name = "firstname")
     private String firstName;
 
     @Column(name = "patronymic")
@@ -49,6 +49,6 @@ public abstract class Account {
     @Column(name = "age")
     private Integer age;
 
-    @JoinColumn(name = "number_card")
+    @Column(name = "number_card")
     private String numberCard;
 }

@@ -8,7 +8,15 @@ import java.util.Date;
 
 public class UserFactory {
 
-    public static User createUser(String lastName, String firstName, String numberPhone, String email, String password, Status status, Role role) {
+    public static User createUser(String lastName,
+                                  String firstName,
+                                  String numberPhone,
+                                  String email,
+                                  String password,
+                                  Status status,
+                                  Date created,
+                                  Date updated,
+                                  Role role) {
         User account = new User();
         account.setLastName(lastName);
         account.setFirstName(firstName);
@@ -17,8 +25,8 @@ public class UserFactory {
         account.setPassword(password);
         account.setStatus(status);
         account.setRole(role);
-        account.setCreated(new Date());
-        account.setUpdated(account.getCreated());
+        account.setCreated(created);
+        account.setUpdated(updated);
         return account;
     }
 }

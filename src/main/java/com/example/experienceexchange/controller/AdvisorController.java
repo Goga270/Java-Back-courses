@@ -2,6 +2,8 @@ package com.example.experienceexchange.controller;
 
 import com.example.experienceexchange.exception.JwtTokenInvalidException;
 import com.example.experienceexchange.exception.EmailNotUniqueException;
+import com.example.experienceexchange.exception.PasswordsNotMatchException;
+import com.example.experienceexchange.exception.UserNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,8 @@ import java.util.Map;
 @ControllerAdvice
 public class AdvisorController extends ResponseEntityExceptionHandler {
 
+
+    // TODO: НАДО ЛИ ИХ ЛОВИТЬ ?
     @ExceptionHandler(value = {JwtTokenInvalidException.class})
     protected ResponseEntity<Object> handleInvalidToken(RuntimeException exception, WebRequest request) {
         Map<String, String> body = new HashMap<>();
@@ -36,7 +40,7 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
         return getObjectResponseEntity(exception, request, body, httpStatus);
     }
 
-    @ExceptionHandler(value = {EmailNotUniqueException.class})
+    @ExceptionHandler(value = {EmailNotUniqueException.class, UserNotFoundException.class, PasswordsNotMatchException.class})
     protected ResponseEntity<Object> handleEmailNotUnique(Exception exception, WebRequest request) {
         Map<String, String> body = new HashMap<>();
         body.put("solution", "Write another email");

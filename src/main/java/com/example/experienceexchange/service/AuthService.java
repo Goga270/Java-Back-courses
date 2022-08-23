@@ -20,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+
 @Service
 public class AuthService implements IAuthService {
 
@@ -42,7 +44,7 @@ public class AuthService implements IAuthService {
     @Override
     public TokenDto authentication(LoginDto loginDto) {
         Authentication authentication = manager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
-        JwtUserDetails userDetails = (JwtUserDetails) authentication.getCredentials();
+        JwtUserDetails userDetails = (JwtUserDetails) authentication.getPrincipal();
         String token = jwtTokenProvider.createToken(userDetails.getUsername(), userDetails.getRole());
         return TokenDtoFactory.createTokenDto(token, userDetails.getUsername());
     }
@@ -70,6 +72,8 @@ public class AuthService implements IAuthService {
                 accountDto.getEmail(),
                 passwordEncoder.encode(accountDto.getPassword()),
                 Status.ACTIVE,
+                new Date(),
+                new Date(),
                 role);
         userRepository.save(account);
     }
