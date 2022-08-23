@@ -1,8 +1,9 @@
 package com.example.experienceexchange.service;
 
-import com.example.experienceexchange.dto.CourseDto;
+import com.example.experienceexchange.dto.CommentDto;
 import com.example.experienceexchange.dto.LessonDto;
 import com.example.experienceexchange.repository.interfaceRepo.ILessonRepository;
+import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.ILessonService;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +19,12 @@ public class LessonService implements ILessonService {
     }
 
     @Override
-    public void createLesson(LessonDto lessonDto) {
+    public void createLesson(JwtUserDetails userDetails, LessonDto lessonDto) {
 
     }
 
     @Override
-    public CourseDto editLesson(Long id, LessonDto lessonDto) {
+    public LessonDto editLesson(Long id, LessonDto lessonDto) {
         return null;
     }
 
@@ -34,6 +35,16 @@ public class LessonService implements ILessonService {
 
     @Override
     public Set<LessonDto> getLessonByDirection() {
+        return null;
+    }
+
+    @Override
+    public void subscribeToLesson(Long id, JwtUserDetails userDetails) {
+
+    }
+
+    @Override
+    public CommentDto createComment(JwtUserDetails userDetails, CommentDto commentDto) {
         return null;
     }
 }

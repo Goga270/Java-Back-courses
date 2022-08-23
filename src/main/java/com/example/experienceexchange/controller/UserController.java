@@ -1,12 +1,15 @@
 package com.example.experienceexchange.controller;
 
 import com.example.experienceexchange.dto.AccountDto;
+import com.example.experienceexchange.dto.LessonDto;
 import com.example.experienceexchange.dto.NewPasswordDto;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.IUserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 @RestController
 public class UserController {
@@ -20,6 +23,11 @@ public class UserController {
     @GetMapping("/profile")
     public AccountDto getCurrentProfile(@AuthenticationPrincipal JwtUserDetails userDetails) {
         return accountService.getAccount(userDetails);
+    }
+
+    @GetMapping("/schedule")
+    public Set<LessonDto> getSchedule(@AuthenticationPrincipal JwtUserDetails userDetails) {
+        return accountService.getSchedule(userDetails);
     }
 
     @PostMapping("/profile-settings")
