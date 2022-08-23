@@ -18,20 +18,19 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/login")
     public TokenDto login(@RequestBody @Validated LoginDto loginDto) {
         return authService.authentication(loginDto);
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/registration")
+    @ResponseStatus(HttpStatus.CREATED)
     public void registration(@RequestBody @Validated({AccountDto.Registration.class}) AccountDto registrationDto) {
         authService.registrationUser(registrationDto);
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/registration-admin")
+    @ResponseStatus(HttpStatus.CREATED)
     public void registrationAdmin(@RequestBody @Validated({AccountDto.Registration.class}) AccountDto registrationDto) {
         authService.registrationAdmin(registrationDto);
     }

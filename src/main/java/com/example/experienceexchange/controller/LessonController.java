@@ -29,30 +29,32 @@ public class LessonController {
         return lessonService.getLessonByDirection();
     }
 
-    @PostMapping("new-lesson")
+    @PostMapping("/new-lesson")
     @ResponseStatus(HttpStatus.CREATED)
     public void createLesson(@AuthenticationPrincipal JwtUserDetails userDetails,
                              @RequestBody @Validated(LessonDto.Create.class) LessonDto lessonDto) {
         lessonService.createLesson(userDetails, lessonDto);
     }
 
-    @PostMapping("{id}/review")
+    @PostMapping("/{id}/review")
     public CommentDto createComment(@AuthenticationPrincipal JwtUserDetails userDetails,
                                     @RequestBody @Validated(CourseDto.Create.class) CommentDto commentDto) {
         return lessonService.createComment(userDetails,commentDto);
     }
 
-    @PutMapping("{id}/settings")
+    @PutMapping("/{id}/settings")
     public LessonDto editLesson(@PathVariable Long id, @RequestBody LessonDto lessonDto) {
         return lessonService.editLesson(id,lessonDto);
     }
 
-    @PatchMapping("{id}/subscribe")
+    @PatchMapping("/{id}/subscribe")
+    @ResponseStatus(HttpStatus.OK)
     public void subscribeToLesson(@PathVariable Long id, @AuthenticationPrincipal JwtUserDetails userDetails) {
         lessonService.subscribeToLesson(id,userDetails);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public void deleteLesson(@PathVariable Long id) {
         lessonService.deleteLesson(id);
     }

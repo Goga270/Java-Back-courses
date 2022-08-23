@@ -18,18 +18,19 @@ public class DirectionController {
         this.directionService = directionService;
     }
 
-    @PostMapping("new-direction")
+    @PostMapping("/new-direction")
     @ResponseStatus(HttpStatus.CREATED)
     public void createDirection(@RequestBody @Validated(DirectionDto.Create.class) DirectionDto directionDto) {
         directionService.createDirection(directionDto);
     }
 
-    @PutMapping("{id}/settings")
+    @PutMapping("/{id}/settings")
     public DirectionDto editDirection(@PathVariable Long id, @RequestBody DirectionDto directionDto) {
         return directionService.editDirection(id,directionDto);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public void deleteDirection(@PathVariable Long id) {
         directionService.deleteDirection(id);
     }

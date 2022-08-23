@@ -17,18 +17,19 @@ public class SectionController {
         this.sectionService = sectionService;
     }
 
-    @PostMapping("new-section")
+    @PostMapping("/new-section")
     @ResponseStatus(HttpStatus.CREATED)
     public void createSection(@RequestBody @Validated(SectionDto.Create.class) SectionDto sectionDto) {
         sectionService.createSection(sectionDto);
     }
 
-    @PutMapping("{id}/settings")
+    @PutMapping("/{id}/settings")
     public SectionDto editSection(@PathVariable Long id, @RequestBody SectionDto sectionDto) {
         return sectionService.editSection(id,sectionDto);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public void deleteSection(@PathVariable Long id) {
         sectionService.deleteSection(id);
     }

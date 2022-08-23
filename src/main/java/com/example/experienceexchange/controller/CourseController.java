@@ -35,30 +35,32 @@ public class CourseController {
         return null;
     }
 
-    @PostMapping("new-course")
+    @PostMapping("/new-course")
     @ResponseStatus(HttpStatus.CREATED)
     public void createCourse(@AuthenticationPrincipal JwtUserDetails userDetails,
                              @RequestBody @Validated(CourseDto.Create.class) CourseDto courseDto) {
         courseService.createCourse(userDetails, courseDto);
     }
 
-    @PostMapping("{id}/review")
+    @PostMapping("/{id}/review")
     public CommentDto createComment(@AuthenticationPrincipal JwtUserDetails userDetails,
                                    @RequestBody @Validated(CourseDto.Create.class) CommentDto commentDto) {
         return courseService.createComment(userDetails,commentDto);
     }
 
-    @PutMapping("{id}/settings")
+    @PutMapping("/{id}/settings")
     public CourseDto editCourse(@PathVariable Long id, @RequestBody CourseDto courseDto) {
         return courseService.editCourse(id, courseDto);
     }
 
-    @PatchMapping("{id}/subscribe")
+    @PatchMapping("/{id}/subscribe")
+    @ResponseStatus(HttpStatus.OK)
     public void subscribeToCourse(@PathVariable Long id, @AuthenticationPrincipal JwtUserDetails userDetails) {
         courseService.subscribeToCourse(id,userDetails);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public void deleteCourse(@PathVariable Long id) {
         courseService.deleteCourse(id);
     }

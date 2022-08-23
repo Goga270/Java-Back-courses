@@ -5,6 +5,7 @@ import com.example.experienceexchange.dto.LessonDto;
 import com.example.experienceexchange.dto.NewPasswordDto;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.IUserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +38,7 @@ public class UserController {
     }
 
     @PatchMapping("/profile-settings/password")
+    @ResponseStatus(HttpStatus.OK)
     public void changePassword(@AuthenticationPrincipal JwtUserDetails jwtUserDetails,
                                @RequestBody @Validated NewPasswordDto passwordDto) {
         accountService.changePassword(jwtUserDetails, passwordDto);
