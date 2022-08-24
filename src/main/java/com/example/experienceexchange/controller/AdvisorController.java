@@ -1,9 +1,6 @@
 package com.example.experienceexchange.controller;
 
-import com.example.experienceexchange.exception.JwtTokenInvalidException;
-import com.example.experienceexchange.exception.EmailNotUniqueException;
-import com.example.experienceexchange.exception.PasswordsNotMatchException;
-import com.example.experienceexchange.exception.UserNotFoundException;
+import com.example.experienceexchange.exception.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +37,17 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
         return getObjectResponseEntity(exception, request, body, httpStatus);
     }
 
-    @ExceptionHandler(value = {EmailNotUniqueException.class, UserNotFoundException.class, PasswordsNotMatchException.class})
+    @ExceptionHandler(value = {UserNotFoundException.class,
+            PasswordsNotMatchException.class,
+            SectionNotFoundException.class,
+            DirectionNotFoundException.class})
+    protected ResponseEntity<Object> handleNotFound(Exception exception, WebRequest request) {
+        Map<String, String> body = new HashMap<>();
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        return getObjectResponseEntity(exception, request, body, httpStatus);
+    }
+
+    @ExceptionHandler(value = {EmailNotUniqueException.class})
     protected ResponseEntity<Object> handleEmailNotUnique(Exception exception, WebRequest request) {
         Map<String, String> body = new HashMap<>();
         body.put("solution", "Write another email");
@@ -53,13 +60,17 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
         Map<String, String> body = new HashMap<>();
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        body.put("timestamp", new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()));
+        body.put("error", httpStatus.name());
+        body.put("status", String.valueOf(httpStatus.value()));
+        // TODO : НЕ РАБОТАЕТ ?
         exception.getBindingResult().getAllErrors().forEach((error) -> {
 
             String fieldName = ((FieldError) error).getField();
             String message = error.getDefaultMessage();
             body.put(fieldName, message);
         });
-        return getObjectResponseEntity(exception, request, body, httpStatus);
+        return handleExceptionInternal(exception, body, new HttpHeaders(), httpStatus, request);
     }
 
     private ResponseEntity<Object> getObjectResponseEntity(Exception exception,

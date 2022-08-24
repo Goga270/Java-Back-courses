@@ -1,9 +1,11 @@
 package com.example.experienceexchange.constant;
 
 public enum Permission {
+    EDIT_DIRECTION("edit-direction"),
+    EDIT_SECTION("edit-section"),
+    EDIT_COURSE("edit-course"),
+    EDIT_LESSON("edit-lesson"),
     READ("read"),
-    WRITE("write"),
-    DELETE("delete"),
     REGISTRATION_ADMIN("registration-admin");
 
     private final String permission;

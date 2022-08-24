@@ -32,9 +32,9 @@ public class UserController {
     }
 
     @JsonView(AccountDto.Details.class)
-    @PostMapping("/profile-settings")
+    @PutMapping("/profile-settings")
     public AccountDto editProfile(@AuthenticationPrincipal JwtUserDetails userDetails,
-                                  @RequestBody @Validated AccountDto accountDto) {
+                                  @RequestBody @Validated(AccountDto.Edit.class) AccountDto accountDto) {
         return userService.editAccount(userDetails, accountDto);
     }
 

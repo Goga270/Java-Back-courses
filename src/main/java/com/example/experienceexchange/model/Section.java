@@ -23,6 +23,10 @@ public class Section {
     @Column(name = "name")
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "direction_id")
+    private Direction direction;
+
     @ManyToMany(mappedBy = "sections")
     private Set<Product> products = new HashSet<>();
 }

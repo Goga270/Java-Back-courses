@@ -1,6 +1,12 @@
 package com.example.experienceexchange.config;
 
+import com.example.experienceexchange.model.Direction;
+import com.example.experienceexchange.model.Section;
 import com.example.experienceexchange.model.User;
+import com.example.experienceexchange.repository.DirectionRepository;
+import com.example.experienceexchange.repository.SectionRepository;
+import com.example.experienceexchange.repository.interfaceRepo.IDirectionRepository;
+import com.example.experienceexchange.repository.interfaceRepo.ISectionRepository;
 import com.example.experienceexchange.repository.interfaceRepo.IUserRepository;
 import com.example.experienceexchange.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +49,42 @@ public class ApplicationContextConfiguration {
     private String PACKAGES_TO_SCAN;
     @Value("${spring.jpa.properties.hibernate.hbm2ddl.auto}")
     private String DDL_AUTO;
+
+
+    /*@Bean
+    public IUserRepository userRepository() {
+        UserRepository userRepository = new UserRepository();
+        userRepository.setClass(User.class);
+        return userRepository;
+    }
+
+    @Bean
+    public IUserRepository userRepository() {
+        UserRepository userRepository = new UserRepository();
+        userRepository.setClass(User.class);
+        return userRepository;
+    }
+
+    @Bean
+    public IUserRepository userRepository() {
+        UserRepository userRepository = new UserRepository();
+        userRepository.setClass(User.class);
+        return userRepository;
+    }*/
+
+    @Bean
+    public ISectionRepository sectionRepository() {
+        SectionRepository sectionRepository = new SectionRepository();
+        sectionRepository.setClass(Section.class);
+        return sectionRepository;
+    }
+
+    @Bean
+    public IDirectionRepository directionRepository() {
+        DirectionRepository directionRepository = new DirectionRepository();
+        directionRepository.setClass(Direction.class);
+        return directionRepository;
+    }
 
     @Bean
     public IUserRepository userRepository() {

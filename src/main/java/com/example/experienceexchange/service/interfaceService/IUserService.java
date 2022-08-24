@@ -19,7 +19,5 @@ public interface IUserService {
 
     Set<LessonDto> getSchedule(JwtUserDetails userDetails);
 
-    User getUserById(Long id);
-
     void changeEmail(JwtUserDetails jwtUserDetails, NewEmailDto newEmailDto);
 }

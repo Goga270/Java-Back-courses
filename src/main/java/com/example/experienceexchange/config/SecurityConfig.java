@@ -4,6 +4,7 @@ import com.example.experienceexchange.constant.Permission;
 import com.example.experienceexchange.security.configure.JwtConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -32,8 +33,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/login").permitAll()
                 .antMatchers("/auth/registration").permitAll()
                 .antMatchers("/auth/registration-admin").hasAuthority(Permission.REGISTRATION_ADMIN.getPermission())
-                .antMatchers("/direction/**").hasAnyAuthority(Permission.WRITE.getPermission(), Permission.DELETE.getPermission())
-                .antMatchers("/section/**").hasAnyAuthority(Permission.WRITE.getPermission(), Permission.DELETE.getPermission())
+                .antMatchers(HttpMethod.GET,"/directions").hasAuthority(Permission.READ.getPermission())
+                .antMatchers(HttpMethod.GET, "/directions/{id}").hasAuthority(Permission.READ.getPermission())
+                .antMatchers("/directions/new-direction").hasAuthority(Permission.EDIT_DIRECTION.getPermission())
+                .antMatchers("/directions/{id}/settings").hasAuthority(Permission.EDIT_DIRECTION.getPermission())
+                .antMatchers(HttpMethod.DELETE,"/directions/{id}").hasAuthority(Permission.EDIT_DIRECTION.getPermission())
+                .antMatchers("/sections/**").hasAuthority(Permission.EDIT_SECTION.getPermission())
                 .anyRequest()
                 .authenticated()
                 .and()

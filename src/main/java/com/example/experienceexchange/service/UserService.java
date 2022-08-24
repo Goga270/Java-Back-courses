@@ -48,7 +48,6 @@ public class UserService implements IUserService {
         return userMapper.userToAccountDto(newUser);
     }
 
-    // TODO : ЗАТЕСТИТЬ
     @Transactional
     @Override
     public void changePassword(JwtUserDetails userDetails, NewPasswordDto passwordDto) {
@@ -67,7 +66,6 @@ public class UserService implements IUserService {
         return null;
     }
 
-    // TODO : ЗАТЕСТИТЬ
     @Transactional
     @Override
     public void changeEmail(JwtUserDetails jwtUserDetails, NewEmailDto newEmailDto) {
@@ -84,8 +82,7 @@ public class UserService implements IUserService {
         userRepository.update(userForUpdate);
     }
 
-    @Override
-    public User getUserById(Long id) {
+    private User getUserById(Long id) {
         User user = userRepository.find(id);
         if (user == null) {
             throw new UserNotFoundException(id);

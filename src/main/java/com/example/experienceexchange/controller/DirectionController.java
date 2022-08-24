@@ -1,15 +1,16 @@
 package com.example.experienceexchange.controller;
 
-import com.example.experienceexchange.dto.CourseDto;
-import com.example.experienceexchange.dto.LessonDto;
-import com.example.experienceexchange.service.interfaceService.DirectionDto;
+import com.example.experienceexchange.dto.DirectionDto;
 import com.example.experienceexchange.service.interfaceService.IDirectionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Set;
+
 @RestController
-@RequestMapping("/direction")
+@RequestMapping("/directions")
 public class DirectionController {
     // TODO: СДЕЛАТЬ ФУЛЛ ТОЛЬКО ДЛЯ АДМИНА
     private final IDirectionService directionService;
@@ -18,15 +19,25 @@ public class DirectionController {
         this.directionService = directionService;
     }
 
+    @GetMapping("")
+    public List<DirectionDto> getAllDirection() {
+        return directionService.getAllDirections();
+    }
+
+    @GetMapping("/{id}")
+    public DirectionDto getDirection(@PathVariable Integer id) {
+        return directionService.getDirection(id);
+    }
+
     @PostMapping("/new-direction")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createDirection(@RequestBody @Validated(DirectionDto.Create.class) DirectionDto directionDto) {
-        directionService.createDirection(directionDto);
+    public DirectionDto createDirection(@RequestBody @Validated(DirectionDto.Create.class) DirectionDto directionDto) {
+        return directionService.createDirection(directionDto);
     }
 
     @PutMapping("/{id}/settings")
     public DirectionDto editDirection(@PathVariable Long id, @RequestBody DirectionDto directionDto) {
-        return directionService.editDirection(id,directionDto);
+        return directionService.editDirection(id, directionDto);
     }
 
     @DeleteMapping("/{id}")

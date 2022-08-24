@@ -19,9 +19,13 @@ public class Comment {
     @SequenceGenerator(name = "seq_comments", sequenceName = "sequence_id_comments", allocationSize = 1)
     @GeneratedValue(generator = "seq_comments", strategy = GenerationType.SEQUENCE)
     private Long id;
+
     private String header;
+
     private String body;
+
     @Column(name = "date_created")
     private Date created;
+
     private Integer rating;
 }

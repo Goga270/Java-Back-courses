@@ -1,9 +1,10 @@
 package com.example.experienceexchange.service.interfaceService;
 
 import com.example.experienceexchange.dto.SectionDto;
+import com.example.experienceexchange.model.Section;
 
 public interface ISectionService {
-    void createSection(SectionDto sectionDto);
+    SectionDto createSection(SectionDto sectionDto);
 
     SectionDto editSection(Long id, SectionDto sectionDto);
 
