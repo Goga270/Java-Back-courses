@@ -21,6 +21,5 @@ public class DirectionDto {
     @NotNull(groups = Create.class)
     private String header;
 
-    @NotNull(groups = Create.class)
     private Set<SectionDto> sections;
 }

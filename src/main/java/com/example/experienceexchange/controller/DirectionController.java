@@ -1,6 +1,7 @@
 package com.example.experienceexchange.controller;
 
 import com.example.experienceexchange.dto.DirectionDto;
+import com.example.experienceexchange.dto.SectionDto;
 import com.example.experienceexchange.service.interfaceService.IDirectionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -12,7 +13,7 @@ import java.util.Set;
 @RestController
 @RequestMapping("/directions")
 public class DirectionController {
-    // TODO: СДЕЛАТЬ ФУЛЛ ТОЛЬКО ДЛЯ АДМИНА
+
     private final IDirectionService directionService;
 
     public DirectionController(IDirectionService directionService) {
@@ -25,18 +26,19 @@ public class DirectionController {
     }
 
     @GetMapping("/{id}")
-    public DirectionDto getDirection(@PathVariable Integer id) {
+    public DirectionDto getDirection(@PathVariable Long id) {
         return directionService.getDirection(id);
     }
 
     @PostMapping("/new-direction")
     @ResponseStatus(HttpStatus.CREATED)
-    public DirectionDto createDirection(@RequestBody @Validated(DirectionDto.Create.class) DirectionDto directionDto) {
+    public DirectionDto createDirection(@RequestBody @Validated({DirectionDto.Create.class}) DirectionDto directionDto) {
         return directionService.createDirection(directionDto);
     }
 
     @PutMapping("/{id}/settings")
-    public DirectionDto editDirection(@PathVariable Long id, @RequestBody DirectionDto directionDto) {
+    public DirectionDto editDirection(@PathVariable Long id,
+                                      @RequestBody @Validated DirectionDto directionDto) {
         return directionService.editDirection(id, directionDto);
     }
 

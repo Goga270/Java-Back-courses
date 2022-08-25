@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolationException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,6 +56,18 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
         return getObjectResponseEntity(exception, request, body, httpStatus);
     }
 
+    @ExceptionHandler(value = {ConstraintViolationException.class})
+    protected ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException exception, WebRequest request) {
+        Map<String, String> body = new HashMap<>();
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        exception.getConstraintViolations().forEach(w -> {
+            String propertyPath = w.getPropertyPath().toString();
+            String message = w.getMessage();
+            body.put(propertyPath, message);
+        });
+        return getObjectResponseEntity(exception, request, body, httpStatus);
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -63,7 +76,6 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
         body.put("timestamp", new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()));
         body.put("error", httpStatus.name());
         body.put("status", String.valueOf(httpStatus.value()));
-        // TODO : НЕ РАБОТАЕТ ?
         exception.getBindingResult().getAllErrors().forEach((error) -> {
 
             String fieldName = ((FieldError) error).getField();

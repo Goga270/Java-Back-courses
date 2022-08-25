@@ -21,6 +21,7 @@ public class SectionDto {
 
     }
 
+
     @JsonView(AdminDetails.class)
     @Null(groups = {Create.class})
     private Long id;

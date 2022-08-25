@@ -1,7 +1,6 @@
 package com.example.experienceexchange.security.filter;
 
 import com.example.experienceexchange.exception.JwtTokenInvalidException;
-import com.example.experienceexchange.exception.JwtTokenNotEnteredException;
 import com.example.experienceexchange.security.provider.IJwtTokenProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,6 +36,6 @@ public class JwtTokenFilter extends GenericFilterBean {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
-        filterChain.doFilter(servletRequest,servletResponse);
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 }

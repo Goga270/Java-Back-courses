@@ -39,7 +39,7 @@ public class SectionService implements ISectionService {
         Section section = sectionMapper.sectionDtoToSection(sectionDto);
         section.setId(id);
         sectionRepository.update(section);
-        return sectionDto;
+        return sectionMapper.sectionToSectionDto(section);
     }
 
     @Transactional

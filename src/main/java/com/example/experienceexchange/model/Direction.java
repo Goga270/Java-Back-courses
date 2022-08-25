@@ -24,11 +24,11 @@ public class Direction {
     @Column(name = "header")
     private String header;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "direction_id", referencedColumnName = "id")
     private Set<Section> sections = new HashSet<>();
 
-    @ManyToMany(mappedBy = "directions")
+    @ManyToMany(mappedBy = "directions", cascade = CascadeType.ALL)
     private Set<Product> products = new HashSet<>();
 
 }
