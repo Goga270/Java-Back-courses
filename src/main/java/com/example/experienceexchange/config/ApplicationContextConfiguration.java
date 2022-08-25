@@ -47,8 +47,6 @@ public class ApplicationContextConfiguration {
     private String DIALECT;
     @Value("${spring.jpa.properties.packagesToScan}")
     private String PACKAGES_TO_SCAN;
-    @Value("${spring.jpa.properties.hibernate.hbm2ddl.auto}")
-    private String DDL_AUTO;
 
 
     /*@Bean
@@ -137,7 +135,6 @@ public class ApplicationContextConfiguration {
         properties.setProperty("hibernate.show_sql", SHOW_SQL);
         properties.setProperty("hibernate.dialect", DIALECT);
         properties.setProperty("hibernate.format_sql", FORMAT_SQL);
-        properties.setProperty("hibernate.hdm2ddl.auto",DDL_AUTO);
         return properties;
     }
 }

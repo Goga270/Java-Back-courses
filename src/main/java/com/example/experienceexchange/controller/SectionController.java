@@ -27,7 +27,8 @@ public class SectionController {
 
     @JsonView(SectionDto.AdminDetails.class)
     @PutMapping("/{id}/settings")
-    public SectionDto editSection(@PathVariable Long id, @RequestBody @Validated(SectionDto.Edit.class) SectionDto sectionDto) {
+    public SectionDto editSection(@PathVariable Long id,
+                                  @RequestBody @Validated(SectionDto.Edit.class) SectionDto sectionDto) {
         return sectionService.editSection(id, sectionDto);
     }
     // TODO: УДАЛИТСЯ ЛИ У ВСЕХ ? А ИЗ MANY MANY ?

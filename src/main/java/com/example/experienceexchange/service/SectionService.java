@@ -18,12 +18,10 @@ import javax.persistence.EntityExistsException;
 public class SectionService implements ISectionService {
 
     private final ISectionRepository sectionRepository;
-    private final IDirectionRepository directionRepository;
     private final SectionMapper sectionMapper;
 
-    public SectionService(ISectionRepository sectionRepository, IDirectionRepository directionRepository, SectionMapper sectionMapper) {
+    public SectionService(ISectionRepository sectionRepository, SectionMapper sectionMapper) {
         this.sectionRepository = sectionRepository;
-        this.directionRepository = directionRepository;
         this.sectionMapper = sectionMapper;
     }
 
@@ -31,11 +29,6 @@ public class SectionService implements ISectionService {
     @Override
     public SectionDto createSection(SectionDto sectionDto) {
         Section newSection = sectionMapper.sectionDtoToSection(sectionDto);
-        Direction directionForSection = directionRepository.find(sectionDto.getDirectionId());
-        if (directionForSection == null) {
-            throw new DirectionNotFoundException(sectionDto.getDirectionId());
-        }
-        newSection.setDirection(directionForSection);
         Section section = sectionRepository.save(newSection);
         return sectionMapper.sectionToSectionDto(section);
     }
@@ -43,10 +36,10 @@ public class SectionService implements ISectionService {
     @Transactional
     @Override
     public SectionDto editSection(Long id, SectionDto sectionDto) {
-        Section oldSection = getSectionById(id);
-        sectionMapper.updateSection(oldSection, sectionDto);
-        Section updateSection = sectionRepository.update(oldSection);
-        return sectionMapper.sectionToSectionDto(updateSection);
+        Section section = sectionMapper.sectionDtoToSection(sectionDto);
+        section.setId(id);
+        sectionRepository.update(section);
+        return sectionDto;
     }
 
     @Transactional

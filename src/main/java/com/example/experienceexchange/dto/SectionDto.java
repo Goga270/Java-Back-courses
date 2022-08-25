@@ -14,7 +14,7 @@ public class SectionDto {
 
     }
 
-    public class Edit {
+    public interface Edit {
     }
 
     public interface AdminDetails {
@@ -22,15 +22,15 @@ public class SectionDto {
     }
 
     @JsonView(AdminDetails.class)
-    @Null(groups = {Create.class, Edit.class})
+    @Null(groups = {Create.class})
     private Long id;
 
     @JsonView(AdminDetails.class)
-    @Null(groups = {Create.class, Edit.class})
+    @NotNull(groups = {Create.class, Edit.class})
     private String name;
 
     @JsonView(AdminDetails.class)
-    @Null(groups = {Create.class, Edit.class})
+    @NotNull(groups = {Create.class, Edit.class})
     private Long directionId;
 
 }

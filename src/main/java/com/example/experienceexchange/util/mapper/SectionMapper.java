@@ -17,16 +17,19 @@ public abstract class SectionMapper {
 
     @Mapping(target = "directionId", expression = "java(section.getDirection().getId())")
     public abstract SectionDto sectionToSectionDto(Section section);
-    @Mapping(target = "direction", ignore = true)
-    public abstract Section sectionDtoToSection(SectionDto section);
 
-    public Section updateSection(Section oldSection, SectionDto sectionDto) {
-        oldSection.setName(sectionDto.getName());
+    public Section sectionDtoToSection(SectionDto sectionDto) {
+        if (sectionDto == null) {
+            return null;
+        }
+        Section section = new Section();
+        section.setId(sectionDto.getId());
+        section.setName(sectionDto.getName());
         Direction directionForSection = directionRepository.find(sectionDto.getDirectionId());
         if (directionForSection == null) {
             throw new DirectionNotFoundException(sectionDto.getDirectionId());
         }
-        oldSection.setDirection(directionForSection);
-        return oldSection;
+        section.setDirection(directionForSection);
+        return section;
     }
 }
