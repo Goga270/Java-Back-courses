@@ -1,6 +1,7 @@
 package com.example.experienceexchange.controller;
 
 import com.example.experienceexchange.exception.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +16,15 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolationException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
 public class AdvisorController extends ResponseEntityExceptionHandler {
-
 
     // TODO: НАДО ЛИ ИХ ЛОВИТЬ ?
     @ExceptionHandler(value = {JwtTokenInvalidException.class})
@@ -87,7 +90,7 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> getObjectResponseEntity(Exception exception,
                                                            WebRequest request, Map<String, String> body, HttpStatus httpStatus) {
-        body.put("timestamp", new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()));
+        body.put("timestamp", new SimpleDateFormat("dd-MM-yyyy hh:mm:ss Z").format(new Date()));
         body.put("error", httpStatus.name());
         body.put("status", String.valueOf(httpStatus.value()));
         body.put("message", exception.getMessage());

@@ -1,14 +1,8 @@
 package com.example.experienceexchange.config;
 
-import com.example.experienceexchange.model.Direction;
-import com.example.experienceexchange.model.Section;
-import com.example.experienceexchange.model.User;
-import com.example.experienceexchange.repository.DirectionRepository;
-import com.example.experienceexchange.repository.SectionRepository;
-import com.example.experienceexchange.repository.interfaceRepo.IDirectionRepository;
-import com.example.experienceexchange.repository.interfaceRepo.ISectionRepository;
-import com.example.experienceexchange.repository.interfaceRepo.IUserRepository;
-import com.example.experienceexchange.repository.UserRepository;
+import com.example.experienceexchange.model.*;
+import com.example.experienceexchange.repository.*;
+import com.example.experienceexchange.repository.interfaceRepo.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -23,6 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.util.Properties;
+import java.util.TimeZone;
 
 @Configuration
 @ComponentScan(basePackages = {"com.example.experienceexchange"})
@@ -47,28 +42,30 @@ public class ApplicationContextConfiguration {
     private String DIALECT;
     @Value("${spring.jpa.properties.packagesToScan}")
     private String PACKAGES_TO_SCAN;
+    @Value("spring.timeZone.zone")
+    private String ZONE_ID;
 
+    @Bean
+    public TimeZone timeZone() {
+        TimeZone defaultTimeZone = TimeZone.getTimeZone(ZONE_ID);
+        TimeZone.setDefault(defaultTimeZone);
+        return defaultTimeZone;
 
-    /*@Bean
-    public IUserRepository userRepository() {
-        UserRepository userRepository = new UserRepository();
-        userRepository.setClass(User.class);
-        return userRepository;
     }
 
     @Bean
-    public IUserRepository userRepository() {
-        UserRepository userRepository = new UserRepository();
-        userRepository.setClass(User.class);
-        return userRepository;
+    public ICourseRepository courseRepository() {
+        CourseRepository courseRepository = new CourseRepository();
+        courseRepository.setClass(Course.class);
+        return courseRepository;
     }
 
     @Bean
-    public IUserRepository userRepository() {
-        UserRepository userRepository = new UserRepository();
-        userRepository.setClass(User.class);
-        return userRepository;
-    }*/
+    public ILessonRepository lessonRepository() {
+        LessonRepository lessonRepository = new LessonRepository();
+        lessonRepository.setClass(Lesson.class);
+        return lessonRepository;
+    }
 
     @Bean
     public ISectionRepository sectionRepository() {

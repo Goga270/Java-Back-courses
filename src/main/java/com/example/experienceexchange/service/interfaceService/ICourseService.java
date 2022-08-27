@@ -17,5 +17,5 @@ public interface ICourseService {
 
     void subscribeToCourse(Long id, JwtUserDetails userDetails);
 
-    CommentDto createComment(JwtUserDetails userDetails, CommentDto commentDto);
+    CommentDto createComment(Long courseId, JwtUserDetails userDetails, CommentDto commentDto);
 }

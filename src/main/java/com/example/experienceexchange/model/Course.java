@@ -27,6 +27,16 @@ public class Course extends Product {
     @Column(name = "date_end_course")
     private Date dateEnd;
 
-    @Column(name = "course_duration")
-    private Integer courseDuration;
+    @Column(name = "current_number_users")
+    private volatile Integer currentNumberUsers = 0;
+
+/*    @Column(name = "course_duration")
+    private Integer courseDuration;*/
+
+    @ManyToMany(mappedBy = "courseSubscriptions")
+    private Set<User> usersInCourse = new HashSet<>();
+
+    public void addComment(Comment comment) {
+        getComments().add(comment);
+    }
 }

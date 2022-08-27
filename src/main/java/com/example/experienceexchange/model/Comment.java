@@ -20,6 +20,10 @@ public class Comment {
     @GeneratedValue(generator = "seq_comments", strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private User author;
+
     private String header;
 
     private String body;

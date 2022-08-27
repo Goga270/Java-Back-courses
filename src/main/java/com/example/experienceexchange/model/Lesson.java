@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -24,8 +26,13 @@ public class Lesson extends Product {
     private String homeworkLink;
     @Column(name = "link_video")
     private String linkVideo;
-    @Column(name = "date_start_lesson")
+    @Column(name = "access_duration")
+    private Integer accessDuration;
+    @Column(name = "time_start_lesson")
     private Date startLesson;
-    @Column(name = "date_end_lesson")
+    @Column(name = "time_end_lesson")
     private Date endLesson;
+
+    @ManyToMany(mappedBy = "lessonSubscriptions")
+    private Set<User> usersInLesson = new HashSet<>();
 }

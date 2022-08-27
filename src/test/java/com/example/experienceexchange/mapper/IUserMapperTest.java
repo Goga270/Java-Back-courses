@@ -3,12 +3,15 @@ package com.example.experienceexchange.mapper;
 import com.example.experienceexchange.constant.Status;
 import com.example.experienceexchange.model.User;
 import com.example.experienceexchange.security.JwtUserDetails;
+import com.example.experienceexchange.util.date.DateUtil;
 import com.example.experienceexchange.util.mapper.UserMapper;
 import com.example.experienceexchange.util.mapper.UserMapperImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
+
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

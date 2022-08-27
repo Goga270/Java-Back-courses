@@ -1,19 +1,18 @@
 package com.example.experienceexchange.service.interfaceService;
 
-import com.example.experienceexchange.dto.AccountDto;
+import com.example.experienceexchange.dto.UserDto;
 import com.example.experienceexchange.dto.LessonDto;
 import com.example.experienceexchange.dto.NewEmailDto;
 import com.example.experienceexchange.dto.NewPasswordDto;
-import com.example.experienceexchange.model.User;
 import com.example.experienceexchange.security.JwtUserDetails;
 
 import java.util.Set;
 
 public interface IUserService {
 
-    AccountDto getAccount(JwtUserDetails userDetails);
+    UserDto getAccount(JwtUserDetails userDetails);
 
-    AccountDto editAccount(JwtUserDetails userDetails, AccountDto accountDto);
+    UserDto editAccount(JwtUserDetails userDetails, UserDto userDto);
 
     void changePassword(JwtUserDetails userDetails, NewPasswordDto passwordDto);
 

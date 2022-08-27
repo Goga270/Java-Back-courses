@@ -1,12 +1,13 @@
 package com.example.experienceexchange.service;
 
-import com.example.experienceexchange.dto.AccountDto;
+import com.example.experienceexchange.dto.UserDto;
 import com.example.experienceexchange.dto.LessonDto;
 import com.example.experienceexchange.dto.NewEmailDto;
 import com.example.experienceexchange.dto.NewPasswordDto;
 import com.example.experienceexchange.exception.EmailNotUniqueException;
 import com.example.experienceexchange.exception.PasswordsNotMatchException;
 import com.example.experienceexchange.exception.UserNotFoundException;
+import com.example.experienceexchange.model.Lesson;
 import com.example.experienceexchange.model.User;
 import com.example.experienceexchange.repository.interfaceRepo.IUserRepository;
 import com.example.experienceexchange.security.JwtUserDetails;
@@ -32,20 +33,20 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public AccountDto getAccount(JwtUserDetails userDetails) {
+    public UserDto getAccount(JwtUserDetails userDetails) {
         Long userId = userDetails.getId();
         User user = getUserById(userId);
-        return userMapper.userToAccountDto(user);
+        return userMapper.userToUserDto(user);
     }
 
     @Transactional
     @Override
-    public AccountDto editAccount(JwtUserDetails userDetails, AccountDto accountDto) {
+    public UserDto editAccount(JwtUserDetails userDetails, UserDto userDto) {
         Long userId = userDetails.getId();
         User oldUser = getUserById(userId);
-        User newUser = userMapper.updateUser(oldUser, accountDto);
+        User newUser = userMapper.updateUser(oldUser, userDto);
         userRepository.update(newUser);
-        return userMapper.userToAccountDto(newUser);
+        return userMapper.userToUserDto(newUser);
     }
 
     @Transactional
@@ -61,21 +62,21 @@ public class UserService implements IUserService {
         }
     }
 
+    @Transactional
     @Override
     public Set<LessonDto> getSchedule(JwtUserDetails userDetails) {
+        Long userId = userDetails.getId();
+        User user = getUserById(userId);
+        Set<Lesson> subscriptions = user.getLessonSubscriptions();
         return null;
     }
 
     @Transactional
     @Override
     public void changeEmail(JwtUserDetails jwtUserDetails, NewEmailDto newEmailDto) {
-        try {
-            User user = userRepository.findByEmail(newEmailDto.getNewEmail());
-            if (user != null) {
-                throw new EmailNotUniqueException();
-            }
-        } catch (Exception ignored) {
-
+        User user = userRepository.findByEmail(newEmailDto.getNewEmail());
+        if (user != null) {
+            throw new EmailNotUniqueException();
         }
         User userForUpdate = userRepository.find(jwtUserDetails.getId());
         userForUpdate.setEmail(newEmailDto.getNewEmail());

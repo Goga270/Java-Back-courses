@@ -20,9 +20,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @JsonView(AccountDto.Details.class)
+    @JsonView(UserDto.Details.class)
     @GetMapping("/profile")
-    public AccountDto getCurrentProfile(@AuthenticationPrincipal JwtUserDetails userDetails) {
+    public UserDto getCurrentProfile(@AuthenticationPrincipal JwtUserDetails userDetails) {
         return userService.getAccount(userDetails);
     }
     // TODO: НАПИСАТЬ РАСПИСАНИЕ
@@ -31,11 +31,11 @@ public class UserController {
         return userService.getSchedule(userDetails);
     }
 
-    @JsonView(AccountDto.Details.class)
+    @JsonView(UserDto.Details.class)
     @PutMapping("/profile-settings")
-    public AccountDto editProfile(@AuthenticationPrincipal JwtUserDetails userDetails,
-                                  @RequestBody @Validated(AccountDto.Edit.class) AccountDto accountDto) {
-        return userService.editAccount(userDetails, accountDto);
+    public UserDto editProfile(@AuthenticationPrincipal JwtUserDetails userDetails,
+                               @RequestBody @Validated(UserDto.Edit.class) UserDto userDto) {
+        return userService.editAccount(userDetails, userDto);
     }
 
     @PatchMapping("/profile-settings/password")

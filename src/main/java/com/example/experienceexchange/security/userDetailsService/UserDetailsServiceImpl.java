@@ -23,11 +23,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        try {
-            User account = userRepository.findByEmail(username);
-            return userMapper.UserToUserDetails(account);
-        } catch (Exception exception) {
+        User account = userRepository.findByEmail(username);
+        if (account == null) {
             throw new UsernameNotFoundException(String.format("User with email %s not found", username));
         }
+        return userMapper.UserToUserDetails(account);
+
     }
 }

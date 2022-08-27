@@ -4,6 +4,7 @@ package com.example.experienceexchange.controller;
 import com.example.experienceexchange.dto.CommentDto;
 import com.example.experienceexchange.dto.CourseDto;
 import com.example.experienceexchange.dto.FilterDto;
+import com.example.experienceexchange.dto.SubscribeDto;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.ICourseService;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.Path;
 import java.util.Set;
 
 @RestController
@@ -43,9 +45,10 @@ public class CourseController {
     }
 
     @PostMapping("/{id}/review")
-    public CommentDto createComment(@AuthenticationPrincipal JwtUserDetails userDetails,
-                                   @RequestBody @Validated(CourseDto.Create.class) CommentDto commentDto) {
-        return courseService.createComment(userDetails,commentDto);
+    public CommentDto createComment(@PathVariable("id") Long courseId,
+                                    @AuthenticationPrincipal JwtUserDetails userDetails,
+                                    @RequestBody @Validated(CourseDto.Create.class) CommentDto commentDto) {
+        return courseService.createComment(courseId,userDetails, commentDto);
     }
 
     @PutMapping("/{id}/settings")
@@ -55,8 +58,10 @@ public class CourseController {
 
     @PatchMapping("/{id}/subscribe")
     @ResponseStatus(HttpStatus.OK)
-    public void subscribeToCourse(@PathVariable Long id, @AuthenticationPrincipal JwtUserDetails userDetails) {
-        courseService.subscribeToCourse(id,userDetails);
+    public void subscribeToCourse(@AuthenticationPrincipal JwtUserDetails userDetails,
+                                  @PathVariable Long id,
+                                  @RequestBody @Validated SubscribeDto subscribeDto) {
+        courseService.subscribeToCourse(id, userDetails);
     }
 
     @DeleteMapping("/{id}")

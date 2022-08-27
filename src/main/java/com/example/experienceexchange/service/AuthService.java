@@ -2,7 +2,7 @@ package com.example.experienceexchange.service;
 
 import com.example.experienceexchange.constant.Role;
 import com.example.experienceexchange.constant.Status;
-import com.example.experienceexchange.dto.AccountDto;
+import com.example.experienceexchange.dto.UserDto;
 import com.example.experienceexchange.dto.LoginDto;
 import com.example.experienceexchange.dto.TokenDto;
 import com.example.experienceexchange.exception.EmailNotUniqueException;
@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.Date;
 
 @Service
@@ -51,30 +52,34 @@ public class AuthService implements IAuthService {
 
     @Transactional
     @Override
-    public void registrationUser(AccountDto registrationDto) {
+    public void registrationUser(UserDto registrationDto) {
         registration(registrationDto, Role.USER);
     }
 
     @Transactional
     @Override
-    public void registrationAdmin(AccountDto registrationDto) {
+    public void registrationAdmin(UserDto registrationDto) {
         registration(registrationDto, Role.ADMIN);
     }
 
-    private void registration(AccountDto accountDto, Role role) {
-        User account = userRepository.findByEmail(accountDto.getEmail());
+    private void registration(UserDto userDto, Role role) {
+        User account = userRepository.findByEmail(userDto.getEmail());
         if (account != null) {
             throw new EmailNotUniqueException();
         }
-        account = UserFactory.createUser(accountDto.getLastName(),
-                accountDto.getFirstName(),
-                accountDto.getNumberPhone(),
-                accountDto.getEmail(),
-                passwordEncoder.encode(accountDto.getPassword()),
+        Instant now = Instant.now();
+        account = UserFactory.createUser(userDto.getLastname(),
+                userDto.getFirstname(),
+                userDto.getPatronymic(),
+                userDto.getNumberPhone(),
+                userDto.getEmail(),
+                passwordEncoder.encode(userDto.getPassword()),
                 Status.ACTIVE,
-                new Date(),
-                new Date(),
-                role);
+                Date.from(now),
+                Date.from(now),
+                role,
+                userDto.getAge(),
+                userDto.getNumberCard());
         userRepository.save(account);
     }
 }

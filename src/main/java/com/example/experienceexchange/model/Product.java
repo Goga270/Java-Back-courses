@@ -35,7 +35,7 @@ public abstract class Product {
     private Integer purposeKnowledge;
 
     @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
     private User author;
 
     @Column(name = "max_number_users")
@@ -43,9 +43,6 @@ public abstract class Product {
 
     @Column(name = "price")
     private BigDecimal price;
-
-    @Column(name = "current_number_users")
-    private volatile Integer currentNumberUsers = 0;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
@@ -70,14 +67,6 @@ public abstract class Product {
             inverseJoinColumns = {@JoinColumn(name = "skill_id")}
     )
     private Set<Skill> skills = new HashSet<>();
-
-    @ManyToMany
-    @JoinTable(
-            name = "product_user",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "product_id")}
-    )
-    private Set<User> usersCourse= new HashSet<>();
 
     @OneToMany
     @JoinColumn(name = "product_id", referencedColumnName = "id")

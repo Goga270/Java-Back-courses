@@ -15,10 +15,10 @@ import java.util.Date;
 public abstract class Account {
 
     @Column(name = "lastname")
-    private String lastName;
+    private String lastname;
 
     @Column(name = "firstname")
-    private String firstName;
+    private String firstname;
 
     @Column(name = "patronymic")
     private String patronymic;

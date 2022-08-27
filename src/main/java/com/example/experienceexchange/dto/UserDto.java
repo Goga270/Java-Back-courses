@@ -2,7 +2,6 @@ package com.example.experienceexchange.dto;
 
 import com.example.experienceexchange.constant.Role;
 import com.example.experienceexchange.constant.Status;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
@@ -15,7 +14,7 @@ import javax.validation.constraints.Null;
 
 @Getter
 @Setter
-public class AccountDto {
+public class UserDto {
     // TODO : НУЖЕН ЛИ AdminDetails?
     public interface Registration {
     }
@@ -30,18 +29,19 @@ public class AccountDto {
     public interface Details {
     }
 
-    @NotNull(groups = {Registration.class, Edit.class})
+    @NotNull(groups = {Registration.class})
+    @Null(groups = {Edit.class})
     @Email(groups = {Registration.class}, message = "email invalid", regexp = "^(.+)@(\\S+)$")
     @JsonView(Details.class)
     private String email;
 
     @NotNull(groups = {Registration.class, Edit.class})
     @JsonView(Details.class)
-    private String lastName;
+    private String lastname;
 
     @NotNull(groups = {Registration.class, Edit.class})
     @JsonView(Details.class)
-    private String firstName;
+    private String firstname;
 
     @NotNull(groups = {Registration.class, Edit.class})
     @JsonView(Details.class)
@@ -64,9 +64,10 @@ public class AccountDto {
     @NotNull(groups = {Registration.class})
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JsonView(Details.class)
+    @Null(groups = {Edit.class})
     private String password;
 
-    @JsonView(AdminDetails.class)
+    @JsonView({AdminDetails.class,Details.class})
     private String created;
 
     @JsonView(AdminDetails.class)

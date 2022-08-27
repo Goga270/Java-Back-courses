@@ -31,7 +31,7 @@ public class SectionController {
                                   @RequestBody @Validated(SectionDto.Edit.class) SectionDto sectionDto) {
         return sectionService.editSection(id, sectionDto);
     }
-    // TODO: УДАЛИТСЯ ЛИ У ВСЕХ ? А ИЗ MANY MANY ?
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteSection(@PathVariable Long id) {

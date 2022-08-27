@@ -1,6 +1,6 @@
 package com.example.experienceexchange.controller;
 
-import com.example.experienceexchange.dto.AccountDto;
+import com.example.experienceexchange.dto.UserDto;
 import com.example.experienceexchange.dto.LoginDto;
 import com.example.experienceexchange.dto.TokenDto;
 import com.example.experienceexchange.service.interfaceService.IAuthService;
@@ -25,13 +25,19 @@ public class AuthController {
 
     @PostMapping("/registration")
     @ResponseStatus(HttpStatus.CREATED)
-    public void registration(@RequestBody @Validated({AccountDto.Registration.class}) AccountDto registrationDto) {
+    public void registration(@RequestBody @Validated({UserDto.Registration.class}) UserDto registrationDto) {
         authService.registrationUser(registrationDto);
     }
 
     @PostMapping("/registration-admin")
     @ResponseStatus(HttpStatus.CREATED)
-    public void registrationAdmin(@RequestBody @Validated({AccountDto.Registration.class}) AccountDto registrationDto) {
+    public void registrationAdmin(@RequestBody @Validated({UserDto.Registration.class}) UserDto registrationDto) {
         authService.registrationAdmin(registrationDto);
+    }
+
+    @GetMapping("/test")
+    public DateDto test(@RequestBody @Validated DateDto date) {
+
+        return date;
     }
 }
