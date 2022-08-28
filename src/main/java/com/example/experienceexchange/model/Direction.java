@@ -29,6 +29,9 @@ public class Direction {
     private Set<Section> sections = new HashSet<>();
 
     @ManyToMany(mappedBy = "directions", cascade = CascadeType.ALL)
-    private Set<Product> products = new HashSet<>();
+    private Set<Course> courses = new HashSet<>();
+
+    @ManyToMany(mappedBy = "directions", cascade = CascadeType.ALL)
+    private Set<LessonSingle> lessons = new HashSet<>();
 
 }

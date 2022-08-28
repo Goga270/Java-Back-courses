@@ -20,6 +20,6 @@ public class Subscription {
 
     @OneToOne
     private User user;
-    @OneToOne
-    private Product product;
+   /* @OneToOne
+    private Product product;*/
 }

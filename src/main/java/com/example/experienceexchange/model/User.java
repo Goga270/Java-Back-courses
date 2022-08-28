@@ -23,7 +23,7 @@ public class User extends Account {
 
 
     @OneToMany(mappedBy = "author")
-    private Set<Lesson> createdLessons = new HashSet<>();
+    private Set<LessonSingle> createdLessons = new HashSet<>();
 
     @OneToMany(mappedBy = "author")
     private Set<Course> createdCourses = new HashSet<>();
@@ -35,7 +35,7 @@ public class User extends Account {
             joinColumns = {@JoinColumn(name = "lesson_id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
-    private Set<Lesson> lessonSubscriptions = new HashSet<>();
+    private Set<LessonSingle> lessonSubscriptions = new HashSet<>();
 
     @ManyToMany
     @JoinTable(

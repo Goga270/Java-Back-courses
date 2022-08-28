@@ -67,7 +67,7 @@ public class UserService implements IUserService {
     public Set<LessonDto> getSchedule(JwtUserDetails userDetails) {
         Long userId = userDetails.getId();
         User user = getUserById(userId);
-        Set<Lesson> subscriptions = user.getLessonSubscriptions();
+//        Set<Lesson> subscriptions = user.getLessonSubscriptions/**/();
         return null;
     }
 

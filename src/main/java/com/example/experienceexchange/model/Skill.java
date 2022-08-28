@@ -13,6 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "skills")
+// TODO : ЮЗЕРЫ ТОЖЕ МОГУТ ИХ СОЗДАВАТЬ!
 public class Skill {
 
     @Id
@@ -22,6 +23,9 @@ public class Skill {
 
     private String name;
 
-    @ManyToMany(mappedBy = "skills")
-    private Set<Product> products = new HashSet<>();
+    @ManyToMany(mappedBy = "skills", cascade = CascadeType.ALL)
+    private Set<Course> courses = new HashSet<>();
+
+    @ManyToMany(mappedBy = "skills", cascade = CascadeType.ALL)
+    private Set<LessonSingle> lessonSingles = new HashSet<>();
 }

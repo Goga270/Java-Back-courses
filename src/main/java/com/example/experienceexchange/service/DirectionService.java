@@ -44,10 +44,8 @@ public class DirectionService implements IDirectionService {
     @Override
     public DirectionDto createDirection(DirectionDto directionDto) {
         Direction direction = directionMapper.directionDtoToDirection(directionDto);
-        Set<Section> sections = direction.getSections();
-        for (Section section : sections) {
-            section.setDirection(direction);
-        }
+        direction.getSections()
+                .forEach(section -> section.setDirection(direction));
 
         Direction save = directionRepository.save(direction);
         return directionMapper.directionToDirectionDto(save);
