@@ -27,9 +27,9 @@ public class Section {
     @JoinColumn(name = "direction_id")
     private Direction direction;
 
-    @ManyToMany(mappedBy = "sections", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "sections")
     private Set<Course> courses = new HashSet<>();
 
-    @ManyToMany(mappedBy = "sections", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "sections")
     private Set<LessonSingle> lessons = new HashSet<>();
 }

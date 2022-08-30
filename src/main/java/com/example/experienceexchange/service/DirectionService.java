@@ -62,8 +62,8 @@ public class DirectionService implements IDirectionService {
             section.setDirection(direction);
         }
 
-        directionRepository.update(direction);
-        return directionMapper.directionToDirectionDto(direction);
+        Direction update = directionRepository.update(direction);
+        return directionMapper.directionToDirectionDto(update);
     }
 
     @Transactional

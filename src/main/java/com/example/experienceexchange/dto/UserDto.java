@@ -2,6 +2,7 @@ package com.example.experienceexchange.dto;
 
 import com.example.experienceexchange.constant.Role;
 import com.example.experienceexchange.constant.Status;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+import java.util.Date;
 
 
 @Getter
@@ -68,12 +70,14 @@ public class UserDto {
     private String password;
 
     @JsonView({AdminDetails.class,Details.class})
-    private String created;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss X")
+    private Date created;
 
     @JsonView(AdminDetails.class)
-    private String updated;
+    private Date updated;
 
     @JsonView(AdminDetails.class)
+    @Null(groups = {Registration.class,Edit.class})
     private Role role;
 
     @JsonView(AdminDetails.class)

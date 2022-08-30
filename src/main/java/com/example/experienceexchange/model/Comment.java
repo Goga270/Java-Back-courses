@@ -22,7 +22,7 @@ public class Comment {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
     private User author;
 
     private String header;

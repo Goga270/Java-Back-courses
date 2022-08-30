@@ -15,17 +15,17 @@ import java.util.List;
 import java.util.Set;
 
 @Mapper(componentModel = "spring")
-public abstract class DirectionMapper {
+public interface DirectionMapper {
 
-    public abstract DirectionDto directionToDirectionDto(Direction direction);
+    DirectionDto directionToDirectionDto(Direction direction);
 
-    public abstract Direction directionDtoToDirection(DirectionDto directionDto);
+    Direction directionDtoToDirection(DirectionDto directionDto);
 
-    public abstract List<DirectionDto> toDirectionDto(Collection<Direction> directions);
+    List<DirectionDto> toDirectionDto(Collection<Direction> directions);
 
     @Mapping(target = "directionId", expression = "java(section.getDirection().getId())")
-    public abstract SectionDto sectionToSectionDto(Section section);
+    SectionDto sectionToSectionDto(Section section);
 
     @Mapping(target = "direction", ignore = true)
-    public abstract Section sectionDtoToSection(SectionDto sectionDto);
+    Section sectionDtoToSection(SectionDto sectionDto);
 }

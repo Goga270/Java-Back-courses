@@ -44,14 +44,14 @@ public class Course {
 
     @Column(name = "price")
     private BigDecimal price;
-
+    // TODO: ХРАНИТЬ ДАТУ БЕЗ ТАЙМЗОНЫ ПОТОМУ ЧТО ТУТ ОНА НЕ НУЖНА
     @Column(name = "date_start_course")
     private Date dateStart;
 
     @Column(name = "date_end_course")
     private Date dateEnd;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.REFRESH})
     @JoinTable(
             name = "course_section",
             joinColumns = {@JoinColumn(name = "course_id")},
@@ -59,7 +59,7 @@ public class Course {
     )
     private Set<Section> sections = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.REFRESH})
     @JoinTable(
             name = "course_direction",
             joinColumns = {@JoinColumn(name = "course_id")},
@@ -67,7 +67,7 @@ public class Course {
     )
     private Set<Direction> directions = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.REFRESH})
     @JoinTable(
             name = "course_skill",
             joinColumns = {@JoinColumn(name = "course_id")},
@@ -76,11 +76,11 @@ public class Course {
     private Set<Skill> skills = new HashSet<>();
 
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH}, orphanRemoval = true)
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     private Set<Comment> comments = new HashSet<>();
 
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     private Set<LessonOnCourse> lessons = new HashSet<>();
 
@@ -89,5 +89,9 @@ public class Course {
 
     public void addComment(Comment comment) {
         getComments().add(comment);
+    }
+
+    public void addLesson(LessonOnCourse lessonOnCourse) {
+        lessons.add(lessonOnCourse);
     }
 }

@@ -41,7 +41,7 @@ public class LessonSingle extends Lesson {
     @ManyToMany(mappedBy = "lessonSubscriptions")
     private Set<User> usersInLesson = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.REFRESH})
     @JoinTable(
             name = "lesson_section",
             joinColumns = {@JoinColumn(name = "lesson_id")},
@@ -49,7 +49,7 @@ public class LessonSingle extends Lesson {
     )
     private Set<Section> sections = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.REFRESH})
     @JoinTable(
             name = "lesson_direction",
             joinColumns = {@JoinColumn(name = "lesson_id")},
@@ -57,7 +57,7 @@ public class LessonSingle extends Lesson {
     )
     private Set<Direction> directions = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.REFRESH})
     @JoinTable(
             name = "lesson_skill",
             joinColumns = {@JoinColumn(name = "lesson_id")},
@@ -65,7 +65,7 @@ public class LessonSingle extends Lesson {
     )
     private Set<Skill> skills = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH}, orphanRemoval = true)
     @JoinColumn(name = "lesson_id",referencedColumnName = "id")
     private Set<Comment> comments = new HashSet<>();
 }

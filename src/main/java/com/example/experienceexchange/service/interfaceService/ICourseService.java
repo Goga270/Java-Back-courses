@@ -2,14 +2,16 @@ package com.example.experienceexchange.service.interfaceService;
 
 import com.example.experienceexchange.dto.CommentDto;
 import com.example.experienceexchange.dto.CourseDto;
+import com.example.experienceexchange.dto.LessonOnCourseDto;
 import com.example.experienceexchange.security.JwtUserDetails;
 
-import java.util.Set;
+import java.util.List;
 
 public interface ICourseService {
-    Set<CourseDto> getCoursesByDirection();
 
-    void createCourse(JwtUserDetails userDetails, CourseDto courseDto);
+    List<CourseDto> getCoursesByDirection();
+
+    CourseDto createCourse(JwtUserDetails userDetails, CourseDto courseDto);
 
     CourseDto editCourse(Long id, CourseDto courseDto);
 
@@ -18,4 +20,8 @@ public interface ICourseService {
     void subscribeToCourse(Long id, JwtUserDetails userDetails);
 
     CommentDto createComment(Long courseId, JwtUserDetails userDetails, CommentDto commentDto);
+
+    List<CommentDto> getCommentsByCourse(Long courseId);
+
+    CourseDto createLesson(JwtUserDetails userDetails, Long courseId, LessonOnCourseDto lesson);
 }

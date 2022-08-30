@@ -34,10 +34,4 @@ public class AuthController {
     public void registrationAdmin(@RequestBody @Validated({UserDto.Registration.class}) UserDto registrationDto) {
         authService.registrationAdmin(registrationDto);
     }
-
-    @GetMapping("/test")
-    public DateDto test(@RequestBody @Validated DateDto date) {
-
-        return date;
-    }
 }

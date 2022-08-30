@@ -7,7 +7,7 @@ public class DateUtil {
 
     private final static String datePattern = "dd-MM-yyyy hh:mm:ss Z";
 
-    public static Date DateTimeNow() {
+    public static Date dateTimeNow() {
         return Date.from(Instant.now());
     }
 }

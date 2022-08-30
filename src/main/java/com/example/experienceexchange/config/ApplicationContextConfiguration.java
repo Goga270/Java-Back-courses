@@ -54,6 +54,20 @@ public class ApplicationContextConfiguration {
     }
 
     @Bean
+    public ILessonOnCourseRepository lessonOnCourseRepository() {
+        LessonOnCourseRepository lessonOnCourseRepository = new LessonOnCourseRepository();
+        lessonOnCourseRepository.setClass(LessonOnCourse.class);
+        return lessonOnCourseRepository;
+    }
+
+    @Bean
+    public ICommentRepository commentRepository() {
+        CommentRepository commentRepository = new CommentRepository();
+        commentRepository.setClass(Comment.class);
+        return commentRepository;
+    }
+
+    @Bean
     public ICourseRepository courseRepository() {
         CourseRepository courseRepository = new CourseRepository();
         courseRepository.setClass(Course.class);

@@ -23,9 +23,9 @@ public class Skill {
 
     private String name;
 
-    @ManyToMany(mappedBy = "skills", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "skills")
     private Set<Course> courses = new HashSet<>();
 
-    @ManyToMany(mappedBy = "skills", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "skills")
     private Set<LessonSingle> lessonSingles = new HashSet<>();
 }

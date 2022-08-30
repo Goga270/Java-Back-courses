@@ -27,7 +27,8 @@ import java.util.Map;
 public class AdvisorController extends ResponseEntityExceptionHandler {
 
     // TODO: НАДО ЛИ ИХ ЛОВИТЬ ?
-    @ExceptionHandler(value = {JwtTokenInvalidException.class})
+    @ExceptionHandler(value = {JwtTokenInvalidException.class,
+                                NotAccessException.class})
     protected ResponseEntity<Object> handleInvalidToken(RuntimeException exception, WebRequest request) {
         Map<String, String> body = new HashMap<>();
         HttpStatus httpStatus = HttpStatus.FORBIDDEN;

@@ -24,14 +24,14 @@ public class Direction {
     @Column(name = "header")
     private String header;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH,CascadeType.REFRESH}, orphanRemoval = true)
     @JoinColumn(name = "direction_id", referencedColumnName = "id")
     private Set<Section> sections = new HashSet<>();
 
-    @ManyToMany(mappedBy = "directions", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "directions")
     private Set<Course> courses = new HashSet<>();
 
-    @ManyToMany(mappedBy = "directions", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "directions")
     private Set<LessonSingle> lessons = new HashSet<>();
 
 }
