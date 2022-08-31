@@ -24,17 +24,22 @@ public class CourseController {
     }
 
 
-    @GetMapping({"/{direction}"})
+    /*@GetMapping({"/{direction}"})
     public Set<CourseDto> getCoursesByDirection(@PathVariable String direction,
                                                 @RequestBody FilterDto filterDto) {
         return null;
         //return courseService.getCoursesByDirection();
-    }
+    }*/
 
     @JsonView({CourseDto.Details.class})
     @GetMapping("")
     public List<CourseDto> getCourses(@RequestBody FilterDto filterDto) {
         return courseService.getCoursesByDirection();
+    }
+
+    @GetMapping("/{id}")
+    public CourseDto getCourse(@PathVariable("id") Long courseId) {
+        return courseService.getCourse(courseId);
     }
 
     @GetMapping("/{id}/comments")
@@ -67,9 +72,10 @@ public class CourseController {
 
     // TODO : А ТВОЙ ЛИ ЭТО КУРС ПРОВЕРИТЬ НАДО
     @PutMapping("/{id}/settings")
-    public CourseDto editCourse(@PathVariable Long id,
+    public CourseDto editCourse(@AuthenticationPrincipal JwtUserDetails userDetails,
+                                @PathVariable Long id,
                                 @RequestBody @Validated(value = CourseDto.Edit.class) CourseDto courseDto) {
-        return courseService.editCourse(id, courseDto);
+        return courseService.editCourse(userDetails, id, courseDto);
     }
 
     // TODO : А ТВОЙ ЛИ ЭТО КУРС ПРОВЕРИТЬ НАДО
@@ -84,7 +90,8 @@ public class CourseController {
     // TODO : А ТВОЙ ЛИ ЭТО КУРС ПРОВЕРИТЬ НАДО
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteCourse(@PathVariable Long id) {
-        courseService.deleteCourse(id);
+    public void deleteCourse(@AuthenticationPrincipal JwtUserDetails userDetails,
+                             @PathVariable Long id) {
+        courseService.deleteCourse(userDetails, id);
     }
 }

@@ -35,6 +35,7 @@ public class Comment {
     private Integer rating;
 
     @ManyToOne
+    @JoinColumn(name = "course_id", referencedColumnName = "id")
     private Course course;
 
     @ManyToOne

@@ -22,6 +22,7 @@ import com.example.experienceexchange.util.mapper.LessonOnCourseMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityExistsException;
 import java.util.List;
 import java.util.Set;
 
@@ -53,8 +54,7 @@ public class CourseService implements ICourseService {
     @Override
     public List<CourseDto> getCoursesByDirection() {
         List<Course> all = courseRepository.findAll();
-        List<CourseDto> courses = courseMapper.toCourseDto(all);
-        return courses;
+        return courseMapper.toCourseDto(all);
     }
 
     @Transactional
@@ -64,7 +64,7 @@ public class CourseService implements ICourseService {
         User user = userRepository.find(userId);
         Course newCourse = courseMapper.courseDtoToCourse(courseDto);
         newCourse.setAuthor(user);
-        if (newCourse.getLessons() != null){
+        if (newCourse.getLessons() != null) {
             newCourse.getLessons()
                     .forEach(lessonOnCourse -> lessonOnCourse.setCourse(newCourse));
         }
@@ -72,22 +72,50 @@ public class CourseService implements ICourseService {
         courseRepository.update(newCourse);
         return courseMapper.courseToCourseDto(newCourse);
     }
+    // TODO : ЕСЛИ НА КУРС УЖЕ ЕСТЬ ЗАПИСЬ ТО НВЕРНО ЧТО ТО МОЖНО МЕНЯТЬ
+    // TODO : КОММЕНТАРИИИ НУЖНО ТОЖЕ ЗАМАПИТЬ ИНАЧЕ ПРОПАДУТ
+    // TODO : USERS ТОЖЕ НАДО ЗАПАМАПИТЬ ИНАЧЕ ПРОПАДУТ
+    // TODO : СРАВНИТЬ ID ИЗ PathVariable and courseDto
     @Transactional
     @Override
-    public CourseDto editCourse(Long id, CourseDto courseDto) {
-        User user = userRepository.find(id);
-        return null;
+    public CourseDto editCourse(JwtUserDetails userDetails, Long id, CourseDto courseDto) {
+        Course oldCourse = getCourseById(id);
+        checkAccessToCourseEdit(oldCourse, userDetails.getId());
+        Course updateCourse = courseMapper.courseDtoToCourse(courseDto);
+        updateCourse.setAuthor(oldCourse.getAuthor());
+        updateCourse.setCurrentNumberUsers(oldCourse.getCurrentNumberUsers());
+        updateCourse.setComments(oldCourse.getComments());
+        updateCourse.setUsersInCourse(oldCourse.getUsersInCourse());
+        Course update = courseRepository.update(updateCourse);
+        update.getLessons().forEach(lesson -> lesson.setCourse(update));
+        return courseMapper.courseToCourseDto(update);
     }
-    @Transactional
-    @Override
-    public void deleteCourse(Long id) {
 
+    @Transactional
+    @Override
+    public CourseDto getCourse(Long courseId) {
+        Course course = getCourseById(courseId);
+        return courseMapper.courseToCourseDto(course);
     }
+
+    @Transactional
+    @Override
+    public void deleteCourse(JwtUserDetails userDetails, Long id) {
+        Course course = courseRepository.find(id);
+        checkAccessToCourseEdit(course, userDetails.getId());
+        try {
+            courseRepository.delete(course);
+        } catch (EntityExistsException e) {
+            throw new CourseNotFoundException(id);
+        }
+    }
+
     @Transactional
     @Override
     public void subscribeToCourse(Long id, JwtUserDetails userDetails) {
 
     }
+
     // TODO : УДАЛИТЬ ТАБУЛЯЦИЮ В DESCRIPTION
     @Transactional
     @Override
@@ -112,6 +140,7 @@ public class CourseService implements ICourseService {
         return commentMapper.toCommentsDto(comments);
 
     }
+
     // TODO : ПРОВЕРИТЬ ДАТЫ ЧТОБЫ КОНЕЦ КУРСА БЫЛ ПОСЛЕ ЕГО НАЧАЛА  - ДЛЯ ЧАЙНИКОВ
     @Transactional
     @Override

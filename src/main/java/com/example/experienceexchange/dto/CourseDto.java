@@ -31,44 +31,46 @@ public class CourseDto {
 
     @JsonView({Details.class})
     @Null(groups = {Create.class})
-    @Null(groups = {Edit.class})
+    @NotNull(groups = {Edit.class})
     private Long id;
 
     @JsonView({Details.class})
-    @NotNull(groups = {Create.class})
+    @NotNull(groups = {Create.class, Edit.class})
     private String name;
 
     @JsonView({Details.class})
-    @NotNull(groups = {Create.class})
+    @NotNull(groups = {Create.class, Edit.class})
     private String description;
 
     @JsonView({Details.class})
-    @NotNull(groups = {Create.class})
-    @Min(groups = {Create.class}, value = 1)
-    @Max(groups = {Create.class}, value = 5)
+    @NotNull(groups = {Create.class, Edit.class})
+    @Min(groups = {Create.class, Edit.class}, value = 1)
+    @Max(groups = {Create.class, Edit.class}, value = 5)
     private Integer skillLevel;
 
     @JsonView({Details.class})
-    @Null(groups = {Create.class})
+    @Null(groups = {Create.class, Edit.class})
     private Long authorId;
 
     @JsonView({Details.class})
-    @NotNull(groups = {Create.class})
+    @NotNull(groups = {Create.class, Edit.class})
     private Integer maxNumberUsers;
 
     @JsonView({Details.class})
-    @Null(groups = {Create.class})
+    @Null(groups = {Create.class, Edit.class})
     private Integer currentNumberUsers;
-
+        // TODO : МОЖНО ЛИ МЕНЯТЬ ПРАЙС (ИЗМЕНИТЬСЯ У КЛИЕНТОВ)
     @JsonView({Details.class})
-    @NotNull(groups = {Create.class})
+    @NotNull(groups = {Create.class, Edit.class})
     private BigDecimal price;
 
+    // TODO : МОЖНО МЕНЯТЬ ТОЛЬКО ВО ВРЕМЯ ПОКА КУРС НЕ НАЧАЛСЯ ИНАЧЕ НЕЛЬЗЯ
     @JsonView({Details.class})
     @NotNull(groups = {Create.class})
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateStart;
 
+    // TODO : МОЖНО МЕНЯТЬ ТОЛЬКО ВО ВРЕМЯ ПОКА КУРС НЕ НАЧАЛСЯ ИНАЧЕ НЕЛЬЗЯ
     @JsonView({Details.class})
     @NotNull(groups = {Create.class})
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -82,7 +84,6 @@ public class CourseDto {
 
     @JsonView({Details.class})
     private Set<SkillDto> skills;
-
 
     private Set<LessonOnCourseDto> lessons;
 }

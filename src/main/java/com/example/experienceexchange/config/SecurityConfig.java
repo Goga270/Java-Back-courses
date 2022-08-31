@@ -35,6 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/registration").permitAll()
                 .antMatchers("/courses").permitAll()
                 .antMatchers("/lessons").permitAll()
+                .antMatchers("/lessons/{id}").permitAll()
+                .antMatchers("/courses/{id}").permitAll()
                 .antMatchers("/courses/{id}/comments").permitAll()
                 .antMatchers("/lessons/{id}/comments").permitAll()
                 .antMatchers("/auth/registration-admin").hasAuthority(Permission.REGISTRATION_ADMIN.getPermission())

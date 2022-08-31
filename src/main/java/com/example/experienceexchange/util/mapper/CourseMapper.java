@@ -18,7 +18,7 @@ import java.util.List;
 public abstract class CourseMapper {
 
     @Mapping(target = "author", ignore = true)
-    @Mapping(target = "currentNumberUsers", defaultValue = "0")
+    @Mapping(target = "currentNumberUsers", ignore = true)
     public abstract Course courseDtoToCourse(CourseDto courseDto);
 
     @Mapping(target = "authorId", expression = "java(course.getAuthor().getId())")

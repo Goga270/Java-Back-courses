@@ -76,12 +76,10 @@ public class Course {
     private Set<Skill> skills = new HashSet<>();
 
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH}, orphanRemoval = true)
-    @JoinColumn(name = "course_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "course", cascade = {CascadeType.PERSIST, CascadeType.DETACH,  CascadeType.REMOVE}, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE}, orphanRemoval = true)
-    @JoinColumn(name = "course_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "course", cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private Set<LessonOnCourse> lessons = new HashSet<>();
 
     @ManyToMany(mappedBy = "courseSubscriptions")

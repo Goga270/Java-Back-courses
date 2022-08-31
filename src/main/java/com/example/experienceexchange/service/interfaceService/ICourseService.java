@@ -13,9 +13,11 @@ public interface ICourseService {
 
     CourseDto createCourse(JwtUserDetails userDetails, CourseDto courseDto);
 
-    CourseDto editCourse(Long id, CourseDto courseDto);
+    CourseDto editCourse(JwtUserDetails userDetails, Long id, CourseDto courseDto);
 
-    void deleteCourse(Long id);
+    CourseDto getCourse(Long courseId);
+
+    void deleteCourse(JwtUserDetails userDetails, Long id);
 
     void subscribeToCourse(Long id, JwtUserDetails userDetails);
 

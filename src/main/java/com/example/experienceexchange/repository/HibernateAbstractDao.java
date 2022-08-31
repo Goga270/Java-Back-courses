@@ -28,7 +28,7 @@ public abstract class HibernateAbstractDao<T, PK extends Serializable> implement
     public T update(T entity) {
         return entityManager.merge(entity);
     }
-
+    // TODO : ЗАЛОГИРОВАТЬ ?
     @Override
     public void deleteById(PK id) {
         T entity = find(id);
@@ -45,7 +45,15 @@ public abstract class HibernateAbstractDao<T, PK extends Serializable> implement
 
     @Override
     public void delete(T entity) {
-        entityManager.remove(entity);
+        if (entity != null) {
+            try {
+                entityManager.remove(entity);
+            } catch (Exception e) {
+                System.out.println(e.getMessage() + e.getClass().getName());
+            }
+        } else {
+            throw new EntityExistsException();
+        }
     }
 
     @Override
