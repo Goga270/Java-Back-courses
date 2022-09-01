@@ -10,6 +10,6 @@ public class SkillDto {
 
     private Long id;
 
-    @JsonView({CourseDto.Details.class})
+    @JsonView({CourseDto.Details.class, LessonDto.Details.class})
     private String name;
 }

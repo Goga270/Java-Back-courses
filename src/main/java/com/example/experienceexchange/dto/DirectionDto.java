@@ -16,11 +16,11 @@ public class DirectionDto {
 
     }
 
-    @JsonView({CourseDto.Details.class})
+    @JsonView({CourseDto.Details.class, LessonDto.Details.class})
     @Null(groups = Create.class)
     private Long id;
 
-    @JsonView({CourseDto.Details.class})
+    @JsonView({CourseDto.Details.class, LessonDto.Details.class})
     @NotNull(groups = Create.class)
     private String header;
 

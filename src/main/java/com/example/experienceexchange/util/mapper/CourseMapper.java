@@ -15,25 +15,26 @@ import java.util.Collection;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public abstract class CourseMapper {
+public interface CourseMapper {
 
     @Mapping(target = "author", ignore = true)
     @Mapping(target = "currentNumberUsers", ignore = true)
-    public abstract Course courseDtoToCourse(CourseDto courseDto);
+    Course courseDtoToCourse(CourseDto courseDto);
 
     @Mapping(target = "authorId", expression = "java(course.getAuthor().getId())")
     @Mapping(target = "currentNumberUsers", defaultValue = "0")
-    public abstract CourseDto courseToCourseDto(Course course);
+    CourseDto courseToCourseDto(Course course);
 
     @Mapping(target = "directionId", expression = "java(section.getDirection().getId())")
-    public abstract SectionDto sectionToSectionDto(Section section);
+    SectionDto sectionToSectionDto(Section section);
 
-    public abstract List<CourseDto> toCourseDto(Collection<Course> courses);
+    List<CourseDto> toCourseDto(Collection<Course> courses);
 
-    public abstract DirectionDto directionToDirectionDto(Direction direction);
+    DirectionDto directionToDirectionDto(Direction direction);
+
     @Mapping(target = "courseId", expression = "java(lessonOnCourse.getCourse().getId())")
-    public abstract LessonOnCourseDto lessonOnCourseToLessonOnCourseDto(LessonOnCourse lessonOnCourse);
+    LessonOnCourseDto lessonOnCourseToLessonOnCourseDto(LessonOnCourse lessonOnCourse);
 
     @Mapping(target = "course", ignore = true)
-    public abstract LessonOnCourse lessonOnCourseDtoToLessonOnCourse(LessonOnCourseDto lessonOnCourseDto);
+    LessonOnCourse lessonOnCourseDtoToLessonOnCourse(LessonOnCourseDto lessonOnCourseDto);
 }

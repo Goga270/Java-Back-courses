@@ -4,19 +4,23 @@ import com.example.experienceexchange.dto.CommentDto;
 import com.example.experienceexchange.dto.LessonDto;
 import com.example.experienceexchange.security.JwtUserDetails;
 
-import java.util.Set;
+import java.util.List;
 
 public interface ILessonService {
 
-    void createLesson(JwtUserDetails userDetails, LessonDto lessonDto);
+    LessonDto createLesson(JwtUserDetails userDetails, LessonDto lessonDto);
 
-    LessonDto editLesson(Long id, LessonDto lessonDto);
+    LessonDto editLesson(JwtUserDetails userDetails, Long id, LessonDto lessonDto);
 
-    void deleteLesson(Long id);
+    void deleteLesson(JwtUserDetails userDetails, Long id);
 
-    Set<LessonDto> getLessonByDirection();
+    List<LessonDto> getLessonByDirection();
 
     void subscribeToLesson(Long id, JwtUserDetails userDetails);
 
-    CommentDto createComment(JwtUserDetails userDetails, CommentDto commentDto);
+    CommentDto createComment(JwtUserDetails userDetails, Long lessonId, CommentDto commentDto);
+
+    LessonDto getLesson(Long lessonId);
+
+    List<CommentDto> getCommentByLesson(Long lessonId);
 }

@@ -36,7 +36,7 @@ public class CourseController {
     public List<CourseDto> getCourses(@RequestBody FilterDto filterDto) {
         return courseService.getCoursesByDirection();
     }
-
+    @JsonView({CourseDto.Details.class})
     @GetMapping("/{id}")
     public CourseDto getCourse(@PathVariable("id") Long courseId) {
         return courseService.getCourse(courseId);

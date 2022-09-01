@@ -77,7 +77,7 @@ public class ApplicationContextConfiguration {
     @Bean
     public ILessonRepository lessonRepository() {
         LessonRepository lessonRepository = new LessonRepository();
-        lessonRepository.setClass(Lesson.class);
+        lessonRepository.setClass(LessonSingle.class);
         return lessonRepository;
     }
 

@@ -27,25 +27,27 @@ import java.util.Map;
 public class AdvisorController extends ResponseEntityExceptionHandler {
 
     // TODO: НАДО ЛИ ИХ ЛОВИТЬ ?
-    @ExceptionHandler(value = {JwtTokenInvalidException.class,
-                                NotAccessException.class})
+    @ExceptionHandler({JwtTokenInvalidException.class})
     protected ResponseEntity<Object> handleInvalidToken(RuntimeException exception, WebRequest request) {
         Map<String, String> body = new HashMap<>();
         HttpStatus httpStatus = HttpStatus.FORBIDDEN;
         return getObjectResponseEntity(exception, request, body, httpStatus);
     }
 
-    @ExceptionHandler(value = {UsernameNotFoundException.class, AuthenticationException.class})
+    @ExceptionHandler({UsernameNotFoundException.class,
+            AuthenticationException.class,
+            NotAccessException.class})
     protected ResponseEntity<Object> handleAuthentication(Exception exception, WebRequest request) {
         Map<String, String> body = new HashMap<>();
         HttpStatus httpStatus = HttpStatus.FORBIDDEN;
         return getObjectResponseEntity(exception, request, body, httpStatus);
     }
 
-    @ExceptionHandler(value = {UserNotFoundException.class,
-            PasswordsNotMatchException.class,
+    @ExceptionHandler({UserNotFoundException.class,
             SectionNotFoundException.class,
-            DirectionNotFoundException.class})
+            DirectionNotFoundException.class,
+            LessonNotFoundException.class,
+            CourseNotFoundException.class})
     protected ResponseEntity<Object> handleNotFound(Exception exception, WebRequest request) {
         Map<String, String> body = new HashMap<>();
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
@@ -56,6 +58,14 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleEmailNotUnique(Exception exception, WebRequest request) {
         Map<String, String> body = new HashMap<>();
         body.put("solution", "Write another email");
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        return getObjectResponseEntity(exception, request, body, httpStatus);
+    }
+
+    @ExceptionHandler(value = {PasswordsNotMatchException.class})
+    protected ResponseEntity<Object> handlePasswordsNotMatch(Exception exception, WebRequest request) {
+        Map<String, String> body = new HashMap<>();
+        body.put("solution", "try entering passwords again");
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
         return getObjectResponseEntity(exception, request, body, httpStatus);
     }

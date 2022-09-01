@@ -73,8 +73,6 @@ public class CourseService implements ICourseService {
         return courseMapper.courseToCourseDto(newCourse);
     }
     // TODO : ЕСЛИ НА КУРС УЖЕ ЕСТЬ ЗАПИСЬ ТО НВЕРНО ЧТО ТО МОЖНО МЕНЯТЬ
-    // TODO : КОММЕНТАРИИИ НУЖНО ТОЖЕ ЗАМАПИТЬ ИНАЧЕ ПРОПАДУТ
-    // TODO : USERS ТОЖЕ НАДО ЗАПАМАПИТЬ ИНАЧЕ ПРОПАДУТ
     // TODO : СРАВНИТЬ ID ИЗ PathVariable and courseDto
     @Transactional
     @Override
@@ -161,7 +159,7 @@ public class CourseService implements ICourseService {
         }
         return course;
     }
-
+    // TODO: 1 PAR - id author !!!!
     private void checkAccessToCourseEdit(Course course, Long userId) {
         if (!course.getAuthor().getId().equals(userId)) {
             throw new NotAccessException();

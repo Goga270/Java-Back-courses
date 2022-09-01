@@ -65,7 +65,11 @@ public class LessonSingle extends Lesson {
     )
     private Set<Skill> skills = new HashSet<>();
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH}, orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "lesson_id",referencedColumnName = "id")
     private Set<Comment> comments = new HashSet<>();
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
 }

@@ -22,11 +22,11 @@ public class SectionDto {
     }
 
 
-    @JsonView({AdminDetails.class,CourseDto.Details.class})
+    @JsonView({AdminDetails.class,CourseDto.Details.class, LessonDto.Details.class})
     @Null(groups = {Create.class, DirectionDto.Create.class})
     private Long id;
 
-    @JsonView({AdminDetails.class,CourseDto.Details.class})
+    @JsonView({AdminDetails.class,CourseDto.Details.class, LessonDto.Details.class})
     @NotNull(groups = {Create.class, Edit.class, DirectionDto.Create.class})
     private String name;
 

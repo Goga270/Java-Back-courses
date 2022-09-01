@@ -66,13 +66,13 @@ public class CourseDto {
 
     // TODO : МОЖНО МЕНЯТЬ ТОЛЬКО ВО ВРЕМЯ ПОКА КУРС НЕ НАЧАЛСЯ ИНАЧЕ НЕЛЬЗЯ
     @JsonView({Details.class})
-    @NotNull(groups = {Create.class})
+    @NotNull(groups = {Edit.class, Create.class})
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateStart;
 
     // TODO : МОЖНО МЕНЯТЬ ТОЛЬКО ВО ВРЕМЯ ПОКА КУРС НЕ НАЧАЛСЯ ИНАЧЕ НЕЛЬЗЯ
     @JsonView({Details.class})
-    @NotNull(groups = {Create.class})
+    @NotNull(groups = {Edit.class, Create.class})
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateEnd;
 
