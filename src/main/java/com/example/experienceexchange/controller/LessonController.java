@@ -1,9 +1,6 @@
 package com.example.experienceexchange.controller;
 
-import com.example.experienceexchange.dto.CommentDto;
-import com.example.experienceexchange.dto.CourseDto;
-import com.example.experienceexchange.dto.FilterDto;
-import com.example.experienceexchange.dto.LessonDto;
+import com.example.experienceexchange.dto.*;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.ILessonService;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -45,7 +42,7 @@ public class LessonController {
 
 
     @GetMapping("/{id}/comments")
-    public List<CommentDto> getCommentsByCourse(@PathVariable("id") Long lessonId) {
+    public List<CommentDto> getCommentsByLesson(@PathVariable("id") Long lessonId) {
         return lessonService.getCommentByLesson(lessonId);
     }
 
@@ -54,6 +51,15 @@ public class LessonController {
     public LessonDto createLesson(@AuthenticationPrincipal JwtUserDetails userDetails,
                                   @RequestBody @Validated(LessonDto.Create.class) LessonDto lessonDto) {
         return lessonService.createLesson(userDetails, lessonDto);
+    }
+
+    @JsonView({PaymentDto.DetailsForPayLesson.class})
+    @PostMapping("/{id}/subscribe")
+    @ResponseStatus(HttpStatus.OK)
+    public PaymentDto subscribeToLesson(@AuthenticationPrincipal JwtUserDetails userDetails,
+                                        @PathVariable("id") Long lessonId,
+                                        @RequestBody @Validated(PaymentDto.Create.class) PaymentDto paymentDto) {
+        return lessonService.subscribeToLesson(userDetails, paymentDto, lessonId);
     }
 
     @PostMapping("/{id}/new-comment")
@@ -69,13 +75,6 @@ public class LessonController {
                                 @PathVariable Long id,
                                 @RequestBody @Validated(LessonDto.Edit.class) LessonDto lessonDto) {
         return lessonService.editLesson(userDetails, id, lessonDto);
-    }
-
-    @PatchMapping("/{id}/subscribe")
-    @ResponseStatus(HttpStatus.OK)
-    public void subscribeToLesson(@AuthenticationPrincipal JwtUserDetails userDetails,
-                                  @PathVariable Long id) {
-        lessonService.subscribeToLesson(id, userDetails);
     }
 
     @DeleteMapping("/{id}")

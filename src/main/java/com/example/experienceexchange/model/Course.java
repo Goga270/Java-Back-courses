@@ -40,7 +40,7 @@ public class Course {
     private Integer maxNumberUsers;
 
     @Column(name = "current_number_users")
-    private volatile Integer currentNumberUsers = 0;
+    private volatile Integer currentNumberUsers;
 
     @Column(name = "price")
     private BigDecimal price;
@@ -92,4 +92,19 @@ public class Course {
     public void addLesson(LessonOnCourse lessonOnCourse) {
         lessons.add(lessonOnCourse);
     }
+
+    public Boolean isAvailableForSubscription(Date nowDate) {
+        return currentNumberUsers.compareTo(maxNumberUsers) < 0
+                && dateStart.after(nowDate)
+                && dateEnd.after(nowDate);
+    }
+
+    public Boolean isSatisfactoryPrice(BigDecimal EnteredPrice) {
+        return price.compareTo(EnteredPrice) <= 0;
+    }
+
+    public synchronized void increaseNumberSubscriptions() {
+        currentNumberUsers++;
+    }
+
 }

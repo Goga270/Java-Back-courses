@@ -50,7 +50,14 @@ public class ApplicationContextConfiguration {
         TimeZone defaultTimeZone = TimeZone.getTimeZone(ZONE_ID);
         TimeZone.setDefault(defaultTimeZone);
         return defaultTimeZone;
+    }
 
+
+    @Bean
+    public IPaymentRepository paymentRepository() {
+        PaymentRepository paymentRepository = new PaymentRepository();
+        paymentRepository.setClass(Payment.class);
+        return paymentRepository;
     }
 
     @Bean

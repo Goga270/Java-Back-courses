@@ -3,6 +3,7 @@ package com.example.experienceexchange.service.interfaceService;
 import com.example.experienceexchange.dto.CommentDto;
 import com.example.experienceexchange.dto.CourseDto;
 import com.example.experienceexchange.dto.LessonOnCourseDto;
+import com.example.experienceexchange.dto.PaymentDto;
 import com.example.experienceexchange.security.JwtUserDetails;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public interface ICourseService {
 
     void deleteCourse(JwtUserDetails userDetails, Long id);
 
-    void subscribeToCourse(Long id, JwtUserDetails userDetails);
+    PaymentDto subscribeToCourse(JwtUserDetails userDetails, PaymentDto paymentDto, Long courseId);
 
     CommentDto createComment(Long courseId, JwtUserDetails userDetails, CommentDto commentDto);
 

@@ -1,34 +1,41 @@
 package com.example.experienceexchange.service;
 
-import com.example.experienceexchange.dto.UserDto;
-import com.example.experienceexchange.dto.LessonDto;
-import com.example.experienceexchange.dto.NewEmailDto;
-import com.example.experienceexchange.dto.NewPasswordDto;
+import com.example.experienceexchange.dto.*;
 import com.example.experienceexchange.exception.EmailNotUniqueException;
 import com.example.experienceexchange.exception.PasswordsNotMatchException;
 import com.example.experienceexchange.exception.UserNotFoundException;
-import com.example.experienceexchange.model.Lesson;
+import com.example.experienceexchange.model.Payment;
 import com.example.experienceexchange.model.User;
+import com.example.experienceexchange.repository.interfaceRepo.IPaymentRepository;
 import com.example.experienceexchange.repository.interfaceRepo.IUserRepository;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.IUserService;
+import com.example.experienceexchange.util.mapper.PaymentMapper;
 import com.example.experienceexchange.util.mapper.UserMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
 public class UserService implements IUserService {
 
     private final IUserRepository userRepository;
+    private final IPaymentRepository paymentRepository;
     private final UserMapper userMapper;
+    private final PaymentMapper paymentMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(IUserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+    public UserService(IUserRepository userRepository,
+                       IPaymentRepository paymentRepository,
+                       UserMapper userMapper,
+                       PaymentMapper paymentMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.paymentRepository = paymentRepository;
         this.userMapper = userMapper;
+        this.paymentMapper = paymentMapper;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -81,6 +88,13 @@ public class UserService implements IUserService {
         User userForUpdate = userRepository.find(jwtUserDetails.getId());
         userForUpdate.setEmail(newEmailDto.getNewEmail());
         userRepository.update(userForUpdate);
+    }
+
+    @Transactional
+    @Override
+    public List<PaymentDto> getPayments(JwtUserDetails userDetails) {
+        List<Payment> allPaymentByUserId = paymentRepository.findAllPaymentByUserId(userDetails.getId());
+        return paymentMapper.toPaymentDto(allPaymentByUserId);
     }
 
     private User getUserById(Long id) {

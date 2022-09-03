@@ -11,7 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
+
 // TODO: можно удалить только свой курс, или можно удалить только свой комментарий, но мб админ может что он хочет
 @RestController
 @RequestMapping("/courses")
@@ -61,7 +61,6 @@ public class CourseController {
         return courseService.createComment(courseId,userDetails, commentDto);
     }
 
-    // TODO : А ТВОЙ ЛИ ЭТО КУРС ПРОВЕРИТЬ НАДО - сделано
     @PostMapping("/{id}/settings/new-lesson")
     public CourseDto createLesson(
                                 @AuthenticationPrincipal JwtUserDetails userDetails,
@@ -70,7 +69,6 @@ public class CourseController {
         return courseService.createLesson(userDetails, courseId, lesson);
     }
 
-    // TODO : А ТВОЙ ЛИ ЭТО КУРС ПРОВЕРИТЬ НАДО
     @PutMapping("/{id}/settings")
     public CourseDto editCourse(@AuthenticationPrincipal JwtUserDetails userDetails,
                                 @PathVariable Long id,
@@ -79,12 +77,13 @@ public class CourseController {
     }
 
     // TODO : А ТВОЙ ЛИ ЭТО КУРС ПРОВЕРИТЬ НАДО
-    @PatchMapping("/{id}/subscribe")
+    @JsonView({PaymentDto.DetailsForPayCourse.class})
+    @PostMapping("/{id}/subscribe")
     @ResponseStatus(HttpStatus.OK)
-    public void subscribeToCourse(@AuthenticationPrincipal JwtUserDetails userDetails,
-                                  @PathVariable Long id,
-                                  @RequestBody @Validated SubscribeDto subscribeDto) {
-        courseService.subscribeToCourse(id, userDetails);
+    public PaymentDto subscribeToCourse(@AuthenticationPrincipal JwtUserDetails userDetails,
+                                  @PathVariable("id") Long courseId,
+                                  @RequestBody @Validated(PaymentDto.Create.class) PaymentDto paymentDto) {
+        return courseService.subscribeToCourse(userDetails, paymentDto, courseId);
     }
 
     // TODO : А ТВОЙ ЛИ ЭТО КУРС ПРОВЕРИТЬ НАДО

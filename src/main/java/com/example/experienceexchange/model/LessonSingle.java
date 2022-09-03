@@ -1,12 +1,14 @@
 package com.example.experienceexchange.model;
 
 import com.example.experienceexchange.constant.TypeLesson;
+import com.example.experienceexchange.util.date.DateUtil;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,7 +31,7 @@ public class LessonSingle extends Lesson {
     private Integer maxNumberUsers;
 
     @Column(name = "current_number_users")
-    private volatile Integer currentNumberUsers = 0;
+    private volatile Integer currentNumberUsers;
 
     @Column(name = "price")
     private BigDecimal price;
@@ -66,10 +68,23 @@ public class LessonSingle extends Lesson {
     private Set<Skill> skills = new HashSet<>();
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REMOVE}, orphanRemoval = true)
-    @JoinColumn(name = "lesson_id",referencedColumnName = "id")
     private Set<Comment> comments = new HashSet<>();
 
     public void addComment(Comment comment) {
         comments.add(comment);
+    }
+
+    public Boolean isAvailableForSubscription(Date nowDate) {
+        return currentNumberUsers.compareTo(maxNumberUsers) < 0
+                && getStartLesson().after(nowDate)
+                && getEndLesson().after(nowDate);
+    }
+
+    public Boolean isSatisfactoryPrice(BigDecimal EnteredPrice) {
+        return price.compareTo(EnteredPrice) <= 0;
+    }
+
+    public synchronized void increaseNumberSubscriptions() {
+        currentNumberUsers++;
     }
 }

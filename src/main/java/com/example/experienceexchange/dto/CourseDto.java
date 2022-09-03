@@ -44,8 +44,8 @@ public class CourseDto {
 
     @JsonView({Details.class})
     @NotNull(groups = {Create.class, Edit.class})
-    @Min(groups = {Create.class, Edit.class}, value = 1)
-    @Max(groups = {Create.class, Edit.class}, value = 5)
+    @Min(groups = {Create.class, Edit.class}, value = 1, message = "must be between 1 and 5")
+    @Max(groups = {Create.class, Edit.class}, value = 5, message = "must be between 1 and 5")
     private Integer skillLevel;
 
     @JsonView({Details.class})

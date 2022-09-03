@@ -21,7 +21,7 @@ public class Comment {
     @GeneratedValue(generator = "seq_comments", strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private User author;
 
@@ -34,10 +34,11 @@ public class Comment {
 
     private Integer rating;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     private Course course;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lesson_id",referencedColumnName = "id")
     private LessonSingle lesson;
 }

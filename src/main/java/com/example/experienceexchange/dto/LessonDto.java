@@ -58,8 +58,8 @@ public class LessonDto {
 
     @JsonView({Details.class})
     @NotNull(groups = {Create.class, Edit.class})
-    @Min(groups = {Create.class, Edit.class}, value = 1)
-    @Max(groups = {Create.class, Edit.class}, value = 5)
+    @Min(groups = {Create.class, Edit.class}, value = 1, message = "must be between 1 and 5")
+    @Max(groups = {Create.class, Edit.class}, value = 5, message = "must be between 1 and 5")
     private Integer skillLevel;
 
     @JsonView({Details.class})
@@ -72,7 +72,7 @@ public class LessonDto {
 
     @JsonView({Details.class})
     @Null(groups = {Create.class, Edit.class})
-    private volatile Integer currentNumberUsers = 0;
+    private Integer currentNumberUsers;
 
     @JsonView({Details.class})
     @NotNull(groups = {Create.class, Edit.class})

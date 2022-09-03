@@ -32,19 +32,33 @@ public class User extends Account {
     @ManyToMany
     @JoinTable(
             name = "user_lesson",
-            joinColumns = {@JoinColumn(name = "lesson_id")},
-            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "lesson_id")}
     )
     private Set<LessonSingle> lessonSubscriptions = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
             name = "user_course",
-            joinColumns = {@JoinColumn(name = "course_id")},
-            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "course_id")}
     )
     private Set<Course> courseSubscriptions = new HashSet<>();
-    // TODO: ДЛЯ ОПЛАТЫ ПРОСТО СОЗДАВАТЬ JSON PAYMENT ОТДАВАТЬ ДАННЫЕ КОГДА КТО ТО ВЫЗОВЕТ ЭТОТ СКРИПТ И ВСЕ)
+
+    @OneToMany(mappedBy = "costumer")
+    private Set<Payment> myPayments = new HashSet<>();
+
+    public void addLesson(LessonSingle lesson) {
+        lessonSubscriptions.add(lesson);
+    }
+
+    public void addPayment(Payment payment) {
+        myPayments.add(payment);
+    }
+
+    public void addCourse(Course course) {
+        courseSubscriptions.add(course);
+    }
 }
 
 

@@ -1,6 +1,7 @@
 package com.example.experienceexchange.controller;
 
 import com.example.experienceexchange.dto.*;
+import com.example.experienceexchange.model.Payment;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.IUserService;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -9,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -20,6 +22,13 @@ public class UserController {
         this.userService = userService;
     }
 
+
+    // TODO : ( MY SUBS / LESSONS )
+
+    @GetMapping("/profile/payments")
+    public List<PaymentDto> getPayments(@AuthenticationPrincipal JwtUserDetails userDetails) {
+        return userService.getPayments(userDetails);
+    }
     @JsonView(UserDto.Details.class)
     @GetMapping("/profile")
     public UserDto getCurrentProfile(@AuthenticationPrincipal JwtUserDetails userDetails) {

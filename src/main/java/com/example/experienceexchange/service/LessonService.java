@@ -2,41 +2,62 @@ package com.example.experienceexchange.service;
 
 import com.example.experienceexchange.dto.CommentDto;
 import com.example.experienceexchange.dto.LessonDto;
+import com.example.experienceexchange.dto.PaymentDto;
 import com.example.experienceexchange.exception.LessonNotFoundException;
 import com.example.experienceexchange.exception.NotAccessException;
+import com.example.experienceexchange.exception.SubscriptionNotPossibleException;
 import com.example.experienceexchange.model.Comment;
 import com.example.experienceexchange.model.LessonSingle;
+import com.example.experienceexchange.model.Payment;
 import com.example.experienceexchange.model.User;
+import com.example.experienceexchange.repository.PaymentRepository;
 import com.example.experienceexchange.repository.interfaceRepo.ICommentRepository;
 import com.example.experienceexchange.repository.interfaceRepo.ILessonRepository;
+import com.example.experienceexchange.repository.interfaceRepo.IPaymentRepository;
 import com.example.experienceexchange.repository.interfaceRepo.IUserRepository;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.ILessonService;
 import com.example.experienceexchange.util.date.DateUtil;
 import com.example.experienceexchange.util.mapper.CommentMapper;
 import com.example.experienceexchange.util.mapper.LessonMapper;
+import com.example.experienceexchange.util.mapper.PaymentMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityExistsException;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 @Service
 public class LessonService implements ILessonService {
 
+    private static final String SUB_TO_OWN_LESSON = "Subscription to own lesson is not possible";
+    private static final String SUB_TO_CLOSE_LESSON = "Lesson is closed for subscription";
+    private static final String SUB_WITH_INCORRECT_PRICE = "Entered price is less than the fixed price";
+
     private final ILessonRepository lessonRepository;
     private final IUserRepository userRepository;
     private final ICommentRepository commentRepository;
     private final LessonMapper lessonMapper;
     private final CommentMapper commentMapper;// сделать отдельный котроллер для комментов
+    private final PaymentMapper paymentMapper;
+    private final IPaymentRepository paymentRepository; // сделать отдельный контроллер под это
 
-    public LessonService(ILessonRepository lessonRepository, IUserRepository userRepository, ICommentRepository commentRepository, LessonMapper lessonMapper, CommentMapper commentMapper) {
+    public LessonService(ILessonRepository lessonRepository,
+                         IUserRepository userRepository,
+                         ICommentRepository commentRepository,
+                         LessonMapper lessonMapper,
+                         CommentMapper commentMapper,
+                         PaymentMapper paymentMapper,
+                         IPaymentRepository paymentRepository) {
         this.lessonRepository = lessonRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
         this.lessonMapper = lessonMapper;
         this.commentMapper = commentMapper;
+        this.paymentMapper = paymentMapper;
+        this.paymentRepository = paymentRepository;
     }
 
     @Transactional
@@ -47,11 +68,12 @@ public class LessonService implements ILessonService {
         LessonSingle newLesson = lessonMapper.lessonDtoToLesson(lessonDto);
         newLesson.setAuthor(user);
         lessonRepository.save(newLesson);
-        LessonSingle update = lessonRepository.update(newLesson); // надо ли так созхранять ?
+        LessonSingle update = lessonRepository.update(newLesson); // надо ли так сохранять (ссылка на update) ?
         return lessonMapper.lessonToLessonDto(update);
 
     }
 
+    // TODO : ПРОВЕРИТЬ ДАТЫ
     @Transactional
     @Override
     public LessonDto editLesson(JwtUserDetails userDetails, Long id, LessonDto lessonDto) {
@@ -83,9 +105,33 @@ public class LessonService implements ILessonService {
         return lessonMapper.toLessonDto(lessons);
     }
 
+    // TODO : НЕЛЬЗЯ СДЕЛАТЬ НЕСКОЛЬКО ОПЛАТ ЗА ОДИН КУРС В ОДИН ПЕРИОД) МОЖЕТ БЫТЬ СДЕЛАТЬ ДОНАТЫ И ТОГДА ПЛАТЕЖИ ПРОВЕРЯТЬ НЕ НАДО БУДЕТЁ
+    @Transactional
     @Override
-    public void subscribeToLesson(Long id, JwtUserDetails userDetails) {
+    public PaymentDto subscribeToLesson(JwtUserDetails userDetails, PaymentDto paymentDto, Long lessonId) {
+        LessonSingle lesson = getLessonById(lessonId);
+        User user = userRepository.find(userDetails.getId());
+        if (lesson.getAuthor().getId().equals(user.getId())) {
+            throw new SubscriptionNotPossibleException(SUB_TO_OWN_LESSON);
+        }
 
+        if (lesson.isSatisfactoryPrice(paymentDto.getPrice())) {
+            if (lesson.isAvailableForSubscription(DateUtil.dateTimeNow())) {
+                Payment payment = paymentMapper.paymentDtoToPayment(paymentDto);
+                payment.setDatePayment(DateUtil.dateTimeNow());
+                user.addLesson(lesson);
+                user.addPayment(payment);
+                payment.setLesson(lesson);
+                payment.setCostumer(user);
+                lesson.increaseNumberSubscriptions();
+                paymentRepository.save(payment);
+                return paymentMapper.paymentToPaymentDto(payment);
+            } else {
+                throw new SubscriptionNotPossibleException(SUB_TO_CLOSE_LESSON);
+            }
+        } else {
+            throw new SubscriptionNotPossibleException(SUB_WITH_INCORRECT_PRICE);
+        }
     }
 
     @Transactional
@@ -126,8 +172,9 @@ public class LessonService implements ILessonService {
     }
 
     private void checkAccessToLessonEdit(Long authorId, Long authUserID) {
-        if (!authorId.equals(authorId)) {
+        if (!authorId.equals(authUserID)) {
             throw new NotAccessException();
         }
     }
 }
+

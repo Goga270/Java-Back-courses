@@ -26,6 +26,11 @@ import java.util.Map;
 @ControllerAdvice
 public class AdvisorController extends ResponseEntityExceptionHandler {
 
+    private static final String DATE_PATTERN = "dd-MM-yyyy HH:mm:ss X";
+    private static final String SOLUTION_EMAIL_NOT_UNIQUE = "Write another email";
+    private static final String SOLUTION_PASSWORD_NOT_MATCH = "Try entering passwords again";
+
+
     // TODO: НАДО ЛИ ИХ ЛОВИТЬ ?
     @ExceptionHandler({JwtTokenInvalidException.class})
     protected ResponseEntity<Object> handleInvalidToken(RuntimeException exception, WebRequest request) {
@@ -57,7 +62,7 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {EmailNotUniqueException.class})
     protected ResponseEntity<Object> handleEmailNotUnique(Exception exception, WebRequest request) {
         Map<String, String> body = new HashMap<>();
-        body.put("solution", "Write another email");
+        body.put("solution", SOLUTION_EMAIL_NOT_UNIQUE);
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
         return getObjectResponseEntity(exception, request, body, httpStatus);
     }
@@ -65,11 +70,18 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {PasswordsNotMatchException.class})
     protected ResponseEntity<Object> handlePasswordsNotMatch(Exception exception, WebRequest request) {
         Map<String, String> body = new HashMap<>();
-        body.put("solution", "try entering passwords again");
+        body.put("solution", SOLUTION_PASSWORD_NOT_MATCH);
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
         return getObjectResponseEntity(exception, request, body, httpStatus);
     }
 
+    @ExceptionHandler(value = {SubscriptionNotPossibleException.class})
+    protected ResponseEntity<Object> handleSubscriptionNotPossible(Exception exception, WebRequest request) {
+        Map<String, String> body = new HashMap<>();
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        return getObjectResponseEntity(exception, request, body, httpStatus);
+    }
+    // чет пока не работает
     @ExceptionHandler(value = {ConstraintViolationException.class})
     protected ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException exception, WebRequest request) {
         Map<String, String> body = new HashMap<>();
@@ -87,7 +99,7 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
         Map<String, String> body = new HashMap<>();
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-        body.put("timestamp", new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()));
+        body.put("timestamp", new SimpleDateFormat(DATE_PATTERN).format(new Date()));
         body.put("error", httpStatus.name());
         body.put("status", String.valueOf(httpStatus.value()));
         exception.getBindingResult().getAllErrors().forEach((error) -> {
@@ -101,7 +113,7 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> getObjectResponseEntity(Exception exception,
                                                            WebRequest request, Map<String, String> body, HttpStatus httpStatus) {
-        body.put("timestamp", new SimpleDateFormat("dd-MM-yyyy hh:mm:ss Z").format(new Date()));
+        body.put("timestamp", new SimpleDateFormat(DATE_PATTERN).format(new Date()));
         body.put("error", httpStatus.name());
         body.put("status", String.valueOf(httpStatus.value()));
         body.put("message", exception.getMessage());

@@ -3,22 +3,19 @@ package com.example.experienceexchange.service;
 import com.example.experienceexchange.dto.CommentDto;
 import com.example.experienceexchange.dto.CourseDto;
 import com.example.experienceexchange.dto.LessonOnCourseDto;
+import com.example.experienceexchange.dto.PaymentDto;
 import com.example.experienceexchange.exception.CourseNotFoundException;
 import com.example.experienceexchange.exception.NotAccessException;
-import com.example.experienceexchange.model.Comment;
-import com.example.experienceexchange.model.Course;
-import com.example.experienceexchange.model.LessonOnCourse;
-import com.example.experienceexchange.model.User;
-import com.example.experienceexchange.repository.interfaceRepo.ICommentRepository;
-import com.example.experienceexchange.repository.interfaceRepo.ICourseRepository;
-import com.example.experienceexchange.repository.interfaceRepo.ILessonOnCourseRepository;
-import com.example.experienceexchange.repository.interfaceRepo.IUserRepository;
+import com.example.experienceexchange.exception.SubscriptionNotPossibleException;
+import com.example.experienceexchange.model.*;
+import com.example.experienceexchange.repository.interfaceRepo.*;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.ICourseService;
 import com.example.experienceexchange.util.date.DateUtil;
 import com.example.experienceexchange.util.mapper.CommentMapper;
 import com.example.experienceexchange.util.mapper.CourseMapper;
 import com.example.experienceexchange.util.mapper.LessonOnCourseMapper;
+import com.example.experienceexchange.util.mapper.PaymentMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,22 +26,35 @@ import java.util.Set;
 @Service
 public class CourseService implements ICourseService {
 
+    private static final String SUB_TO_OWN_COURSE = "Subscription to own course is not possible";
+    private static final String SUB_TO_CLOSE_COURSE = "Course is closed for subscription";
+    private static final String SUB_WITH_INCORRECT_PRICE = "Entered price is less than the fixed price";
+
     private final ICourseRepository courseRepository;
     private final IUserRepository userRepository; // удалить ?
     private final ICommentRepository commentRepository;
     private final ILessonOnCourseRepository lessonOnCourseRepository;
+    private final IPaymentRepository paymentRepository;
+    private final PaymentMapper paymentMapper;
     private final CommentMapper commentMapper;
     private final CourseMapper courseMapper;
     private final LessonOnCourseMapper lessonMapper;
 
     public CourseService(ICourseRepository courseRepository,
                          IUserRepository userRepository,
-                         ICommentRepository commentRepository, ILessonOnCourseRepository lessonOnCourseRepository, CommentMapper commentMapper,
-                         CourseMapper courseMapper, LessonOnCourseMapper lessonMapper) {
+                         ICommentRepository commentRepository,
+                         ILessonOnCourseRepository lessonOnCourseRepository,
+                         IPaymentRepository paymentRepository,
+                         PaymentMapper paymentMapper,
+                         CommentMapper commentMapper,
+                         CourseMapper courseMapper,
+                         LessonOnCourseMapper lessonMapper) {
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
         this.lessonOnCourseRepository = lessonOnCourseRepository;
+        this.paymentRepository = paymentRepository;
+        this.paymentMapper = paymentMapper;
         this.commentMapper = commentMapper;
         this.courseMapper = courseMapper;
         this.lessonMapper = lessonMapper;
@@ -110,10 +120,32 @@ public class CourseService implements ICourseService {
 
     @Transactional
     @Override
-    public void subscribeToCourse(Long id, JwtUserDetails userDetails) {
+    public PaymentDto subscribeToCourse(JwtUserDetails userDetails, PaymentDto paymentDto, Long courseId) {
+        Course course = getCourseById(courseId);
+        User user = userRepository.find(userDetails.getId());
+        if (course.getAuthor().getId().equals(user.getId())) {
+            throw new SubscriptionNotPossibleException(SUB_TO_OWN_COURSE);
+        }
 
+        if (course.isSatisfactoryPrice(paymentDto.getPrice())) {
+            if (course.isAvailableForSubscription(DateUtil.dateTimeNow())) {
+                Payment payment = paymentMapper.paymentDtoToPayment(paymentDto);
+                payment.setDatePayment(DateUtil.dateTimeNow());
+                user.addCourse(course);
+                user.addPayment(payment);
+                payment.setCourse(course);
+                payment.setCostumer(user);
+                course.increaseNumberSubscriptions();
+                paymentRepository.save(payment);
+                return paymentMapper.paymentToPaymentDto(payment);
+            } else {
+                throw new SubscriptionNotPossibleException(SUB_TO_CLOSE_COURSE);
+            }
+        } else {
+            throw new SubscriptionNotPossibleException(SUB_WITH_INCORRECT_PRICE);
+        }
     }
-
+    // TODO : ДОБАВИТЬ В FILL СКРИПТ CURRENT_NUMBER_USER, А ТО БУДЕТ ОШИБКА БУДЕТ NULLpOITER
     // TODO : УДАЛИТЬ ТАБУЛЯЦИЮ В DESCRIPTION
     @Transactional
     @Override
