@@ -31,31 +31,25 @@ public class CourseService implements ICourseService {
     private static final String SUB_WITH_INCORRECT_PRICE = "Entered price is less than the fixed price";
 
     private final ICourseRepository courseRepository;
-    private final IUserRepository userRepository; // удалить ?
-    private final ICommentRepository commentRepository;
+    private final IUserRepository userRepository;
     private final ILessonOnCourseRepository lessonOnCourseRepository;
     private final IPaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
-    private final CommentMapper commentMapper;
     private final CourseMapper courseMapper;
     private final LessonOnCourseMapper lessonMapper;
 
     public CourseService(ICourseRepository courseRepository,
                          IUserRepository userRepository,
-                         ICommentRepository commentRepository,
                          ILessonOnCourseRepository lessonOnCourseRepository,
                          IPaymentRepository paymentRepository,
                          PaymentMapper paymentMapper,
-                         CommentMapper commentMapper,
                          CourseMapper courseMapper,
                          LessonOnCourseMapper lessonMapper) {
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
-        this.commentRepository = commentRepository;
         this.lessonOnCourseRepository = lessonOnCourseRepository;
         this.paymentRepository = paymentRepository;
         this.paymentMapper = paymentMapper;
-        this.commentMapper = commentMapper;
         this.courseMapper = courseMapper;
         this.lessonMapper = lessonMapper;
     }
@@ -147,29 +141,6 @@ public class CourseService implements ICourseService {
     }
     // TODO : ДОБАВИТЬ В FILL СКРИПТ CURRENT_NUMBER_USER, А ТО БУДЕТ ОШИБКА БУДЕТ NULLpOITER
     // TODO : УДАЛИТЬ ТАБУЛЯЦИЮ В DESCRIPTION
-    @Transactional
-    @Override
-    public CommentDto createComment(Long courseId, JwtUserDetails userDetails, CommentDto commentDto) {
-        Course course = getCourseById(courseId);
-        User user = userRepository.find(userDetails.getId());
-        Comment comment = commentMapper.commentDtoToComment(commentDto);
-        comment.setCreated(DateUtil.dateTimeNow());
-        comment.setAuthor(user);
-        comment.setCourse(course);
-        course.addComment(comment);
-        Comment save = commentRepository.save(comment);
-        CommentDto dto = commentMapper.commentToCommentDto(save);
-        return dto;
-    }
-
-    @Transactional
-    @Override
-    public List<CommentDto> getCommentsByCourse(Long courseId) {
-        Course course = getCourseById(courseId);
-        Set<Comment> comments = course.getComments();
-        return commentMapper.toCommentsDto(comments);
-
-    }
 
     // TODO : ПРОВЕРИТЬ ДАТЫ ЧТОБЫ КОНЕЦ КУРСА БЫЛ ПОСЛЕ ЕГО НАЧАЛА  - ДЛЯ ЧАЙНИКОВ
     @Transactional

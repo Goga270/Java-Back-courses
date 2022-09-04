@@ -1,6 +1,7 @@
 package com.example.experienceexchange.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,23 +15,41 @@ import java.util.Date;
 @Setter
 public class CommentDto {
 
-    public interface Create{}
+    public interface CreateForCourse {
+    }
 
-    @NotNull(groups = {Create.class})
+    public interface CreateForLesson {
+    }
+    @JsonView({CreateForCourse.class, CreateForLesson.class})
+    @NotNull(groups = {CreateForCourse.class, CreateForLesson.class})
     private String header;
 
-    @NotNull(groups = {Create.class})
+    @JsonView({CreateForCourse.class, CreateForLesson.class})
+    @NotNull(groups = {CreateForCourse.class, CreateForLesson.class})
     private String body;
 
-    @Null(groups = {Create.class})
+    @JsonView({CreateForCourse.class, CreateForLesson.class})
+    @Null(groups = {CreateForCourse.class, CreateForLesson.class})
     private String authorName;
 
-    @Null(groups = {Create.class})
+    @JsonView({CreateForCourse.class})
+    @NotNull(groups = {CreateForCourse.class})
+    @Null(groups = {CreateForLesson.class})
+    private CourseDto course;
+
+    @JsonView({CreateForLesson.class})
+    @NotNull(groups = {CreateForLesson.class})
+    @Null(groups = {CreateForCourse.class})
+    private LessonDto lesson;
+
+    @JsonView({CreateForCourse.class, CreateForLesson.class})
+    @Null(groups = {CreateForCourse.class, CreateForLesson.class})
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss X")
     private Date created;
 
-    @NotNull(groups = {Create.class})
-    @Min(groups = {Create.class}, value = 1)
-    @Max(groups = {Create.class}, value = 5)
+    @JsonView({CreateForCourse.class, CreateForLesson.class})
+    @NotNull(groups = {CreateForCourse.class, CreateForLesson.class})
+    @Min(groups = {CreateForCourse.class, CreateForLesson.class}, value = 1)
+    @Max(groups = {CreateForCourse.class, CreateForLesson.class}, value = 5)
     private Integer rating;
 }

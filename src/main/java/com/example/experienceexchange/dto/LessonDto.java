@@ -1,6 +1,7 @@
 package com.example.experienceexchange.dto;
 
 import com.example.experienceexchange.constant.TypeLesson;
+import com.example.experienceexchange.model.Comment;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
@@ -29,9 +30,9 @@ public class LessonDto {
     public interface Edit {
     }
 
-    @JsonView({Details.class})
+    @JsonView({CommentDto.CreateForLesson.class, Details.class})
     @Null(groups = {Create.class})
-    @NotNull(groups = {Edit.class})
+    @NotNull(groups = {CommentDto.CreateForLesson.class, Edit.class})
     private Long id;
 
     @JsonView({Details.class})

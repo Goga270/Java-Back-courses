@@ -29,9 +29,9 @@ public class CourseDto {
     public interface Edit {
     }
 
-    @JsonView({Details.class})
+    @JsonView({CommentDto.CreateForCourse.class, Details.class})
     @Null(groups = {Create.class})
-    @NotNull(groups = {Edit.class})
+    @NotNull(groups = {CommentDto.CreateForCourse.class, Edit.class})
     private Long id;
 
     @JsonView({Details.class})

@@ -27,7 +27,6 @@ public abstract class PaymentMapper {
         paymentDto.setPrice(payment.getPrice());
         if (payment.getCourse() != null) {
             paymentDto.setCourseId(payment.getCourse().getId());
-
         } else {
             paymentDto.setLessonId(payment.getLesson().getId());
         }

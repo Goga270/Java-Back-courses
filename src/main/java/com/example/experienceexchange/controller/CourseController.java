@@ -1,7 +1,10 @@
 package com.example.experienceexchange.controller;
 
 
-import com.example.experienceexchange.dto.*;
+import com.example.experienceexchange.dto.CourseDto;
+import com.example.experienceexchange.dto.FilterDto;
+import com.example.experienceexchange.dto.LessonOnCourseDto;
+import com.example.experienceexchange.dto.PaymentDto;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.ICourseService;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -36,36 +39,25 @@ public class CourseController {
     public List<CourseDto> getCourses(@RequestBody FilterDto filterDto) {
         return courseService.getCoursesByDirection();
     }
+
     @JsonView({CourseDto.Details.class})
     @GetMapping("/{id}")
     public CourseDto getCourse(@PathVariable("id") Long courseId) {
         return courseService.getCourse(courseId);
     }
 
-    @GetMapping("/{id}/comments")
-    public List<CommentDto> getCommentsByCourse(@PathVariable("id") Long courseId) {
-        return courseService.getCommentsByCourse(courseId);
-    }
-
     @PostMapping("/new-course")
     @ResponseStatus(HttpStatus.CREATED)
     public CourseDto createCourse(@AuthenticationPrincipal JwtUserDetails userDetails,
-                             @RequestBody @Validated(CourseDto.Create.class) CourseDto courseDto) {
+                                  @RequestBody @Validated(CourseDto.Create.class) CourseDto courseDto) {
         return courseService.createCourse(userDetails, courseDto);
-    }
-
-    @PostMapping("/{id}/new-comment")
-    public CommentDto createComment(@PathVariable("id") Long courseId,
-                                    @AuthenticationPrincipal JwtUserDetails userDetails,
-                                    @RequestBody @Validated(CommentDto.Create.class) CommentDto commentDto) {
-        return courseService.createComment(courseId,userDetails, commentDto);
     }
 
     @PostMapping("/{id}/settings/new-lesson")
     public CourseDto createLesson(
-                                @AuthenticationPrincipal JwtUserDetails userDetails,
-                                @PathVariable("id") Long courseId,
-                                @RequestBody @Validated({LessonOnCourseDto.Create.class}) LessonOnCourseDto lesson) {
+            @AuthenticationPrincipal JwtUserDetails userDetails,
+            @PathVariable("id") Long courseId,
+            @RequestBody @Validated({LessonOnCourseDto.Create.class}) LessonOnCourseDto lesson) {
         return courseService.createLesson(userDetails, courseId, lesson);
     }
 
@@ -81,8 +73,8 @@ public class CourseController {
     @PostMapping("/{id}/subscribe")
     @ResponseStatus(HttpStatus.OK)
     public PaymentDto subscribeToCourse(@AuthenticationPrincipal JwtUserDetails userDetails,
-                                  @PathVariable("id") Long courseId,
-                                  @RequestBody @Validated(PaymentDto.Create.class) PaymentDto paymentDto) {
+                                        @PathVariable("id") Long courseId,
+                                        @RequestBody @Validated(PaymentDto.Create.class) PaymentDto paymentDto) {
         return courseService.subscribeToCourse(userDetails, paymentDto, courseId);
     }
 

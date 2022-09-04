@@ -10,4 +10,12 @@ public class DateUtil {
     public static Date dateTimeNow() {
         return Date.from(Instant.now());
     }
+
+    public static Boolean isDateBeforeNow(Date date) {
+        return date.before(dateTimeNow());
+    }
+
+    public static Boolean isDateAfterNow(Date date) {
+        return date.after(dateTimeNow());
+    }
 }

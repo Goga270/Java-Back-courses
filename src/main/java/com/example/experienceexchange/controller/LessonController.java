@@ -1,6 +1,8 @@
 package com.example.experienceexchange.controller;
 
-import com.example.experienceexchange.dto.*;
+import com.example.experienceexchange.dto.FilterDto;
+import com.example.experienceexchange.dto.LessonDto;
+import com.example.experienceexchange.dto.PaymentDto;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.ILessonService;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -10,8 +12,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
-import java.util.logging.Filter;
 
 @RestController
 @RequestMapping("/lessons")
@@ -41,11 +41,6 @@ public class LessonController {
     }
 
 
-    @GetMapping("/{id}/comments")
-    public List<CommentDto> getCommentsByLesson(@PathVariable("id") Long lessonId) {
-        return lessonService.getCommentByLesson(lessonId);
-    }
-
     @PostMapping("/new-lesson")
     @ResponseStatus(HttpStatus.CREATED)
     public LessonDto createLesson(@AuthenticationPrincipal JwtUserDetails userDetails,
@@ -60,14 +55,6 @@ public class LessonController {
                                         @PathVariable("id") Long lessonId,
                                         @RequestBody @Validated(PaymentDto.Create.class) PaymentDto paymentDto) {
         return lessonService.subscribeToLesson(userDetails, paymentDto, lessonId);
-    }
-
-    @PostMapping("/{id}/new-comment")
-    public CommentDto createComment(
-            @PathVariable("id") Long lessonId,
-            @AuthenticationPrincipal JwtUserDetails userDetails,
-            @RequestBody @Validated(CommentDto.Create.class) CommentDto commentDto) {
-        return lessonService.createComment(userDetails, lessonId, commentDto);
     }
 
     @PutMapping("/{id}/settings")

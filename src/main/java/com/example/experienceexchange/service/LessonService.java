@@ -35,27 +35,22 @@ public class LessonService implements ILessonService {
     private static final String SUB_TO_OWN_LESSON = "Subscription to own lesson is not possible";
     private static final String SUB_TO_CLOSE_LESSON = "Lesson is closed for subscription";
     private static final String SUB_WITH_INCORRECT_PRICE = "Entered price is less than the fixed price";
+    private static final String NOT_DELETE_STARTED_COURSE ="Course started can`t be deleted";
 
     private final ILessonRepository lessonRepository;
     private final IUserRepository userRepository;
-    private final ICommentRepository commentRepository;
     private final LessonMapper lessonMapper;
-    private final CommentMapper commentMapper;// сделать отдельный котроллер для комментов
     private final PaymentMapper paymentMapper;
     private final IPaymentRepository paymentRepository; // сделать отдельный контроллер под это
 
     public LessonService(ILessonRepository lessonRepository,
                          IUserRepository userRepository,
-                         ICommentRepository commentRepository,
                          LessonMapper lessonMapper,
-                         CommentMapper commentMapper,
                          PaymentMapper paymentMapper,
                          IPaymentRepository paymentRepository) {
         this.lessonRepository = lessonRepository;
         this.userRepository = userRepository;
-        this.commentRepository = commentRepository;
         this.lessonMapper = lessonMapper;
-        this.commentMapper = commentMapper;
         this.paymentMapper = paymentMapper;
         this.paymentRepository = paymentRepository;
     }
@@ -87,7 +82,7 @@ public class LessonService implements ILessonService {
         LessonSingle update = lessonRepository.update(updateLesson);
         return lessonMapper.lessonToLessonDto(update);
     }
-
+    // ЕСЛИ КУРС УДАЛИТСЯ ТО ЧТО ДЕЛАТЬ С ДЕНЬГАМИ ПОКУПАТЕЛЕЙ?
     @Transactional
     @Override
     public void deleteLesson(JwtUserDetails userDetails, Long id) {
@@ -133,34 +128,13 @@ public class LessonService implements ILessonService {
             throw new SubscriptionNotPossibleException(SUB_WITH_INCORRECT_PRICE);
         }
     }
-
-    @Transactional
-    @Override
-    public CommentDto createComment(JwtUserDetails userDetails, Long lessonId, CommentDto commentDto) {
-        LessonSingle lesson = getLessonById(lessonId);
-        User user = userRepository.find(userDetails.getId());
-        Comment comment = commentMapper.commentDtoToComment(commentDto);
-        comment.setCreated(DateUtil.dateTimeNow());
-        comment.setAuthor(user);
-        comment.setLesson(lesson);
-        lesson.addComment(comment);
-        Comment save = commentRepository.save(comment);
-        return commentMapper.commentToCommentDto(save);
-    }
-
+    // TODO: НАДО КАК ТО ОТПИСЫВАТЬ ПОЛЬЗОВАТЕЛЕЙ КОГДА ВРЕМЯ КУРСА КОНЧАЕТСЯ
+    // TODO : ПАРАМЕТР ДОСТУПА У LESSON ON COURSE НЕ ИПСОЛЬЗУЕТСЯ ( КОЛИЧЕСТВО ДНЕЙ НА УРОК)
     @Transactional
     @Override
     public LessonDto getLesson(Long lessonId) {
         LessonSingle lesson = getLessonById(lessonId);
         return lessonMapper.lessonToLessonDto(lesson);
-    }
-
-    @Transactional
-    @Override
-    public List<CommentDto> getCommentByLesson(Long lessonId) {
-        LessonSingle lesson = getLessonById(lessonId);
-        Set<Comment> comments = lesson.getComments();
-        return commentMapper.toCommentsDto(comments);
     }
 
     private LessonSingle getLessonById(Long lessonId) throws LessonNotFoundException {

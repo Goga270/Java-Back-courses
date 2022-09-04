@@ -19,9 +19,5 @@ public interface ILessonService {
 
     PaymentDto subscribeToLesson(JwtUserDetails userDetails, PaymentDto paymentDto, Long lessonId);
 
-    CommentDto createComment(JwtUserDetails userDetails, Long lessonId, CommentDto commentDto);
-
     LessonDto getLesson(Long lessonId);
-
-    List<CommentDto> getCommentByLesson(Long lessonId);
 }
