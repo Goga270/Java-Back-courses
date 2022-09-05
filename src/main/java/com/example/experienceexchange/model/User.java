@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -15,7 +17,6 @@ import java.util.Set;
 @Table(name = "users")
 public class User extends Account {
 
-    // TODO: УДАЛЕНИЕ ПРИ MANY TO MANY
     @Id
     @SequenceGenerator(name = "seq_user", sequenceName = "sequence_id_users", allocationSize = 1)
     @GeneratedValue(generator = "seq_user", strategy = GenerationType.SEQUENCE)
@@ -27,7 +28,6 @@ public class User extends Account {
 
     @OneToMany(mappedBy = "author")
     private Set<Course> createdCourses = new HashSet<>();
-    // TODO : РЕШИТЬ С ОПЛАТОЙ
 
     @ManyToMany
     @JoinTable(
@@ -46,7 +46,7 @@ public class User extends Account {
     private Set<Course> courseSubscriptions = new HashSet<>();
 
     @OneToMany(mappedBy = "costumer")
-    private Set<Payment> myPayments = new HashSet<>();
+    private List<Payment> myPayments = new LinkedList<>();
 
     public void addLesson(LessonSingle lesson) {
         lessonSubscriptions.add(lesson);

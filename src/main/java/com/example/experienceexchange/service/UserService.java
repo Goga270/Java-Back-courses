@@ -17,23 +17,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class UserService implements IUserService {
 
     private final IUserRepository userRepository;
-    private final IPaymentRepository paymentRepository;
     private final UserMapper userMapper;
     private final PaymentMapper paymentMapper;
     private final PasswordEncoder passwordEncoder;
 
     public UserService(IUserRepository userRepository,
-                       IPaymentRepository paymentRepository,
                        UserMapper userMapper,
-                       PaymentMapper paymentMapper, PasswordEncoder passwordEncoder) {
+                       PaymentMapper paymentMapper,
+                       PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.paymentRepository = paymentRepository;
         this.userMapper = userMapper;
         this.paymentMapper = paymentMapper;
         this.passwordEncoder = passwordEncoder;
@@ -71,10 +68,10 @@ public class UserService implements IUserService {
 
     @Transactional
     @Override
-    public Set<LessonDto> getSchedule(JwtUserDetails userDetails) {
+    public List<LessonDto> getSchedule(JwtUserDetails userDetails) {
         Long userId = userDetails.getId();
         User user = getUserById(userId);
-//        Set<Lesson> subscriptions = user.getLessonSubscriptions/**/();
+
         return null;
     }
 
@@ -93,8 +90,8 @@ public class UserService implements IUserService {
     @Transactional
     @Override
     public List<PaymentDto> getPayments(JwtUserDetails userDetails) {
-        List<Payment> allPaymentByUserId = paymentRepository.findAllPaymentByUserId(userDetails.getId());
-        return paymentMapper.toPaymentDto(allPaymentByUserId);
+        List<Payment> payments = getUserById(userDetails.getId()).getMyPayments();
+        return paymentMapper.toPaymentDto(payments);
     }
 
     private User getUserById(Long id) {

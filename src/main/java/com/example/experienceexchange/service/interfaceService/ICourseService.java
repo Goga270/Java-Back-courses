@@ -21,5 +21,5 @@ public interface ICourseService {
 
     PaymentDto subscribeToCourse(JwtUserDetails userDetails, PaymentDto paymentDto, Long courseId);
 
-    CourseDto createLesson(JwtUserDetails userDetails, Long courseId, LessonOnCourseDto lesson);
+    CourseDto createLessonOnCourse(JwtUserDetails userDetails, Long courseId, LessonOnCourseDto lesson);
 }

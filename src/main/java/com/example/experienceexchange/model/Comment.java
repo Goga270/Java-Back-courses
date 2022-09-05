@@ -8,7 +8,6 @@ import javax.persistence.*;
 import java.util.Date;
 
 
-// TODO: НЕЛЬЗЯ НАПИСАТЬ КОМЕНТ ПОКА КУРС НЕ ЗАКОНЧЕН ?
 @Setter
 @Getter
 @NoArgsConstructor

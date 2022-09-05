@@ -58,7 +58,7 @@ public class CourseController {
             @AuthenticationPrincipal JwtUserDetails userDetails,
             @PathVariable("id") Long courseId,
             @RequestBody @Validated({LessonOnCourseDto.Create.class}) LessonOnCourseDto lesson) {
-        return courseService.createLesson(userDetails, courseId, lesson);
+        return courseService.createLessonOnCourse(userDetails, courseId, lesson);
     }
 
     @PutMapping("/{id}/settings")
@@ -69,12 +69,12 @@ public class CourseController {
     }
 
     // TODO : А ТВОЙ ЛИ ЭТО КУРС ПРОВЕРИТЬ НАДО
-    @JsonView({PaymentDto.DetailsForPayCourse.class})
+    @JsonView({PaymentDto.CreateCourse.class})
     @PostMapping("/{id}/subscribe")
     @ResponseStatus(HttpStatus.OK)
     public PaymentDto subscribeToCourse(@AuthenticationPrincipal JwtUserDetails userDetails,
                                         @PathVariable("id") Long courseId,
-                                        @RequestBody @Validated(PaymentDto.Create.class) PaymentDto paymentDto) {
+                                        @RequestBody @Validated(PaymentDto.CreateCourse.class) PaymentDto paymentDto) {
         return courseService.subscribeToCourse(userDetails, paymentDto, courseId);
     }
 

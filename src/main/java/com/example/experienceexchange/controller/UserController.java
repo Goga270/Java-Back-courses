@@ -36,7 +36,7 @@ public class UserController {
     }
     // TODO: НАПИСАТЬ РАСПИСАНИЕ
     @GetMapping("/schedule")
-    public Set<LessonDto> getSchedule(@AuthenticationPrincipal JwtUserDetails userDetails) {
+    public List<LessonDto> getSchedule(@AuthenticationPrincipal JwtUserDetails userDetails) {
         return userService.getSchedule(userDetails);
     }
 

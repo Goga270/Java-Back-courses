@@ -29,6 +29,7 @@ public class CourseService implements ICourseService {
     private static final String SUB_TO_OWN_COURSE = "Subscription to own course is not possible";
     private static final String SUB_TO_CLOSE_COURSE = "Course is closed for subscription";
     private static final String SUB_WITH_INCORRECT_PRICE = "Entered price is less than the fixed price";
+    private static final String NOT_ACCESS_EDIT = "No access to edit resource";
 
     private final ICourseRepository courseRepository;
     private final IUserRepository userRepository;
@@ -77,7 +78,6 @@ public class CourseService implements ICourseService {
         return courseMapper.courseToCourseDto(newCourse);
     }
     // TODO : ЕСЛИ НА КУРС УЖЕ ЕСТЬ ЗАПИСЬ ТО НВЕРНО ЧТО ТО МОЖНО МЕНЯТЬ
-    // TODO : СРАВНИТЬ ID ИЗ PathVariable and courseDto
     @Transactional
     @Override
     public CourseDto editCourse(JwtUserDetails userDetails, Long id, CourseDto courseDto) {
@@ -140,12 +140,11 @@ public class CourseService implements ICourseService {
         }
     }
     // TODO : ДОБАВИТЬ В FILL СКРИПТ CURRENT_NUMBER_USER, А ТО БУДЕТ ОШИБКА БУДЕТ NULLpOITER
-    // TODO : УДАЛИТЬ ТАБУЛЯЦИЮ В DESCRIPTION
 
     // TODO : ПРОВЕРИТЬ ДАТЫ ЧТОБЫ КОНЕЦ КУРСА БЫЛ ПОСЛЕ ЕГО НАЧАЛА  - ДЛЯ ЧАЙНИКОВ
     @Transactional
     @Override
-    public CourseDto createLesson(JwtUserDetails userDetails, Long courseId, LessonOnCourseDto lessonDto) {
+    public CourseDto createLessonOnCourse(JwtUserDetails userDetails, Long courseId, LessonOnCourseDto lessonDto) {
         Course course = getCourseById(courseId);
         checkAccessToCourseEdit(course, userDetails.getId());
         LessonOnCourse lessonOnCourse = lessonMapper.lessonOnCourseDtoToLessonOnCourse(lessonDto);
@@ -155,7 +154,7 @@ public class CourseService implements ICourseService {
         return courseMapper.courseToCourseDto(course);
     }
 
-    private Course getCourseById(Long id) {
+    private Course getCourseById(Long id) throws CourseNotFoundException {
         Course course = courseRepository.find(id);
         if (course == null) {
             throw new CourseNotFoundException(id);
@@ -163,9 +162,9 @@ public class CourseService implements ICourseService {
         return course;
     }
     // TODO: 1 PAR - id author !!!!
-    private void checkAccessToCourseEdit(Course course, Long userId) {
+    private void checkAccessToCourseEdit(Course course, Long userId) throws NotAccessException {
         if (!course.getAuthor().getId().equals(userId)) {
-            throw new NotAccessException();
+            throw new NotAccessException(NOT_ACCESS_EDIT);
         }
     }
 }

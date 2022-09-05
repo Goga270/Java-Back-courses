@@ -48,12 +48,12 @@ public class LessonController {
         return lessonService.createLesson(userDetails, lessonDto);
     }
 
-    @JsonView({PaymentDto.DetailsForPayLesson.class})
+    @JsonView({PaymentDto.CreateLesson.class})
     @PostMapping("/{id}/subscribe")
     @ResponseStatus(HttpStatus.OK)
     public PaymentDto subscribeToLesson(@AuthenticationPrincipal JwtUserDetails userDetails,
                                         @PathVariable("id") Long lessonId,
-                                        @RequestBody @Validated(PaymentDto.Create.class) PaymentDto paymentDto) {
+                                        @RequestBody @Validated(PaymentDto.CreateLesson.class) PaymentDto paymentDto) {
         return lessonService.subscribeToLesson(userDetails, paymentDto, lessonId);
     }
 

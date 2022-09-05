@@ -19,7 +19,6 @@ import java.util.Set;
 @Table(name = "single_lessons")
 public class LessonSingle extends Lesson {
 
-    // TODO : ОГРАНИЧИТЬ В ДТО
     @Column(name = "skill_level")
     private Integer skillLevel;
 

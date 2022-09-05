@@ -13,7 +13,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "skills")
-// TODO : ЮЗЕРЫ ТОЖЕ МОГУТ ИХ СОЗДАВАТЬ!
 public class Skill {
 
     @Id

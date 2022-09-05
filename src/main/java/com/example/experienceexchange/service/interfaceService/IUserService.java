@@ -4,7 +4,6 @@ import com.example.experienceexchange.dto.*;
 import com.example.experienceexchange.security.JwtUserDetails;
 
 import java.util.List;
-import java.util.Set;
 
 public interface IUserService {
 
@@ -14,7 +13,7 @@ public interface IUserService {
 
     void changePassword(JwtUserDetails userDetails, NewPasswordDto passwordDto);
 
-    Set<LessonDto> getSchedule(JwtUserDetails userDetails);
+    List<LessonDto> getSchedule(JwtUserDetails userDetails);
 
     void changeEmail(JwtUserDetails jwtUserDetails, NewEmailDto newEmailDto);
 

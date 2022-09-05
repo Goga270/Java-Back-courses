@@ -35,7 +35,9 @@ public class LessonService implements ILessonService {
     private static final String SUB_TO_OWN_LESSON = "Subscription to own lesson is not possible";
     private static final String SUB_TO_CLOSE_LESSON = "Lesson is closed for subscription";
     private static final String SUB_WITH_INCORRECT_PRICE = "Entered price is less than the fixed price";
+    private static final String NOT_ACCESS_EDIT = "No access to edit resource";
     private static final String NOT_DELETE_STARTED_COURSE ="Course started can`t be deleted";
+
 
     private final ILessonRepository lessonRepository;
     private final IUserRepository userRepository;
@@ -145,9 +147,9 @@ public class LessonService implements ILessonService {
         return lesson;
     }
 
-    private void checkAccessToLessonEdit(Long authorId, Long authUserID) {
+    private void checkAccessToLessonEdit(Long authorId, Long authUserID) throws NotAccessException {
         if (!authorId.equals(authUserID)) {
-            throw new NotAccessException();
+            throw new NotAccessException(NOT_ACCESS_EDIT);
         }
     }
 }

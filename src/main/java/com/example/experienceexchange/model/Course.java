@@ -28,7 +28,6 @@ public class Course {
     @Column(name = "description")
     private String description;
 
-    // TODO : ОГРАНИЧИТЬ В ДТО
     @Column(name = "skill_level")
     private Integer skillLevel;
 

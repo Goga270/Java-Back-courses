@@ -1,11 +1,9 @@
 package com.example.experienceexchange.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.JoinColumn;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.math.BigDecimal;
@@ -15,36 +13,35 @@ import java.util.Date;
 @Setter
 public class PaymentDto {
 
-    public interface Create {
+    public interface CreateLesson {
 
     }
 
-    public interface DetailsForPayLesson {
+    public interface CreateCourse {
 
     }
 
-    public interface DetailsForPayCourse {
-
-    }
-
-    @Null(groups = {Create.class})
+    @Null(groups = {CreateLesson.class, CreateCourse.class})
     private Long id;
-    @JsonView({DetailsForPayCourse.class})
+
+    @NotNull(groups = {CreateCourse.class})
+    @Null(groups = {CreateLesson.class})
     private Long courseId;
-    @JsonView({DetailsForPayLesson.class})
+
+    @NotNull(groups = {CreateLesson.class})
+    @Null(groups = {CreateCourse.class})
     private Long lessonId;
-    @JsonView({DetailsForPayCourse.class, DetailsForPayLesson.class})
-    @Null(groups = {Create.class})
+
+    @Null(groups = {CreateLesson.class, CreateCourse.class})
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss X")
     private Date datePayment;
 
-    @JsonView({DetailsForPayCourse.class, DetailsForPayLesson.class})
-    @NotNull(groups = {Create.class})
+    @NotNull(groups = {CreateLesson.class})
     private BigDecimal price;
 
-    @JsonView({DetailsForPayCourse.class, DetailsForPayLesson.class})
+    @Null(groups = {CreateLesson.class, CreateCourse.class})
     private String numberCardUser;
 
-    @JsonView({DetailsForPayCourse.class, DetailsForPayLesson.class})
+    @Null(groups = {CreateLesson.class, CreateCourse.class})
     private String emailUser;
 }
