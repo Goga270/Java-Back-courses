@@ -2,6 +2,7 @@ package com.example.experienceexchange.service.interfaceService;
 
 import com.example.experienceexchange.dto.CommentDto;
 import com.example.experienceexchange.dto.LessonDto;
+import com.example.experienceexchange.dto.LessonOnCourseDto;
 import com.example.experienceexchange.dto.PaymentDto;
 import com.example.experienceexchange.security.JwtUserDetails;
 
@@ -20,4 +21,6 @@ public interface ILessonService {
     PaymentDto subscribeToLesson(JwtUserDetails userDetails, PaymentDto paymentDto, Long lessonId);
 
     LessonDto getLesson(Long lessonId);
+
+    List<LessonDto> getSchedule(JwtUserDetails userDetails);
 }

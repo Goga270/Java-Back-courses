@@ -2,6 +2,7 @@ package com.example.experienceexchange.controller;
 
 import com.example.experienceexchange.dto.FilterDto;
 import com.example.experienceexchange.dto.LessonDto;
+import com.example.experienceexchange.dto.LessonOnCourseDto;
 import com.example.experienceexchange.dto.PaymentDto;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.ILessonService;
@@ -40,6 +41,11 @@ public class LessonController {
         return lessonService.getLesson(lessonId);
     }
 
+
+    @GetMapping("/schedule-my-lessons")
+    public List<LessonDto> getScheduleBySingleLesson(@AuthenticationPrincipal JwtUserDetails userDetails) {
+        return lessonService.getSchedule(userDetails);
+    }
 
     @PostMapping("/new-lesson")
     @ResponseStatus(HttpStatus.CREATED)

@@ -1,12 +1,14 @@
 package com.example.experienceexchange.service;
 
-import com.example.experienceexchange.dto.*;
+import com.example.experienceexchange.dto.NewEmailDto;
+import com.example.experienceexchange.dto.NewPasswordDto;
+import com.example.experienceexchange.dto.PaymentDto;
+import com.example.experienceexchange.dto.UserDto;
 import com.example.experienceexchange.exception.EmailNotUniqueException;
 import com.example.experienceexchange.exception.PasswordsNotMatchException;
 import com.example.experienceexchange.exception.UserNotFoundException;
 import com.example.experienceexchange.model.Payment;
 import com.example.experienceexchange.model.User;
-import com.example.experienceexchange.repository.interfaceRepo.IPaymentRepository;
 import com.example.experienceexchange.repository.interfaceRepo.IUserRepository;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.IUserService;
@@ -68,15 +70,6 @@ public class UserService implements IUserService {
 
     @Transactional
     @Override
-    public List<LessonDto> getSchedule(JwtUserDetails userDetails) {
-        Long userId = userDetails.getId();
-        User user = getUserById(userId);
-
-        return null;
-    }
-
-    @Transactional
-    @Override
     public void changeEmail(JwtUserDetails jwtUserDetails, NewEmailDto newEmailDto) {
         User user = userRepository.findByEmail(newEmailDto.getNewEmail());
         if (user != null) {
@@ -101,4 +94,5 @@ public class UserService implements IUserService {
         }
         return user;
     }
+
 }

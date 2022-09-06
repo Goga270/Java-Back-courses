@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 // TODO: можно удалить только свой курс, или можно удалить только свой комментарий, но мб админ может что он хочет
+// TODO: ДОБАВИТЬ RESPONCE КОДЫ ОТВЕТОВ!
 @RestController
 @RequestMapping("/courses")
 public class CourseController {
@@ -46,6 +47,19 @@ public class CourseController {
         return courseService.getCourse(courseId);
     }
 
+    @JsonView(LessonOnCourseDto.DetailsForTimetable.class)
+    @GetMapping("/my-schedule-courses")
+    public List<LessonOnCourseDto> getSchedule(@AuthenticationPrincipal JwtUserDetails userDetails) {
+        return courseService.getSchedule(userDetails);
+    }
+
+    @JsonView(LessonOnCourseDto.DetailsForTimetable.class)
+    @GetMapping("/{id}/my-schedule-course")
+    public List<LessonOnCourseDto> getScheduleByCourse(@AuthenticationPrincipal JwtUserDetails userDetails,
+                                                       @PathVariable("id") Long courseId) {
+        return courseService.getScheduleByCourse(userDetails, courseId);
+    }
+
     @PostMapping("/new-course")
     @ResponseStatus(HttpStatus.CREATED)
     public CourseDto createCourse(@AuthenticationPrincipal JwtUserDetails userDetails,
@@ -71,7 +85,7 @@ public class CourseController {
     // TODO : А ТВОЙ ЛИ ЭТО КУРС ПРОВЕРИТЬ НАДО
     @JsonView({PaymentDto.CreateCourse.class})
     @PostMapping("/{id}/subscribe")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public PaymentDto subscribeToCourse(@AuthenticationPrincipal JwtUserDetails userDetails,
                                         @PathVariable("id") Long courseId,
                                         @RequestBody @Validated(PaymentDto.CreateCourse.class) PaymentDto paymentDto) {

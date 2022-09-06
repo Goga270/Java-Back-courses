@@ -22,7 +22,7 @@ public class LessonSingle extends Lesson {
     @Column(name = "skill_level")
     private Integer skillLevel;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private User author;
 

@@ -1,6 +1,7 @@
 package com.example.experienceexchange.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,24 +25,28 @@ public class PaymentDto {
     @Null(groups = {CreateLesson.class, CreateCourse.class})
     private Long id;
 
-    @NotNull(groups = {CreateCourse.class})
+    @JsonView(CreateCourse.class)
     @Null(groups = {CreateLesson.class})
     private Long courseId;
 
-    @NotNull(groups = {CreateLesson.class})
+    @JsonView(CreateLesson.class)
     @Null(groups = {CreateCourse.class})
     private Long lessonId;
 
+    @JsonView({CreateLesson.class, CreateCourse.class})
     @Null(groups = {CreateLesson.class, CreateCourse.class})
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss X")
     private Date datePayment;
 
+    @JsonView({CreateLesson.class, CreateCourse.class})
     @NotNull(groups = {CreateLesson.class})
     private BigDecimal price;
 
+    @JsonView({CreateLesson.class, CreateCourse.class})
     @Null(groups = {CreateLesson.class, CreateCourse.class})
     private String numberCardUser;
 
+    @JsonView({CreateLesson.class, CreateCourse.class})
     @Null(groups = {CreateLesson.class, CreateCourse.class})
     private String emailUser;
 }

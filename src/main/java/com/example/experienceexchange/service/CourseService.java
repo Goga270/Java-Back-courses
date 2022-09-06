@@ -102,6 +102,22 @@ public class CourseService implements ICourseService {
 
     @Transactional
     @Override
+    public List<LessonOnCourseDto> getSchedule(JwtUserDetails userDetails) {
+        Long userId = userDetails.getId();
+        List<LessonOnCourse> allLessonsOnCourseByUserId = lessonOnCourseRepository.findAllLessonsOnCourseByUserId(userId);
+        return lessonMapper.toLessonOnCourseDto(allLessonsOnCourseByUserId);
+    }
+
+    @Transactional
+    @Override
+    public List<LessonOnCourseDto> getScheduleByCourse(JwtUserDetails userDetails, Long courseId) {
+        Long userId = userDetails.getId();
+        List<LessonOnCourse> lessons = lessonOnCourseRepository.findAllLessonsOnCourseByUserIdAndCourseId(userId, courseId);
+        return lessonMapper.toLessonOnCourseDto(lessons);
+    }
+
+    @Transactional
+    @Override
     public void deleteCourse(JwtUserDetails userDetails, Long id) {
         Course course = courseRepository.find(id);
         checkAccessToCourseEdit(course, userDetails.getId());

@@ -4,7 +4,7 @@ import com.example.experienceexchange.dto.*;
 import com.example.experienceexchange.security.JwtUserDetails;
 
 import java.util.List;
-
+    // TODO : НЕЙМИНГ GET FIND
 public interface IUserService {
 
     UserDto getAccount(JwtUserDetails userDetails);
@@ -12,8 +12,6 @@ public interface IUserService {
     UserDto editAccount(JwtUserDetails userDetails, UserDto userDto);
 
     void changePassword(JwtUserDetails userDetails, NewPasswordDto passwordDto);
-
-    List<LessonDto> getSchedule(JwtUserDetails userDetails);
 
     void changeEmail(JwtUserDetails jwtUserDetails, NewEmailDto newEmailDto);
 

@@ -6,10 +6,7 @@ import com.example.experienceexchange.dto.PaymentDto;
 import com.example.experienceexchange.exception.LessonNotFoundException;
 import com.example.experienceexchange.exception.NotAccessException;
 import com.example.experienceexchange.exception.SubscriptionNotPossibleException;
-import com.example.experienceexchange.model.Comment;
-import com.example.experienceexchange.model.LessonSingle;
-import com.example.experienceexchange.model.Payment;
-import com.example.experienceexchange.model.User;
+import com.example.experienceexchange.model.*;
 import com.example.experienceexchange.repository.PaymentRepository;
 import com.example.experienceexchange.repository.interfaceRepo.ICommentRepository;
 import com.example.experienceexchange.repository.interfaceRepo.ILessonRepository;
@@ -36,7 +33,7 @@ public class LessonService implements ILessonService {
     private static final String SUB_TO_CLOSE_LESSON = "Lesson is closed for subscription";
     private static final String SUB_WITH_INCORRECT_PRICE = "Entered price is less than the fixed price";
     private static final String NOT_ACCESS_EDIT = "No access to edit resource";
-    private static final String NOT_DELETE_STARTED_COURSE ="Course started can`t be deleted";
+    private static final String NOT_DELETE_STARTED_COURSE = "Course started can`t be deleted";
 
 
     private final ILessonRepository lessonRepository;
@@ -84,6 +81,7 @@ public class LessonService implements ILessonService {
         LessonSingle update = lessonRepository.update(updateLesson);
         return lessonMapper.lessonToLessonDto(update);
     }
+
     // ЕСЛИ КУРС УДАЛИТСЯ ТО ЧТО ДЕЛАТЬ С ДЕНЬГАМИ ПОКУПАТЕЛЕЙ?
     @Transactional
     @Override
@@ -130,6 +128,7 @@ public class LessonService implements ILessonService {
             throw new SubscriptionNotPossibleException(SUB_WITH_INCORRECT_PRICE);
         }
     }
+
     // TODO: НАДО КАК ТО ОТПИСЫВАТЬ ПОЛЬЗОВАТЕЛЕЙ КОГДА ВРЕМЯ КУРСА КОНЧАЕТСЯ
     // TODO : ПАРАМЕТР ДОСТУПА У LESSON ON COURSE НЕ ИПСОЛЬЗУЕТСЯ ( КОЛИЧЕСТВО ДНЕЙ НА УРОК)
     @Transactional
@@ -137,6 +136,16 @@ public class LessonService implements ILessonService {
     public LessonDto getLesson(Long lessonId) {
         LessonSingle lesson = getLessonById(lessonId);
         return lessonMapper.lessonToLessonDto(lesson);
+    }
+// TODO : TYPELESSON НЕ ПРОСТО ТАК ИСПОЛЬЗОВАТЬ!
+
+    // TODO : СДЕЛАТЬ ОТПИСКУ ОТ КУРСА (АВТОМАТИЧЕСКУЮ ?)
+    @Transactional
+    @Override
+    public List<LessonDto> getSchedule(JwtUserDetails userDetails) {
+        Long userId = userDetails.getId();
+        List<LessonSingle> allLessons = lessonRepository.findAllLessonsByUserId(userId);
+        return lessonMapper.toLessonDto(allLessons);
     }
 
     private LessonSingle getLessonById(Long lessonId) throws LessonNotFoundException {
