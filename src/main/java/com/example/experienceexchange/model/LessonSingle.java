@@ -1,7 +1,6 @@
 package com.example.experienceexchange.model;
 
 import com.example.experienceexchange.constant.TypeLesson;
-import com.example.experienceexchange.util.date.DateUtil;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +19,7 @@ import java.util.Set;
 public class LessonSingle extends Lesson {
 
     @Column(name = "skill_level")
-    private Integer skillLevel;
+    private Integer masteryLevel;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
@@ -68,10 +67,6 @@ public class LessonSingle extends Lesson {
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REMOVE}, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
-
-    public void addComment(Comment comment) {
-        comments.add(comment);
-    }
 
     public Boolean isAvailableForSubscription(Date nowDate) {
         return currentNumberUsers.compareTo(maxNumberUsers) < 0

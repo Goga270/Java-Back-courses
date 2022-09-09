@@ -5,6 +5,7 @@ import com.example.experienceexchange.dto.CourseDto;
 import com.example.experienceexchange.dto.FilterDto;
 import com.example.experienceexchange.dto.LessonOnCourseDto;
 import com.example.experienceexchange.dto.PaymentDto;
+import com.example.experienceexchange.repository.filter.SearchCriteria;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.ICourseService;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -13,10 +14,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
-// TODO: можно удалить только свой курс, или можно удалить только свой комментарий, но мб админ может что он хочет
-// TODO: ДОБАВИТЬ RESPONCE КОДЫ ОТВЕТОВ!
 @RestController
 @RequestMapping("/courses")
 public class CourseController {
@@ -27,18 +27,10 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-
-    /*@GetMapping({"/{direction}"})
-    public Set<CourseDto> getCoursesByDirection(@PathVariable String direction,
-                                                @RequestBody FilterDto filterDto) {
-        return null;
-        //return courseService.getCoursesByDirection();
-    }*/
-
     @JsonView({CourseDto.Details.class})
     @GetMapping("")
-    public List<CourseDto> getCourses(@RequestBody FilterDto filterDto) {
-        return courseService.getCoursesByDirection();
+    public List<CourseDto> getCoursesByFilter(@RequestBody List<SearchCriteria> filters) {
+        return courseService.getCourses(filters);
     }
 
     @JsonView({CourseDto.Details.class})

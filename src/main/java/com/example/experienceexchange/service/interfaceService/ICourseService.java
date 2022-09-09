@@ -1,15 +1,17 @@
 package com.example.experienceexchange.service.interfaceService;
 
 import com.example.experienceexchange.dto.CourseDto;
+import com.example.experienceexchange.dto.FilterDto;
 import com.example.experienceexchange.dto.LessonOnCourseDto;
 import com.example.experienceexchange.dto.PaymentDto;
+import com.example.experienceexchange.repository.filter.SearchCriteria;
 import com.example.experienceexchange.security.JwtUserDetails;
 
 import java.util.List;
 
 public interface ICourseService {
 
-    List<CourseDto> getCoursesByDirection();
+    List<CourseDto> getCourses(List<SearchCriteria> filterDto);
 
     CourseDto createCourse(JwtUserDetails userDetails, CourseDto courseDto);
 

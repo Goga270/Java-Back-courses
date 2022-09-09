@@ -29,7 +29,7 @@ public class Course {
     private String description;
 
     @Column(name = "skill_level")
-    private Integer skillLevel;
+    private Integer masteryLevel;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
@@ -75,7 +75,7 @@ public class Course {
     private Set<Skill> skills = new HashSet<>();
 
 
-    @OneToMany(mappedBy = "course", cascade = {CascadeType.PERSIST, CascadeType.DETACH,  CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(mappedBy = "course", cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REMOVE}, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
 
     @OneToMany(mappedBy = "course", cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
@@ -83,10 +83,6 @@ public class Course {
 
     @ManyToMany(mappedBy = "courseSubscriptions")
     private Set<User> usersInCourse = new HashSet<>();
-
-    public void addComment(Comment comment) {
-        getComments().add(comment);
-    }
 
     public void addLesson(LessonOnCourse lessonOnCourse) {
         lessons.add(lessonOnCourse);

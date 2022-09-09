@@ -2,6 +2,8 @@ package com.example.experienceexchange.config;
 
 import com.example.experienceexchange.model.*;
 import com.example.experienceexchange.repository.*;
+import com.example.experienceexchange.repository.filter.PredicateBuilder;
+import com.example.experienceexchange.repository.filter.PredicateBuilderImpl;
 import com.example.experienceexchange.repository.interfaceRepo.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
@@ -16,6 +18,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import java.util.TimeZone;
 
@@ -46,12 +50,15 @@ public class ApplicationContextConfiguration {
     private String ZONE_ID;
 
     @Bean
-    public TimeZone timeZone() {
-        TimeZone defaultTimeZone = TimeZone.getTimeZone(ZONE_ID);
-        TimeZone.setDefault(defaultTimeZone);
-        return defaultTimeZone;
-    }
+    public List<String> predicates() {
+        List<String> predicateBuilders = new LinkedList<>();
+        predicateBuilders.add("section.id");
+        predicateBuilders.add("direction.id");
+        predicateBuilders.add("skill.id");
+        predicateBuilders.add("course.masteryLevel");
 
+        return predicateBuilders;
+    }
 
     @Bean
     public IPaymentRepository paymentRepository() {

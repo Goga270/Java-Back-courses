@@ -1,18 +1,16 @@
 package com.example.experienceexchange.service;
 
-import com.example.experienceexchange.dto.CommentDto;
-import com.example.experienceexchange.dto.CourseDto;
-import com.example.experienceexchange.dto.LessonOnCourseDto;
-import com.example.experienceexchange.dto.PaymentDto;
+import com.example.experienceexchange.dto.*;
 import com.example.experienceexchange.exception.CourseNotFoundException;
 import com.example.experienceexchange.exception.NotAccessException;
 import com.example.experienceexchange.exception.SubscriptionNotPossibleException;
 import com.example.experienceexchange.model.*;
+import com.example.experienceexchange.repository.filter.IFilterProvider;
+import com.example.experienceexchange.repository.filter.SearchCriteria;
 import com.example.experienceexchange.repository.interfaceRepo.*;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.ICourseService;
 import com.example.experienceexchange.util.date.DateUtil;
-import com.example.experienceexchange.util.mapper.CommentMapper;
 import com.example.experienceexchange.util.mapper.CourseMapper;
 import com.example.experienceexchange.util.mapper.LessonOnCourseMapper;
 import com.example.experienceexchange.util.mapper.PaymentMapper;
@@ -20,8 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityExistsException;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 @Service
 public class CourseService implements ICourseService {
@@ -35,6 +34,7 @@ public class CourseService implements ICourseService {
     private final IUserRepository userRepository;
     private final ILessonOnCourseRepository lessonOnCourseRepository;
     private final IPaymentRepository paymentRepository;
+    private final IFilterProvider filterProvider;
     private final PaymentMapper paymentMapper;
     private final CourseMapper courseMapper;
     private final LessonOnCourseMapper lessonMapper;
@@ -43,13 +43,14 @@ public class CourseService implements ICourseService {
                          IUserRepository userRepository,
                          ILessonOnCourseRepository lessonOnCourseRepository,
                          IPaymentRepository paymentRepository,
-                         PaymentMapper paymentMapper,
+                         IFilterProvider filterProvider, PaymentMapper paymentMapper,
                          CourseMapper courseMapper,
                          LessonOnCourseMapper lessonMapper) {
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
         this.lessonOnCourseRepository = lessonOnCourseRepository;
         this.paymentRepository = paymentRepository;
+        this.filterProvider = filterProvider;
         this.paymentMapper = paymentMapper;
         this.courseMapper = courseMapper;
         this.lessonMapper = lessonMapper;
@@ -57,11 +58,16 @@ public class CourseService implements ICourseService {
 
     @Transactional
     @Override
-    public List<CourseDto> getCoursesByDirection() {
-        List<Course> all = courseRepository.findAll();
-        return courseMapper.toCourseDto(all);
-    }
+    public List<CourseDto> getCourses(List<SearchCriteria> filters) {
+        Map<String, List<SearchCriteria>> searchMap = filterProvider.createSearchMap(filters);
+        String filterQuery = filterProvider.createFilterQuery(searchMap);
+//        List<Course> courses = courseRepository.findAllCourseByFilter(filterQuery);
 
+
+        List<Course> courses = courseRepository.findAllCourseByFilter(filterQuery);
+        return courseMapper.toCourseDto(courses);
+    }
+    // TODO : ДОБАВИТЬ ПОИСК ЧЕРЕЗ LIKE
     @Transactional
     @Override
     public CourseDto createCourse(JwtUserDetails userDetails, CourseDto courseDto) {
