@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ILessonRepository extends GenericDao<LessonSingle,Long> {
     List<LessonSingle> findAllLessonsByUserId(Long userId);
+
+    List<LessonSingle> findAllLessonsByFilter(String filter);
 }

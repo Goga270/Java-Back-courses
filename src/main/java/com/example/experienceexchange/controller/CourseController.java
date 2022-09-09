@@ -2,7 +2,6 @@ package com.example.experienceexchange.controller;
 
 
 import com.example.experienceexchange.dto.CourseDto;
-import com.example.experienceexchange.dto.FilterDto;
 import com.example.experienceexchange.dto.LessonOnCourseDto;
 import com.example.experienceexchange.dto.PaymentDto;
 import com.example.experienceexchange.repository.filter.SearchCriteria;
@@ -14,7 +13,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -37,6 +35,14 @@ public class CourseController {
     @GetMapping("/{id}")
     public CourseDto getCourse(@PathVariable("id") Long courseId) {
         return courseService.getCourse(courseId);
+    }
+
+    @JsonView({LessonOnCourseDto.DetailsForSubscribe.class})
+    @GetMapping("/{courseId}/{lessonId}")
+    public LessonOnCourseDto getLessonOnCourse(@AuthenticationPrincipal JwtUserDetails userDetails,
+                                               @PathVariable Long courseId,
+                                               @PathVariable Long lessonId) {
+        return courseService.getLessonOnCourse(userDetails, courseId, lessonId);
     }
 
     @JsonView(LessonOnCourseDto.DetailsForTimetable.class)
@@ -74,7 +80,6 @@ public class CourseController {
         return courseService.editCourse(userDetails, id, courseDto);
     }
 
-    // TODO : А ТВОЙ ЛИ ЭТО КУРС ПРОВЕРИТЬ НАДО
     @JsonView({PaymentDto.CreateCourse.class})
     @PostMapping("/{id}/subscribe")
     @ResponseStatus(HttpStatus.CREATED)
@@ -84,7 +89,6 @@ public class CourseController {
         return courseService.subscribeToCourse(userDetails, paymentDto, courseId);
     }
 
-    // TODO : А ТВОЙ ЛИ ЭТО КУРС ПРОВЕРИТЬ НАДО
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteCourse(@AuthenticationPrincipal JwtUserDetails userDetails,

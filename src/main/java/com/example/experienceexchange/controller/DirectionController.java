@@ -20,7 +20,6 @@ public class DirectionController {
         this.directionService = directionService;
     }
 
-    // TODO: ПОКАЗЫВАТЬ ЛИ ID ДЛЯ НЕ АДМИНОВ
     @GetMapping("")
     public List<DirectionDto> getAllDirection() {
         return directionService.getAllDirections();

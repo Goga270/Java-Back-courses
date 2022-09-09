@@ -1,6 +1,7 @@
 package com.example.experienceexchange.util.date;
 
 import java.time.Instant;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtil {
@@ -17,5 +18,12 @@ public class DateUtil {
 
     public static Boolean isDateAfterNow(Date date) {
         return date.after(dateTimeNow());
+    }
+
+    public static Date addDays(Date date, Integer days) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, days);
+        return cal.getTime();
     }
 }

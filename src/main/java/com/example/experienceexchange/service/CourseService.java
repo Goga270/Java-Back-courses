@@ -1,24 +1,35 @@
 package com.example.experienceexchange.service;
 
-import com.example.experienceexchange.dto.*;
+import com.example.experienceexchange.dto.CourseDto;
+import com.example.experienceexchange.dto.LessonOnCourseDto;
+import com.example.experienceexchange.dto.PaymentDto;
 import com.example.experienceexchange.exception.CourseNotFoundException;
+import com.example.experienceexchange.exception.LessonNotFoundException;
 import com.example.experienceexchange.exception.NotAccessException;
 import com.example.experienceexchange.exception.SubscriptionNotPossibleException;
-import com.example.experienceexchange.model.*;
+import com.example.experienceexchange.model.Course;
+import com.example.experienceexchange.model.LessonOnCourse;
+import com.example.experienceexchange.model.Payment;
+import com.example.experienceexchange.model.User;
 import com.example.experienceexchange.repository.filter.IFilterProvider;
 import com.example.experienceexchange.repository.filter.SearchCriteria;
-import com.example.experienceexchange.repository.interfaceRepo.*;
+import com.example.experienceexchange.repository.interfaceRepo.ICourseRepository;
+import com.example.experienceexchange.repository.interfaceRepo.ILessonOnCourseRepository;
+import com.example.experienceexchange.repository.interfaceRepo.IPaymentRepository;
+import com.example.experienceexchange.repository.interfaceRepo.IUserRepository;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.ICourseService;
 import com.example.experienceexchange.util.date.DateUtil;
 import com.example.experienceexchange.util.mapper.CourseMapper;
 import com.example.experienceexchange.util.mapper.LessonOnCourseMapper;
 import com.example.experienceexchange.util.mapper.PaymentMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityExistsException;
-import java.util.HashMap;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +40,8 @@ public class CourseService implements ICourseService {
     private static final String SUB_TO_CLOSE_COURSE = "Course is closed for subscription";
     private static final String SUB_WITH_INCORRECT_PRICE = "Entered price is less than the fixed price";
     private static final String NOT_ACCESS_EDIT = "No access to edit resource";
+    private static final String NOT_ACCESS_TO_COURSE = "no access to course";
+    private static final String NOT_ACCESS_TO_LESSON = "no access to lesson on course";
 
     private final ICourseRepository courseRepository;
     private final IUserRepository userRepository;
@@ -43,7 +56,8 @@ public class CourseService implements ICourseService {
                          IUserRepository userRepository,
                          ILessonOnCourseRepository lessonOnCourseRepository,
                          IPaymentRepository paymentRepository,
-                         IFilterProvider filterProvider, PaymentMapper paymentMapper,
+                         @Qualifier("courseFilter") IFilterProvider filterProvider,
+                         PaymentMapper paymentMapper,
                          CourseMapper courseMapper,
                          LessonOnCourseMapper lessonMapper) {
         this.courseRepository = courseRepository;
@@ -61,13 +75,11 @@ public class CourseService implements ICourseService {
     public List<CourseDto> getCourses(List<SearchCriteria> filters) {
         Map<String, List<SearchCriteria>> searchMap = filterProvider.createSearchMap(filters);
         String filterQuery = filterProvider.createFilterQuery(searchMap);
-//        List<Course> courses = courseRepository.findAllCourseByFilter(filterQuery);
-
 
         List<Course> courses = courseRepository.findAllCourseByFilter(filterQuery);
         return courseMapper.toCourseDto(courses);
     }
-    // TODO : ДОБАВИТЬ ПОИСК ЧЕРЕЗ LIKE
+
     @Transactional
     @Override
     public CourseDto createCourse(JwtUserDetails userDetails, CourseDto courseDto) {
@@ -83,7 +95,7 @@ public class CourseService implements ICourseService {
         courseRepository.update(newCourse);
         return courseMapper.courseToCourseDto(newCourse);
     }
-    // TODO : ЕСЛИ НА КУРС УЖЕ ЕСТЬ ЗАПИСЬ ТО НВЕРНО ЧТО ТО МОЖНО МЕНЯТЬ
+
     @Transactional
     @Override
     public CourseDto editCourse(JwtUserDetails userDetails, Long id, CourseDto courseDto) {
@@ -120,6 +132,31 @@ public class CourseService implements ICourseService {
         Long userId = userDetails.getId();
         List<LessonOnCourse> lessons = lessonOnCourseRepository.findAllLessonsOnCourseByUserIdAndCourseId(userId, courseId);
         return lessonMapper.toLessonOnCourseDto(lessons);
+    }
+
+    // TODO : TEST
+    @Override
+    public LessonOnCourseDto getLessonOnCourse(JwtUserDetails userDetails, Long courseId, Long lessonId) {
+        List<LessonOnCourse> lessons = lessonOnCourseRepository.findAllLessonsOnCourseByUserIdAndCourseId(userDetails.getId(), courseId);
+        if (lessons.isEmpty()) {
+            throw new NotAccessException(NOT_ACCESS_TO_COURSE);
+        }
+        LessonOnCourse lessonOnCourse = lessons
+                .stream()
+                .filter(lesson -> lesson.getId().equals(lessonId))
+                .findFirst()
+                .orElse(null);
+
+        if (lessonOnCourse == null) {
+            throw new LessonNotFoundException(lessonId);
+        }
+        // TODO : TEST
+        Date dateStartLesson = lessonOnCourse.getStartLesson();
+        Date dateAccessLesson = DateUtil.addDays(dateStartLesson, lessonOnCourse.getAccessDuration());
+        if (DateUtil.isDateAfterNow(dateStartLesson) && DateUtil.isDateBeforeNow(dateAccessLesson)) {
+            throw new NotAccessException(NOT_ACCESS_TO_LESSON);
+        }
+        return lessonMapper.lessonOnCourseToLessonOnCourseDto(lessonOnCourse);
     }
 
     @Transactional
@@ -161,9 +198,7 @@ public class CourseService implements ICourseService {
             throw new SubscriptionNotPossibleException(SUB_WITH_INCORRECT_PRICE);
         }
     }
-    // TODO : ДОБАВИТЬ В FILL СКРИПТ CURRENT_NUMBER_USER, А ТО БУДЕТ ОШИБКА БУДЕТ NULLpOITER
 
-    // TODO : ПРОВЕРИТЬ ДАТЫ ЧТОБЫ КОНЕЦ КУРСА БЫЛ ПОСЛЕ ЕГО НАЧАЛА  - ДЛЯ ЧАЙНИКОВ
     @Transactional
     @Override
     public CourseDto createLessonOnCourse(JwtUserDetails userDetails, Long courseId, LessonOnCourseDto lessonDto) {
@@ -183,7 +218,7 @@ public class CourseService implements ICourseService {
         }
         return course;
     }
-    // TODO: 1 PAR - id author !!!!
+
     private void checkAccessToCourseEdit(Course course, Long userId) throws NotAccessException {
         if (!course.getAuthor().getId().equals(userId)) {
             throw new NotAccessException(NOT_ACCESS_EDIT);

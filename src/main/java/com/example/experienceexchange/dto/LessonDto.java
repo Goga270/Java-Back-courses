@@ -1,7 +1,6 @@
 package com.example.experienceexchange.dto;
 
 import com.example.experienceexchange.constant.TypeLesson;
-import com.example.experienceexchange.model.Comment;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
@@ -30,12 +29,18 @@ public class LessonDto {
     public interface Edit {
     }
 
+    public interface DetailsForTimetable {
+    }
+
+    public interface DetailsForUserProfile {
+    }
+
     @JsonView({CommentDto.CreateForLesson.class, Details.class})
     @Null(groups = {Create.class})
     @NotNull(groups = {CommentDto.CreateForLesson.class, Edit.class})
     private Long id;
 
-    @JsonView({Details.class})
+    @JsonView({Details.class, DetailsForTimetable.class, DetailsForUserProfile.class})
     @NotNull(groups = {Create.class, Edit.class})
     private String name;
     @JsonView({Details.class})
@@ -47,21 +52,21 @@ public class LessonDto {
     @JsonView({Details.class})
     @NotNull(groups = {Create.class, Edit.class})
     private String linkVideo;
-    @JsonView({Details.class})
+    @JsonView({Details.class, DetailsForTimetable.class, DetailsForUserProfile.class})
     @NotNull(groups = {Create.class, Edit.class})
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss X")
     private Date startLesson;
 
-    @JsonView({Details.class})
+    @JsonView({Details.class, DetailsForTimetable.class, DetailsForUserProfile.class})
     @NotNull(groups = {Create.class, Edit.class})
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss X")
     private Date endLesson;
 
-    @JsonView({Details.class})
+    @JsonView({Details.class, DetailsForUserProfile.class})
     @NotNull(groups = {Create.class, Edit.class})
     @Min(groups = {Create.class, Edit.class}, value = 1, message = "must be between 1 and 5")
     @Max(groups = {Create.class, Edit.class}, value = 5, message = "must be between 1 and 5")
-    private Integer skillLevel;
+    private Integer masteryLevel;
 
     @JsonView({Details.class})
     @Null(groups = {Create.class, Edit.class})
@@ -75,11 +80,11 @@ public class LessonDto {
     @Null(groups = {Create.class, Edit.class})
     private Integer currentNumberUsers;
 
-    @JsonView({Details.class})
+    @JsonView({Details.class, DetailsForUserProfile.class})
     @NotNull(groups = {Create.class, Edit.class})
     private BigDecimal price;
 
-    @JsonView({Details.class})
+    @JsonView({Details.class, DetailsForTimetable.class, DetailsForUserProfile.class})
     @NotNull(groups = {Create.class})
     private TypeLesson typeLesson;
 

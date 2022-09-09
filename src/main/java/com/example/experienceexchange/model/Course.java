@@ -43,7 +43,6 @@ public class Course {
 
     @Column(name = "price")
     private BigDecimal price;
-    // TODO: ХРАНИТЬ ДАТУ БЕЗ ТАЙМЗОНЫ ПОТОМУ ЧТО ТУТ ОНА НЕ НУЖНА
     @Column(name = "date_start_course")
     private Date dateStart;
 

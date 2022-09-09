@@ -57,6 +57,10 @@
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.13.3" />
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.13.3" />
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.13.3" />
+          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-slf4j-impl:2.17.1" />
+          <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.25" />
+          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-api:2.17.1" />
+          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-core:2.17.1" />
         </element>
       </element>
       <element id="directory" name="META-INF">

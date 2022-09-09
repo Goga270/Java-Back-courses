@@ -17,15 +17,10 @@ import java.util.Date;
 @Getter
 @Setter
 public class UserDto {
-    // TODO : НУЖЕН ЛИ AdminDetails?
     public interface Registration {
     }
 
     public interface Edit {
-    }
-
-    public interface AdminDetails {
-
     }
 
     public interface Details {
@@ -69,17 +64,14 @@ public class UserDto {
     @Null(groups = {Edit.class})
     private String password;
 
-    @JsonView({AdminDetails.class,Details.class})
+    @JsonView({Details.class})
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss X")
     private Date created;
 
-    @JsonView(AdminDetails.class)
     private Date updated;
 
-    @JsonView(AdminDetails.class)
     @Null(groups = {Registration.class,Edit.class})
     private Role role;
 
-    @JsonView(AdminDetails.class)
     private Status status;
 }

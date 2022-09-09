@@ -6,7 +6,8 @@ public enum Permission {
     EDIT_COURSE("edit-course"),
     EDIT_LESSON("edit-lesson"),
     READ("read"),
-    REGISTRATION_ADMIN("registration-admin");
+    REGISTRATION_ADMIN("registration-admin"),
+    BLOCK_USER("block-user");
 
     private final String permission;
 

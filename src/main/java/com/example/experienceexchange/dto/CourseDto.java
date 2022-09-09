@@ -1,6 +1,5 @@
 package com.example.experienceexchange.dto;
 
-import com.example.experienceexchange.model.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
@@ -12,15 +11,16 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 @Getter
 @Setter
 public class CourseDto {
-    // TODO: mapper + параметры
 
     public interface Create {
+    }
+
+    public interface DetailsForUserProfile {
     }
 
     public interface Details {
@@ -34,7 +34,7 @@ public class CourseDto {
     @NotNull(groups = {CommentDto.CreateForCourse.class, Edit.class})
     private Long id;
 
-    @JsonView({Details.class})
+    @JsonView({Details.class, DetailsForUserProfile.class})
     @NotNull(groups = {Create.class, Edit.class})
     private String name;
 
@@ -42,11 +42,11 @@ public class CourseDto {
     @NotNull(groups = {Create.class, Edit.class})
     private String description;
 
-    @JsonView({Details.class})
+    @JsonView({Details.class, DetailsForUserProfile.class})
     @NotNull(groups = {Create.class, Edit.class})
     @Min(groups = {Create.class, Edit.class}, value = 1, message = "must be between 1 and 5")
     @Max(groups = {Create.class, Edit.class}, value = 5, message = "must be between 1 and 5")
-    private Integer skillLevel;
+    private Integer masteryLevel;
 
     @JsonView({Details.class})
     @Null(groups = {Create.class, Edit.class})
@@ -59,21 +59,18 @@ public class CourseDto {
     @JsonView({Details.class})
     @Null(groups = {Create.class, Edit.class})
     private Integer currentNumberUsers;
-        // TODO : МОЖНО ЛИ МЕНЯТЬ ПРАЙС (ИЗМЕНИТЬСЯ У КЛИЕНТОВ)
     @JsonView({Details.class})
     @NotNull(groups = {Create.class, Edit.class})
     private BigDecimal price;
 
-    // TODO : МОЖНО МЕНЯТЬ ТОЛЬКО ВО ВРЕМЯ ПОКА КУРС НЕ НАЧАЛСЯ ИНАЧЕ НЕЛЬЗЯ
-    @JsonView({Details.class})
+    @JsonView({Details.class, DetailsForUserProfile.class})
     @NotNull(groups = {Edit.class, Create.class})
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss Z")
     private Date dateStart;
 
-    // TODO : МОЖНО МЕНЯТЬ ТОЛЬКО ВО ВРЕМЯ ПОКА КУРС НЕ НАЧАЛСЯ ИНАЧЕ НЕЛЬЗЯ
-    @JsonView({Details.class})
+    @JsonView({Details.class, DetailsForUserProfile.class})
     @NotNull(groups = {Edit.class, Create.class})
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss Z")
     private Date dateEnd;
 
     @JsonView({Details.class})
@@ -84,6 +81,6 @@ public class CourseDto {
 
     @JsonView({Details.class})
     private Set<SkillDto> skills;
-
+    @JsonView({DetailsForUserProfile.class})
     private Set<LessonOnCourseDto> lessons;
 }

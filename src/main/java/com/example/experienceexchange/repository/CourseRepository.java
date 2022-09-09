@@ -2,11 +2,13 @@ package com.example.experienceexchange.repository;
 
 import com.example.experienceexchange.model.Course;
 import com.example.experienceexchange.repository.interfaceRepo.ICourseRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
 import java.util.List;
 
+@Slf4j
 @Repository
 public class CourseRepository extends HibernateAbstractDao<Course, Long> implements ICourseRepository {
 

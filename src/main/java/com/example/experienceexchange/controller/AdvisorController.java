@@ -27,6 +27,7 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
     private static final String SOLUTION_PASSWORD_NOT_MATCH = "Try entering passwords again";
     private static final String SOLUTION_NUMBER_FORMAT = "Check your search filters";
 
+    // TODO : ВСЕ ЛИ ЛОВЛЮ ?
     @ExceptionHandler({NumberFormatException.class})
     protected ResponseEntity<Object> handleNumberFormat(NumberFormatException exception, WebRequest request) {
         Map<String, String> body = new HashMap<>();
@@ -35,7 +36,6 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
         return getObjectResponseEntity(exception, request, body, httpStatus);
     }
 
-    // TODO: НАДО ЛИ ИХ ЛОВИТЬ ?
     @ExceptionHandler({JwtTokenInvalidException.class})
     protected ResponseEntity<Object> handleInvalidToken(RuntimeException exception, WebRequest request) {
         Map<String, String> body = new HashMap<>();

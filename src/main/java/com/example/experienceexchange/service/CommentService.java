@@ -16,7 +16,6 @@ import java.util.List;
 
 @Service
 public class CommentService implements ICommentService {
-    // TODO : НАДО ЛИ ВЫВОДИТЬ КУРСЫ КОТОРЫЕ УЖЕ КОНЧИЛИСЬ ВО ВСЕХ КУРСАХ
     private final ICommentRepository commentRepository;
     private final IUserRepository userRepository;
     private final CommentMapper commentMapper;

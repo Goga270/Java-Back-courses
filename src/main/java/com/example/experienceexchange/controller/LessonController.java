@@ -1,9 +1,8 @@
 package com.example.experienceexchange.controller;
 
-import com.example.experienceexchange.dto.FilterDto;
 import com.example.experienceexchange.dto.LessonDto;
-import com.example.experienceexchange.dto.LessonOnCourseDto;
 import com.example.experienceexchange.dto.PaymentDto;
+import com.example.experienceexchange.repository.filter.SearchCriteria;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.ILessonService;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -24,24 +23,19 @@ public class LessonController {
         this.lessonService = lessonService;
     }
 
-    /*@GetMapping({"/{direction}"})
-    public Set<LessonDto> getLessonByDirection(@PathVariable String direction,
-                                                @RequestBody FilterDto filterDto) {
-        return lessonService.getLessonByDirection();
-    }*/
+    @JsonView({LessonDto.Details.class})
+    @GetMapping({""})
+    public List<LessonDto> getLessonByDirection(@RequestBody List<SearchCriteria> filters) {
+        return lessonService.getLessons(filters);
+    }
 
     @JsonView({LessonDto.Details.class})
-    @GetMapping("")
-    public List<LessonDto> getLessons(@RequestBody FilterDto filterDto) {
-        return lessonService.getLessonByDirection();
-    }
-
     @GetMapping("/{id}")
     public LessonDto getLesson(@PathVariable("id") Long lessonId) {
-        return lessonService.getLesson(lessonId);
+        return lessonService.getLessons(lessonId);
     }
-
-
+    // TODO : JSONVOIEW - НА РАЗНЫЕ ЗАДАЧИ НАПРИМЕР ПОСМОТРЕТЬ ПРОСТО ИНФУ ПО КУРСУ И ЗАЙТИ НА САМ УРОК С ДОМАШКОЙ И Т.П.
+    @JsonView({LessonDto.DetailsForTimetable.class})
     @GetMapping("/schedule-my-lessons")
     public List<LessonDto> getScheduleBySingleLesson(@AuthenticationPrincipal JwtUserDetails userDetails) {
         return lessonService.getSchedule(userDetails);
@@ -63,11 +57,11 @@ public class LessonController {
         return lessonService.subscribeToLesson(userDetails, paymentDto, lessonId);
     }
 
-    @PutMapping("/{id}/settings")
+    @PutMapping("/{lessonId}/settings")
     public LessonDto editLesson(@AuthenticationPrincipal JwtUserDetails userDetails,
-                                @PathVariable Long id,
+                                @PathVariable Long lessonId,
                                 @RequestBody @Validated(LessonDto.Edit.class) LessonDto lessonDto) {
-        return lessonService.editLesson(userDetails, id, lessonDto);
+        return lessonService.editLesson(userDetails, lessonId, lessonDto);
     }
 
     @DeleteMapping("/{id}")

@@ -20,8 +20,16 @@ public class UserController {
         this.userService = userService;
     }
 
-    // TODO : На уроки то и курсы надо как то заходить
-    // TODO : ( MY SUBS / LESSONS )
+    @JsonView({LessonDto.DetailsForUserProfile.class})
+    @GetMapping("/profile/lessons-subscriptions")
+    public List<LessonDto> getLessonsSubscription(@AuthenticationPrincipal JwtUserDetails userDetails) {
+        return userService.getLessonsSubscriptionByUser(userDetails);
+    }
+    @JsonView({CourseDto.DetailsForUserProfile.class})
+    @GetMapping("/profile/courses-subscriptions")
+    public List<CourseDto> getCoursesSubscription(@AuthenticationPrincipal JwtUserDetails userDetails) {
+        return userService.getCoursesSubscriptionByUser(userDetails);
+    }
 
     @GetMapping("/profile/payments")
     public List<PaymentDto> getPayments(@AuthenticationPrincipal JwtUserDetails userDetails) {

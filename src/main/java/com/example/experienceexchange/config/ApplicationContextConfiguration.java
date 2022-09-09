@@ -2,8 +2,10 @@ package com.example.experienceexchange.config;
 
 import com.example.experienceexchange.model.*;
 import com.example.experienceexchange.repository.*;
+import com.example.experienceexchange.repository.filter.IFilterProvider;
+import com.example.experienceexchange.repository.filter.IPredicateBuilder;
+import com.example.experienceexchange.repository.filter.JpqlFilterProvider;
 import com.example.experienceexchange.repository.filter.PredicateBuilder;
-import com.example.experienceexchange.repository.filter.PredicateBuilderImpl;
 import com.example.experienceexchange.repository.interfaceRepo.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
@@ -21,7 +23,6 @@ import javax.sql.DataSource;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.TimeZone;
 
 @Configuration
 @ComponentScan(basePackages = {"com.example.experienceexchange"})
@@ -46,18 +47,30 @@ public class ApplicationContextConfiguration {
     private String DIALECT;
     @Value("${spring.jpa.properties.packagesToScan}")
     private String PACKAGES_TO_SCAN;
-    @Value("spring.timeZone.zone")
-    private String ZONE_ID;
 
     @Bean
-    public List<String> predicates() {
-        List<String> predicateBuilders = new LinkedList<>();
-        predicateBuilders.add("section.id");
-        predicateBuilders.add("direction.id");
-        predicateBuilders.add("skill.id");
-        predicateBuilders.add("course.masteryLevel");
+    public IFilterProvider courseFilter() {
+        List<String> parameters = new LinkedList<>();
+        parameters.add("section.id");
+        parameters.add("direction.id");
+        parameters.add("skill.id");
+        parameters.add("course.masteryLevel");
+        return new JpqlFilterProvider(parameters, predicateBuilder());
+    }
 
-        return predicateBuilders;
+    @Bean
+    public IFilterProvider lessonFilter() {
+        List<String> parameters = new LinkedList<>();
+        parameters.add("section.id");
+        parameters.add("direction.id");
+        parameters.add("skill.id");
+        parameters.add("lesson.masteryLevel");
+        return new JpqlFilterProvider(parameters, predicateBuilder());
+    }
+
+    @Bean
+    public IPredicateBuilder predicateBuilder() {
+        return new PredicateBuilder();
     }
 
     @Bean

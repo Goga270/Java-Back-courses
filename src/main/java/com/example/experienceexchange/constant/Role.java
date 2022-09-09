@@ -9,8 +9,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public enum Role {
-    ADMIN(Arrays.asList(Permission.READ, Permission.EDIT_DIRECTION, Permission.EDIT_SECTION, Permission.REGISTRATION_ADMIN)),
-    USER(Arrays.asList(Permission.EDIT_COURSE, Permission.EDIT_LESSON, Permission.READ));
+
+    ADMIN(Arrays.asList(
+            Permission.READ,
+            Permission.EDIT_DIRECTION,
+            Permission.EDIT_SECTION,
+            Permission.REGISTRATION_ADMIN,
+            Permission.BLOCK_USER)),
+
+    USER(Arrays.asList(Permission.EDIT_COURSE,
+            Permission.EDIT_LESSON,
+            Permission.READ));
 
     private final List<Permission> permissions;
 

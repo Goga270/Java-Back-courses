@@ -23,7 +23,6 @@ public class IUserMapperTest {
     private final static String EMAIL = "email@mail.ru";
     private final static Boolean VALID = true;
     private final static Status STATUS_ACTIVE = Status.ACTIVE;
-    // TODO: ЗАТЕСТИТЬ ДАТЫ
 
 
     @InjectMocks

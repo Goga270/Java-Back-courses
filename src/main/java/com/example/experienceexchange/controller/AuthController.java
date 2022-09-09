@@ -1,8 +1,8 @@
 package com.example.experienceexchange.controller;
 
-import com.example.experienceexchange.dto.UserDto;
 import com.example.experienceexchange.dto.LoginDto;
 import com.example.experienceexchange.dto.TokenDto;
+import com.example.experienceexchange.dto.UserDto;
 import com.example.experienceexchange.service.interfaceService.IAuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -33,5 +33,11 @@ public class AuthController {
     @ResponseStatus(HttpStatus.CREATED)
     public void registrationAdmin(@RequestBody @Validated({UserDto.Registration.class}) UserDto registrationDto) {
         authService.registrationAdmin(registrationDto);
+    }
+
+    @PatchMapping("/block-user")
+    @ResponseStatus(HttpStatus.OK)
+    public void blockUser(@RequestParam(name = "id") Long id) {
+        authService.blockUser(id);
     }
 }

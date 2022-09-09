@@ -4,7 +4,7 @@ import com.example.experienceexchange.dto.*;
 import com.example.experienceexchange.security.JwtUserDetails;
 
 import java.util.List;
-    // TODO : НЕЙМИНГ GET FIND
+
 public interface IUserService {
 
     UserDto getAccount(JwtUserDetails userDetails);
@@ -16,4 +16,8 @@ public interface IUserService {
     void changeEmail(JwtUserDetails jwtUserDetails, NewEmailDto newEmailDto);
 
     List<PaymentDto> getPayments(JwtUserDetails userDetails);
+
+    List<LessonDto> getLessonsSubscriptionByUser(JwtUserDetails userDetails);
+
+    List<CourseDto> getCoursesSubscriptionByUser(JwtUserDetails userDetails);
 }

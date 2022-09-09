@@ -1,7 +1,6 @@
 package com.example.experienceexchange.service.interfaceService;
 
 import com.example.experienceexchange.dto.CourseDto;
-import com.example.experienceexchange.dto.FilterDto;
 import com.example.experienceexchange.dto.LessonOnCourseDto;
 import com.example.experienceexchange.dto.PaymentDto;
 import com.example.experienceexchange.repository.filter.SearchCriteria;
@@ -28,4 +27,6 @@ public interface ICourseService {
     List<LessonOnCourseDto> getSchedule(JwtUserDetails userDetails);
 
     List<LessonOnCourseDto> getScheduleByCourse(JwtUserDetails userDetails, Long courseId);
+
+    LessonOnCourseDto getLessonOnCourse(JwtUserDetails userDetails, Long courseId, Long lessonId);
 }

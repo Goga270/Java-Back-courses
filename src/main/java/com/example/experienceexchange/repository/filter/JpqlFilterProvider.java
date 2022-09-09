@@ -1,6 +1,5 @@
 package com.example.experienceexchange.repository.filter;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
@@ -14,11 +13,12 @@ public class JpqlFilterProvider implements IFilterProvider {
 
     private final String FORMAT_AND = "AND ";
 
-    private final List<String> fields;
-    private final PredicateBuilder predicateBuilder;
+    private final List<String> parametersForFilter;
+    private final IPredicateBuilder predicateBuilder;
 
-    public JpqlFilterProvider(@Qualifier("predicates") List<String> fields, PredicateBuilder predicateBuilder) {
-        this.fields = fields;
+    public JpqlFilterProvider(List<String> parametersForFilter,
+                              IPredicateBuilder predicateBuilder) {
+        this.parametersForFilter = parametersForFilter;
         this.predicateBuilder = predicateBuilder;
     }
 
@@ -45,7 +45,7 @@ public class JpqlFilterProvider implements IFilterProvider {
             return null;
         }
         Map<String, List<SearchCriteria>> maps = new LinkedHashMap<>();
-        fields
+        parametersForFilter
                 .forEach(field -> maps.put(field, filters
                         .stream()
                         .filter(sc -> field.contains(sc.getKey()))
@@ -53,22 +53,4 @@ public class JpqlFilterProvider implements IFilterProvider {
                 );
         return maps;
     }
-
-    /*@Override
-    public Map<String, List<Long>> getParametersForQuery(Map<String, List<SearchCriteria>> searchMap) {
-        Map<String, List<Long>> collect = searchMap
-                .entrySet()
-                .stream()
-                .collect(
-                        Collectors.toMap(Map.Entry::getKey,
-                                entry -> entry
-                                        .getValue()
-                                        .stream()
-                                        .map(sc -> Long.valueOf(sc.getKey()))
-                                        .collect(Collectors.toList())
-                        )
-                );
-        return collect;
-    }*/
-
 }
