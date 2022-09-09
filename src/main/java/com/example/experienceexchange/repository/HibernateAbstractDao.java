@@ -2,19 +2,18 @@ package com.example.experienceexchange.repository;
 
 
 import com.example.experienceexchange.repository.interfaceRepo.GenericDao;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.validation.ConstraintViolationException;
 import java.io.Serializable;
 import java.util.List;
 
 public abstract class HibernateAbstractDao<T, PK extends Serializable> implements GenericDao<T, PK> {
 
     protected Class<T> type;
+
     @PersistenceContext
     protected EntityManager entityManager;
 
@@ -28,7 +27,7 @@ public abstract class HibernateAbstractDao<T, PK extends Serializable> implement
     public T update(T entity) {
         return entityManager.merge(entity);
     }
-    // TODO : ЗАЛОГИРОВАТЬ ?
+
     @Override
     public void deleteById(PK id) {
         T entity = find(id);

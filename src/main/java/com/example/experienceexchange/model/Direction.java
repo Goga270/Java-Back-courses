@@ -24,7 +24,10 @@ public class Direction {
     @Column(name = "header")
     private String header;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH,CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.DETACH,
+            CascadeType.REFRESH}, orphanRemoval = true)
     @JoinColumn(name = "direction_id", referencedColumnName = "id")
     private Set<Section> sections = new HashSet<>();
 

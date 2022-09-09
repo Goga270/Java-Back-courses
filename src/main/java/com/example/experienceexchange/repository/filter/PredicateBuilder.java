@@ -11,7 +11,7 @@ public class PredicateBuilder implements IPredicateBuilder {
     private static final String OPEN_BRACKET = "(";
     private static final String CLOSE_BRACKET = ")";
     private static final String FORMAT_PREDICATE = " %s=%s ";
-    private static final String FORMAT_OR = "OR";
+    private static final String FORMAT_OR = " OR ";
 
     @Override
     public String getGroup(List<SearchCriteria> searchCriteriaGroupingByParameters, String param) {

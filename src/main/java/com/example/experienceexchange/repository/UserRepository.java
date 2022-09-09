@@ -20,8 +20,7 @@ public class UserRepository extends HibernateAbstractDao<User, Long> implements 
 
         cq.select(root).where(cb.equal(root.get("email"), email));
         try {
-            User user = entityManager.createQuery(cq).getSingleResult();
-            return user;
+            return entityManager.createQuery(cq).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }

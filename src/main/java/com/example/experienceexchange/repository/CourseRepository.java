@@ -19,7 +19,7 @@ public class CourseRepository extends HibernateAbstractDao<Course, Long> impleme
                     "JOIN  course.skills skill " +
                     "WHERE course.dateStart > now() " +
                     "%s";
-    // TODO : ЗАЛОГИРОВАТЬ ЧТОБЫ ЗНАТЬ КАКОЙ СКРИПТ УЛЕТЕЛ В БАЗУ ДАННЫХ
+
     @Override
     public List<Course> findAllCourseByFilter(String filter) {
         String jpqlQuery = String.format(JPQL_FILTER_COURSE, filter);

@@ -8,7 +8,8 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository
-public class LessonRepository extends HibernateAbstractDao<LessonSingle,Long> implements ILessonRepository {
+public class LessonRepository extends HibernateAbstractDao<LessonSingle, Long> implements ILessonRepository {
+
     private static final String JPQL_FIND_LESSONS_BY_USER =
             "SELECT ln FROM LessonSingle ln " +
                     "JOIN FETCH ln.usersInLesson u " +
@@ -29,7 +30,7 @@ public class LessonRepository extends HibernateAbstractDao<LessonSingle,Long> im
         query.setParameter("userId", userId);
         return query.getResultList();
     }
-    // TODO : ЗАЛОГИРОВАТЬ ЧТОБЫ ЗНАТЬ КАКОЙ СКРИПТ УЛЕТЕЛ В БАЗУ ДАННЫХ
+
     @Override
     public List<LessonSingle> findAllLessonsByFilter(String filter) {
         String jpqlQuery = String.format(JPQL_FILTER_LESSON, filter);

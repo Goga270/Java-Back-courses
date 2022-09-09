@@ -18,6 +18,8 @@ import java.util.Date;
 public class JwtTokenProvider implements IJwtTokenProvider {
 
     private static final String HEADER_AUTHORIZATION = "Authorization";
+    private static final String TOKEN_INVALID = "Jwt token is invalid";
+
     private final byte[] SECRET;
     private final Long validityInMillisSeconds;
     private final UserDetailsService userDetailsService;
@@ -36,8 +38,11 @@ public class JwtTokenProvider implements IJwtTokenProvider {
     public String createToken(String email, Role role) {
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("role", String.valueOf(role));
+
         Date now = new Date();
+
         Date validity = new Date(now.getTime() + validityInMillisSeconds);
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
@@ -63,7 +68,7 @@ public class JwtTokenProvider implements IJwtTokenProvider {
             Jws<Claims> claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtTokenInvalidException("Jwt token is invalid");
+            throw new JwtTokenInvalidException(TOKEN_INVALID);
         }
     }
 

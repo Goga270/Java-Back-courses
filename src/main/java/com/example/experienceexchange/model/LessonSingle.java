@@ -65,7 +65,10 @@ public class LessonSingle extends Lesson {
     )
     private Set<Skill> skills = new HashSet<>();
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.DETACH,
+            CascadeType.REMOVE}, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
 
     public Boolean isAvailableForSubscription(Date nowDate) {

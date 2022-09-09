@@ -17,6 +17,7 @@ import java.util.Set;
 @Entity
 @Table(name = "courses")
 public class Course {
+
     @Id
     @SequenceGenerator(name = "seq_courses", sequenceName = "sequence_id_courses", allocationSize = 1)
     @GeneratedValue(generator = "seq_courses", strategy = GenerationType.SEQUENCE)
@@ -74,10 +75,17 @@ public class Course {
     private Set<Skill> skills = new HashSet<>();
 
 
-    @OneToMany(mappedBy = "course", cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(mappedBy = "course", cascade = {
+            CascadeType.PERSIST,
+            CascadeType.DETACH,
+            CascadeType.REMOVE}, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
 
-    @OneToMany(mappedBy = "course", cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(mappedBy = "course", cascade = {
+            CascadeType.PERSIST,
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.REMOVE}, orphanRemoval = true)
     private Set<LessonOnCourse> lessons = new HashSet<>();
 
     @ManyToMany(mappedBy = "courseSubscriptions")

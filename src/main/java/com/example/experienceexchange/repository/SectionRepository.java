@@ -5,5 +5,6 @@ import com.example.experienceexchange.repository.interfaceRepo.ISectionRepositor
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class SectionRepository extends HibernateAbstractDao<Section,Long> implements ISectionRepository {
+public class SectionRepository extends HibernateAbstractDao<Section, Long> implements ISectionRepository {
+    //
 }

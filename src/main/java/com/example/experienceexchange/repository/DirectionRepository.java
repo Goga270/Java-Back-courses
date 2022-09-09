@@ -5,5 +5,6 @@ import com.example.experienceexchange.repository.interfaceRepo.IDirectionReposit
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class DirectionRepository extends HibernateAbstractDao<Direction,Long> implements IDirectionRepository {
+public class DirectionRepository extends HibernateAbstractDao<Direction, Long> implements IDirectionRepository {
+    //
 }

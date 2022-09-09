@@ -1,7 +1,6 @@
 package com.example.experienceexchange.repository;
 
 import com.example.experienceexchange.model.Comment;
-import com.example.experienceexchange.model.Payment;
 import com.example.experienceexchange.repository.interfaceRepo.ICommentRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +11,7 @@ import java.util.List;
 
 @Repository
 public class CommentRepository extends HibernateAbstractDao<Comment, Long> implements ICommentRepository {
+
     @Override
     public List<Comment> findAllCommentsByCourseId(Long userId) {
         CriteriaBuilder cb = getCriteriaBuilder();
