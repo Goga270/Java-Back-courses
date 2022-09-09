@@ -17,18 +17,14 @@ import java.util.Date;
 @Getter
 @Setter
 public class UserDto {
-    public interface Registration {
-    }
 
-    public interface Edit {
-    }
-
-    public interface Details {
-    }
+    private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss X";
+    private static final String EMAIL_MESSAGE = "email invalid";
+    private static final String EMAIL_PATTERN = "^(.+)@(\\S+)$";
 
     @NotNull(groups = {Registration.class})
     @Null(groups = {Edit.class})
-    @Email(groups = {Registration.class}, message = "email invalid", regexp = "^(.+)@(\\S+)$")
+    @Email(groups = {Registration.class}, message = EMAIL_MESSAGE, regexp = EMAIL_MESSAGE)
     @JsonView(Details.class)
     private String email;
 
@@ -48,11 +44,9 @@ public class UserDto {
     @JsonView(Details.class)
     private String numberPhone;
 
-
     @NotNull(groups = {Registration.class, Edit.class})
     @JsonView(Details.class)
     private Integer age;
-
 
     @NotNull(groups = {Registration.class, Edit.class})
     @JsonView(Details.class)
@@ -65,13 +59,22 @@ public class UserDto {
     private String password;
 
     @JsonView({Details.class})
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss X")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_PATTERN)
     private Date created;
 
     private Date updated;
 
-    @Null(groups = {Registration.class,Edit.class})
+    @Null(groups = {Registration.class, Edit.class})
     private Role role;
 
     private Status status;
+
+    public interface Registration {
+    }
+
+    public interface Edit {
+    }
+
+    public interface Details {
+    }
 }

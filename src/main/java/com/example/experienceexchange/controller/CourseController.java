@@ -66,6 +66,7 @@ public class CourseController {
     }
 
     @PostMapping("/{id}/settings/new-lesson")
+    @ResponseStatus(HttpStatus.CREATED)
     public CourseDto createLesson(
             @AuthenticationPrincipal JwtUserDetails userDetails,
             @PathVariable("id") Long courseId,
@@ -92,7 +93,7 @@ public class CourseController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteCourse(@AuthenticationPrincipal JwtUserDetails userDetails,
-                             @PathVariable Long id) {
-        courseService.deleteCourse(userDetails, id);
+                             @PathVariable("id") Long courseId) {
+        courseService.deleteCourse(userDetails, courseId);
     }
 }

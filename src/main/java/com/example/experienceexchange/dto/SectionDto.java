@@ -10,17 +10,6 @@ import javax.validation.constraints.Null;
 @Getter
 @Setter
 public class SectionDto {
-    public interface Create {
-
-    }
-
-    public interface Edit {
-    }
-
-    public interface AdminDetails {
-
-    }
-
 
     @JsonView({AdminDetails.class,CourseDto.Details.class, LessonDto.Details.class})
     @Null(groups = {Create.class, DirectionDto.Create.class})
@@ -34,4 +23,12 @@ public class SectionDto {
     @NotNull(groups = {Create.class, Edit.class})
     private Long directionId;
 
+    public interface Create {
+    }
+
+    public interface Edit {
+    }
+
+    public interface AdminDetails {
+    }
 }

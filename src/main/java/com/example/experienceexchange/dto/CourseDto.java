@@ -17,17 +17,8 @@ import java.util.Set;
 @Setter
 public class CourseDto {
 
-    public interface Create {
-    }
-
-    public interface DetailsForUserProfile {
-    }
-
-    public interface Details {
-    }
-
-    public interface Edit {
-    }
+    private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss X";
+    private static final String MASTERY_LEVEL_MESSAGE = "must be between 1 and 5";
 
     @JsonView({CommentDto.CreateForCourse.class, Details.class})
     @Null(groups = {Create.class})
@@ -44,8 +35,8 @@ public class CourseDto {
 
     @JsonView({Details.class, DetailsForUserProfile.class})
     @NotNull(groups = {Create.class, Edit.class})
-    @Min(groups = {Create.class, Edit.class}, value = 1, message = "must be between 1 and 5")
-    @Max(groups = {Create.class, Edit.class}, value = 5, message = "must be between 1 and 5")
+    @Min(groups = {Create.class, Edit.class}, value = 1, message = MASTERY_LEVEL_MESSAGE)
+    @Max(groups = {Create.class, Edit.class}, value = 5, message = MASTERY_LEVEL_MESSAGE)
     private Integer masteryLevel;
 
     @JsonView({Details.class})
@@ -59,18 +50,19 @@ public class CourseDto {
     @JsonView({Details.class})
     @Null(groups = {Create.class, Edit.class})
     private Integer currentNumberUsers;
+
     @JsonView({Details.class})
     @NotNull(groups = {Create.class, Edit.class})
     private BigDecimal price;
 
     @JsonView({Details.class, DetailsForUserProfile.class})
     @NotNull(groups = {Edit.class, Create.class})
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss Z")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_PATTERN)
     private Date dateStart;
 
     @JsonView({Details.class, DetailsForUserProfile.class})
     @NotNull(groups = {Edit.class, Create.class})
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss Z")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_PATTERN)
     private Date dateEnd;
 
     @JsonView({Details.class})
@@ -81,6 +73,19 @@ public class CourseDto {
 
     @JsonView({Details.class})
     private Set<SkillDto> skills;
+
     @JsonView({DetailsForUserProfile.class})
     private Set<LessonOnCourseDto> lessons;
+
+    public interface Create {
+    }
+
+    public interface DetailsForUserProfile {
+    }
+
+    public interface Details {
+    }
+
+    public interface Edit {
+    }
 }

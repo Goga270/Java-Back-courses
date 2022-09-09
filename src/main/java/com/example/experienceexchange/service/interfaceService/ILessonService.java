@@ -9,17 +9,19 @@ import java.util.List;
 
 public interface ILessonService {
 
+    List<LessonDto> getLessons(List<SearchCriteria> filters);
+
+    LessonDto getLesson(Long lessonId);
+
+    LessonDto getLesson(JwtUserDetails userDetails, Long lessonId);
+
+    List<LessonDto> getSchedule(JwtUserDetails userDetails);
+
     LessonDto createLesson(JwtUserDetails userDetails, LessonDto lessonDto);
 
     LessonDto editLesson(JwtUserDetails userDetails, Long lessonId, LessonDto lessonDto);
 
-    void deleteLesson(JwtUserDetails userDetails, Long id);
-
-    List<LessonDto> getLessons(List<SearchCriteria> filters);
-
     PaymentDto subscribeToLesson(JwtUserDetails userDetails, PaymentDto paymentDto, Long lessonId);
 
-    LessonDto getLessons(Long lessonId);
-
-    List<LessonDto> getSchedule(JwtUserDetails userDetails);
+    void deleteLesson(JwtUserDetails userDetails, Long id);
 }

@@ -15,25 +15,20 @@ public class LessonOnCourseDto {
 
     private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss X";
 
-    public interface Create {
-    }
-
-    public interface DetailsForTimetable {
-    }
-
-    public interface DetailsForSubscribe {
-    }
-
     @Null(groups = {Create.class})
     private Long id;
+
     @JsonView({DetailsForTimetable.class, DetailsForSubscribe.class})
     @NotNull(groups = {Create.class})
     private String name;
+
     @JsonView({DetailsForSubscribe.class})
     @NotNull(groups = {Create.class})
     private String description;
+
     @JsonView({DetailsForSubscribe.class})
     private String homeworkLink;
+
     @JsonView({DetailsForSubscribe.class})
     private String linkVideo;
 
@@ -53,4 +48,13 @@ public class LessonOnCourseDto {
 
     @JsonView({DetailsForTimetable.class})
     private Long courseId;
+
+    public interface Create {
+    }
+
+    public interface DetailsForTimetable {
+    }
+
+    public interface DetailsForSubscribe {
+    }
 }

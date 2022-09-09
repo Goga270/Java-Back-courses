@@ -25,16 +25,24 @@ public class LessonController {
 
     @JsonView({LessonDto.Details.class})
     @GetMapping({""})
-    public List<LessonDto> getLessonByDirection(@RequestBody List<SearchCriteria> filters) {
+    public List<LessonDto> getLessons(@RequestBody List<SearchCriteria> filters) {
         return lessonService.getLessons(filters);
     }
 
     @JsonView({LessonDto.Details.class})
     @GetMapping("/{id}")
     public LessonDto getLesson(@PathVariable("id") Long lessonId) {
-        return lessonService.getLessons(lessonId);
+        return lessonService.getLesson(lessonId);
     }
-    // TODO : JSONVOIEW - НА РАЗНЫЕ ЗАДАЧИ НАПРИМЕР ПОСМОТРЕТЬ ПРОСТО ИНФУ ПО КУРСУ И ЗАЙТИ НА САМ УРОК С ДОМАШКОЙ И Т.П.
+
+    // TODO : TEST
+    @JsonView({LessonDto.DetailsForSubscriber.class})
+    @GetMapping("/subscriptions/{id}")
+    public LessonDto getLesson(@AuthenticationPrincipal JwtUserDetails userDetails,
+                               @PathVariable("id") Long lessonId) {
+        return lessonService.getLesson(userDetails, lessonId);
+    }
+
     @JsonView({LessonDto.DetailsForTimetable.class})
     @GetMapping("/schedule-my-lessons")
     public List<LessonDto> getScheduleBySingleLesson(@AuthenticationPrincipal JwtUserDetails userDetails) {
@@ -67,7 +75,7 @@ public class LessonController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteLesson(@AuthenticationPrincipal JwtUserDetails userDetails,
-                             @PathVariable Long id) {
-        lessonService.deleteLesson(userDetails, id);
+                             @PathVariable("id") Long lessonId) {
+        lessonService.deleteLesson(userDetails, lessonId);
     }
 }

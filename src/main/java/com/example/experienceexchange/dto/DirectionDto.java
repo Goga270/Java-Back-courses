@@ -12,10 +12,6 @@ import java.util.Set;
 @Getter
 public class DirectionDto {
 
-    public interface Create {
-
-    }
-
     @JsonView({CourseDto.Details.class, LessonDto.Details.class})
     @Null(groups = Create.class)
     private Long id;
@@ -25,4 +21,8 @@ public class DirectionDto {
     private String header;
 
     private Set<SectionDto> sections;
+
+    public interface Create {
+
+    }
 }

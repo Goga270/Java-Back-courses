@@ -8,5 +8,6 @@ import lombok.Setter;
 public class TokenDto {
 
     private String email;
+
     private String token;
 }

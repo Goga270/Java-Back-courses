@@ -20,52 +20,44 @@ import java.util.Set;
 @Setter
 public class LessonDto {
 
-    public interface Create {
-    }
-
-    public interface Details {
-    }
-
-    public interface Edit {
-    }
-
-    public interface DetailsForTimetable {
-    }
-
-    public interface DetailsForUserProfile {
-    }
+    private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss X";
+    private static final String MASTERY_LEVEL_MESSAGE = "must be between 1 and 5";
 
     @JsonView({CommentDto.CreateForLesson.class, Details.class})
     @Null(groups = {Create.class})
     @NotNull(groups = {CommentDto.CreateForLesson.class, Edit.class})
     private Long id;
 
-    @JsonView({Details.class, DetailsForTimetable.class, DetailsForUserProfile.class})
+    @JsonView({DetailsForSubscriber.class, Details.class, DetailsForTimetable.class, DetailsForUserProfile.class})
     @NotNull(groups = {Create.class, Edit.class})
     private String name;
-    @JsonView({Details.class})
+
+    @JsonView({DetailsForSubscriber.class, Details.class})
     @NotNull(groups = {Create.class, Edit.class})
     private String description;
-    @JsonView({Details.class})
+
+    @JsonView({DetailsForSubscriber.class})
     @NotNull(groups = {Create.class, Edit.class})
     private String homeworkLink;
-    @JsonView({Details.class})
+
+    @JsonView({DetailsForSubscriber.class})
     @NotNull(groups = {Create.class, Edit.class})
     private String linkVideo;
-    @JsonView({Details.class, DetailsForTimetable.class, DetailsForUserProfile.class})
+
+    @JsonView({DetailsForSubscriber.class, Details.class, DetailsForTimetable.class, DetailsForUserProfile.class})
     @NotNull(groups = {Create.class, Edit.class})
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss X")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_PATTERN)
     private Date startLesson;
 
-    @JsonView({Details.class, DetailsForTimetable.class, DetailsForUserProfile.class})
+    @JsonView({DetailsForSubscriber.class, Details.class, DetailsForTimetable.class, DetailsForUserProfile.class})
     @NotNull(groups = {Create.class, Edit.class})
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss X")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_PATTERN)
     private Date endLesson;
 
     @JsonView({Details.class, DetailsForUserProfile.class})
     @NotNull(groups = {Create.class, Edit.class})
-    @Min(groups = {Create.class, Edit.class}, value = 1, message = "must be between 1 and 5")
-    @Max(groups = {Create.class, Edit.class}, value = 5, message = "must be between 1 and 5")
+    @Min(groups = {Create.class, Edit.class}, value = 1, message = MASTERY_LEVEL_MESSAGE)
+    @Max(groups = {Create.class, Edit.class}, value = 5, message = MASTERY_LEVEL_MESSAGE)
     private Integer masteryLevel;
 
     @JsonView({Details.class})
@@ -84,7 +76,7 @@ public class LessonDto {
     @NotNull(groups = {Create.class, Edit.class})
     private BigDecimal price;
 
-    @JsonView({Details.class, DetailsForTimetable.class, DetailsForUserProfile.class})
+    @JsonView({DetailsForSubscriber.class, Details.class, DetailsForTimetable.class, DetailsForUserProfile.class})
     @NotNull(groups = {Create.class})
     private TypeLesson typeLesson;
 
@@ -96,4 +88,22 @@ public class LessonDto {
 
     @JsonView({Details.class})
     private Set<SkillDto> skills = new HashSet<>();
+
+    public interface Create {
+    }
+
+    public interface Details {
+    }
+
+    public interface Edit {
+    }
+
+    public interface DetailsForTimetable {
+    }
+
+    public interface DetailsForUserProfile {
+    }
+
+    public interface DetailsForSubscriber {
+    }
 }

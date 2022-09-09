@@ -15,11 +15,9 @@ import java.util.Date;
 @Setter
 public class CommentDto {
 
-    public interface CreateForCourse {
-    }
+    private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss X";
+    private static final String RATING_MESSAGE = "must be between 1 and 5";
 
-    public interface CreateForLesson {
-    }
     @JsonView({CreateForCourse.class, CreateForLesson.class})
     @NotNull(groups = {CreateForCourse.class, CreateForLesson.class})
     private String header;
@@ -44,12 +42,18 @@ public class CommentDto {
 
     @JsonView({CreateForCourse.class, CreateForLesson.class})
     @Null(groups = {CreateForCourse.class, CreateForLesson.class})
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss X")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_PATTERN)
     private Date created;
 
     @JsonView({CreateForCourse.class, CreateForLesson.class})
     @NotNull(groups = {CreateForCourse.class, CreateForLesson.class})
-    @Min(groups = {CreateForCourse.class, CreateForLesson.class}, value = 1)
-    @Max(groups = {CreateForCourse.class, CreateForLesson.class}, value = 5)
+    @Min(groups = {CreateForCourse.class, CreateForLesson.class}, value = 1, message = RATING_MESSAGE)
+    @Max(groups = {CreateForCourse.class, CreateForLesson.class}, value = 5, message = RATING_MESSAGE)
     private Integer rating;
+
+    public interface CreateForCourse {
+    }
+
+    public interface CreateForLesson {
+    }
 }

@@ -5,9 +5,10 @@ import com.example.experienceexchange.dto.PaymentDto;
 import com.example.experienceexchange.exception.LessonNotFoundException;
 import com.example.experienceexchange.exception.NotAccessException;
 import com.example.experienceexchange.exception.SubscriptionNotPossibleException;
-import com.example.experienceexchange.model.*;
+import com.example.experienceexchange.model.LessonSingle;
+import com.example.experienceexchange.model.Payment;
+import com.example.experienceexchange.model.User;
 import com.example.experienceexchange.repository.filter.IFilterProvider;
-import com.example.experienceexchange.repository.filter.JpqlFilterProvider;
 import com.example.experienceexchange.repository.filter.SearchCriteria;
 import com.example.experienceexchange.repository.interfaceRepo.ILessonRepository;
 import com.example.experienceexchange.repository.interfaceRepo.IPaymentRepository;
@@ -32,6 +33,8 @@ public class LessonService implements ILessonService {
     private static final String SUB_TO_CLOSE_LESSON = "Lesson is closed for subscription";
     private static final String SUB_WITH_INCORRECT_PRICE = "Entered price is less than the fixed price";
     private static final String NOT_ACCESS_EDIT = "No access to edit resource";
+    private static final String NOT_FOUND_LESSON_IN_SUBSCRIPTIONS = "lesson not found in subscriptions";
+    private static final String LESSON_NOT_START = "lesson has not started";
 
     private final ILessonRepository lessonRepository;
     private final IUserRepository userRepository;
@@ -84,7 +87,7 @@ public class LessonService implements ILessonService {
         LessonSingle lessonBeforeUpdate = getLessonById(lessonId);
         checkAccessToLessonEdit(lessonBeforeUpdate.getAuthor().getId(), userDetails.getId());
         LessonSingle lessonAfterUpdate = lessonMapper.lessonDtoToLesson(lessonDto);
-        updateLesson(lessonBeforeUpdate,lessonAfterUpdate);
+        updateLesson(lessonBeforeUpdate, lessonAfterUpdate);
         // TODO : TEST
         LessonSingle updateLesson = lessonRepository.update(lessonAfterUpdate);
         return lessonMapper.lessonToLessonDto(updateLesson);
@@ -131,9 +134,26 @@ public class LessonService implements ILessonService {
     // TODO: НАДО КАК ТО ОТПИСЫВАТЬ ПОЛЬЗОВАТЕЛЕЙ КОГДА ВРЕМЯ КУРСА КОНЧАЕТСЯ
     @Transactional
     @Override
-    public LessonDto getLessons(Long lessonId) {
+    public LessonDto getLesson(Long lessonId) {
         LessonSingle lesson = getLessonById(lessonId);
         return lessonMapper.lessonToLessonDto(lesson);
+    }
+
+    @Transactional
+    @Override
+    public LessonDto getLesson(JwtUserDetails userDetails, Long lessonId) {
+        List<LessonSingle> lessons = lessonRepository.findAllLessonsByUserId(userDetails.getId());
+        LessonSingle lessonSingle = lessons.stream()
+                .filter(lesson -> lesson.getId().equals(lessonId))
+                .findFirst()
+                .orElse(null);
+        if (lessonSingle == null) {
+            throw new NotAccessException(NOT_FOUND_LESSON_IN_SUBSCRIPTIONS);
+        }
+        if (DateUtil.isDateBeforeNow(lessonSingle.getStartLesson())) {
+            throw new NotAccessException(LESSON_NOT_START);
+        }
+        return lessonMapper.lessonToLessonDto(lessonSingle);
     }
 
     @Transactional

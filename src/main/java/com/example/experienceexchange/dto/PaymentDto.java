@@ -14,13 +14,7 @@ import java.util.Date;
 @Setter
 public class PaymentDto {
 
-    public interface CreateLesson {
-
-    }
-
-    public interface CreateCourse {
-
-    }
+    private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss X";
 
     @Null(groups = {CreateLesson.class, CreateCourse.class})
     private Long id;
@@ -35,7 +29,7 @@ public class PaymentDto {
 
     @JsonView({CreateLesson.class, CreateCourse.class})
     @Null(groups = {CreateLesson.class, CreateCourse.class})
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss X")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_PATTERN)
     private Date datePayment;
 
     @JsonView({CreateLesson.class, CreateCourse.class})
@@ -49,4 +43,10 @@ public class PaymentDto {
     @JsonView({CreateLesson.class, CreateCourse.class})
     @Null(groups = {CreateLesson.class, CreateCourse.class})
     private String emailUser;
+
+    public interface CreateLesson {
+    }
+
+    public interface CreateCourse {
+    }
 }

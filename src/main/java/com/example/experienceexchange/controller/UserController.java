@@ -25,6 +25,7 @@ public class UserController {
     public List<LessonDto> getLessonsSubscription(@AuthenticationPrincipal JwtUserDetails userDetails) {
         return userService.getLessonsSubscriptionByUser(userDetails);
     }
+
     @JsonView({CourseDto.DetailsForUserProfile.class})
     @GetMapping("/profile/courses-subscriptions")
     public List<CourseDto> getCoursesSubscription(@AuthenticationPrincipal JwtUserDetails userDetails) {
