@@ -1,16 +1,11 @@
 package com.example.experienceexchange.util.mapper;
 
-import com.example.experienceexchange.constant.Status;
 import com.example.experienceexchange.dto.UserDto;
 import com.example.experienceexchange.model.User;
 import com.example.experienceexchange.security.JwtUserDetails;
-import com.example.experienceexchange.util.date.DateUtil;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 

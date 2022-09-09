@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityExistsException;
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +69,7 @@ public class CourseService implements ICourseService {
         this.lessonMapper = lessonMapper;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<CourseDto> getCourses(List<SearchCriteria> filters) {
         Map<String, List<SearchCriteria>> searchMap = filterProvider.createSearchMap(filters);
@@ -84,9 +83,9 @@ public class CourseService implements ICourseService {
     @Override
     public CourseDto createCourse(JwtUserDetails userDetails, CourseDto courseDto) {
         Long userId = userDetails.getId();
-        User user = userRepository.find(userId);
+        User author = userRepository.find(userId);
         Course newCourse = courseMapper.courseDtoToCourse(courseDto);
-        newCourse.setAuthor(user);
+        newCourse.setAuthor(author);
         if (newCourse.getLessons() != null) {
             newCourse.getLessons()
                     .forEach(lessonOnCourse -> lessonOnCourse.setCourse(newCourse));
@@ -99,26 +98,26 @@ public class CourseService implements ICourseService {
     @Transactional
     @Override
     public CourseDto editCourse(JwtUserDetails userDetails, Long id, CourseDto courseDto) {
-        Course oldCourse = getCourseById(id);
-        checkAccessToCourseEdit(oldCourse, userDetails.getId());
-        Course updateCourse = courseMapper.courseDtoToCourse(courseDto);
-        updateCourse.setAuthor(oldCourse.getAuthor());
-        updateCourse.setCurrentNumberUsers(oldCourse.getCurrentNumberUsers());
-        updateCourse.setComments(oldCourse.getComments());
-        updateCourse.setUsersInCourse(oldCourse.getUsersInCourse());
-        Course update = courseRepository.update(updateCourse);
-        update.getLessons().forEach(lesson -> lesson.setCourse(update));
-        return courseMapper.courseToCourseDto(update);
+        Course courseBeforeUpdate = getCourseById(id);
+
+        checkAccessToCourseEdit(courseBeforeUpdate, userDetails.getId());
+
+        Course courseAfterUpdate = courseMapper.courseDtoToCourse(courseDto);
+        updateCourse(courseBeforeUpdate, courseAfterUpdate);
+
+        courseRepository.update(courseAfterUpdate);  // TODO : затестить
+        courseAfterUpdate.getLessons().forEach(lesson -> lesson.setCourse(courseAfterUpdate));
+        return courseMapper.courseToCourseDto(courseAfterUpdate);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public CourseDto getCourse(Long courseId) {
         Course course = getCourseById(courseId);
         return courseMapper.courseToCourseDto(course);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<LessonOnCourseDto> getSchedule(JwtUserDetails userDetails) {
         Long userId = userDetails.getId();
@@ -126,7 +125,7 @@ public class CourseService implements ICourseService {
         return lessonMapper.toLessonOnCourseDto(allLessonsOnCourseByUserId);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<LessonOnCourseDto> getScheduleByCourse(JwtUserDetails userDetails, Long courseId) {
         Long userId = userDetails.getId();
@@ -135,6 +134,7 @@ public class CourseService implements ICourseService {
     }
 
     // TODO : TEST
+    @Transactional(readOnly = true)
     @Override
     public LessonOnCourseDto getLessonOnCourse(JwtUserDetails userDetails, Long courseId, Long lessonId) {
         List<LessonOnCourse> lessons = lessonOnCourseRepository.findAllLessonsOnCourseByUserIdAndCourseId(userDetails.getId(), courseId);
@@ -150,24 +150,20 @@ public class CourseService implements ICourseService {
         if (lessonOnCourse == null) {
             throw new LessonNotFoundException(lessonId);
         }
-        // TODO : TEST
-        Date dateStartLesson = lessonOnCourse.getStartLesson();
-        Date dateAccessLesson = DateUtil.addDays(dateStartLesson, lessonOnCourse.getAccessDuration());
-        if (DateUtil.isDateAfterNow(dateStartLesson) && DateUtil.isDateBeforeNow(dateAccessLesson)) {
-            throw new NotAccessException(NOT_ACCESS_TO_LESSON);
-        }
+
+        checkAccessToLessonGet(lessonOnCourse);
         return lessonMapper.lessonOnCourseToLessonOnCourseDto(lessonOnCourse);
     }
 
     @Transactional
     @Override
-    public void deleteCourse(JwtUserDetails userDetails, Long id) {
-        Course course = courseRepository.find(id);
+    public void deleteCourse(JwtUserDetails userDetails, Long courseId) {
+        Course course = getCourseById(courseId);
         checkAccessToCourseEdit(course, userDetails.getId());
         try {
             courseRepository.delete(course);
         } catch (EntityExistsException e) {
-            throw new CourseNotFoundException(id);
+            throw new CourseNotFoundException(courseId);
         }
     }
 
@@ -175,6 +171,7 @@ public class CourseService implements ICourseService {
     @Override
     public PaymentDto subscribeToCourse(JwtUserDetails userDetails, PaymentDto paymentDto, Long courseId) {
         Course course = getCourseById(courseId);
+
         User user = userRepository.find(userDetails.getId());
         if (course.getAuthor().getId().equals(user.getId())) {
             throw new SubscriptionNotPossibleException(SUB_TO_OWN_COURSE);
@@ -182,13 +179,7 @@ public class CourseService implements ICourseService {
 
         if (course.isSatisfactoryPrice(paymentDto.getPrice())) {
             if (course.isAvailableForSubscription(DateUtil.dateTimeNow())) {
-                Payment payment = paymentMapper.paymentDtoToPayment(paymentDto);
-                payment.setDatePayment(DateUtil.dateTimeNow());
-                user.addCourse(course);
-                user.addPayment(payment);
-                payment.setCourse(course);
-                payment.setCostumer(user);
-                course.increaseNumberSubscriptions();
+                Payment payment = subscribeToCourse(paymentDto, user, course);
                 paymentRepository.save(payment);
                 return paymentMapper.paymentToPaymentDto(payment);
             } else {
@@ -203,10 +194,13 @@ public class CourseService implements ICourseService {
     @Override
     public CourseDto createLessonOnCourse(JwtUserDetails userDetails, Long courseId, LessonOnCourseDto lessonDto) {
         Course course = getCourseById(courseId);
+
         checkAccessToCourseEdit(course, userDetails.getId());
+
         LessonOnCourse lessonOnCourse = lessonMapper.lessonOnCourseDtoToLessonOnCourse(lessonDto);
         lessonOnCourse.setCourse(course);
         course.addLesson(lessonOnCourse);
+
         lessonOnCourseRepository.save(lessonOnCourse);
         return courseMapper.courseToCourseDto(course);
     }
@@ -223,5 +217,35 @@ public class CourseService implements ICourseService {
         if (!course.getAuthor().getId().equals(userId)) {
             throw new NotAccessException(NOT_ACCESS_EDIT);
         }
+    }
+
+    private Course updateCourse(Course courseBeforeUpdate, Course courseAfterUpdate) {
+        courseAfterUpdate.setAuthor(courseBeforeUpdate.getAuthor());
+        courseAfterUpdate.setCurrentNumberUsers(courseBeforeUpdate.getCurrentNumberUsers());
+        courseAfterUpdate.setComments(courseBeforeUpdate.getComments());
+        courseAfterUpdate.setUsersInCourse(courseBeforeUpdate.getUsersInCourse());
+        return courseAfterUpdate;
+    }
+
+    private void checkAccessToLessonGet(LessonOnCourse lesson) throws NotAccessException {
+        Date dateStartLesson = lesson.getStartLesson();
+        Date dateAccessLesson = DateUtil.addDays(dateStartLesson, lesson.getAccessDuration());
+        if (DateUtil.isDateAfterNow(dateStartLesson) && DateUtil.isDateBeforeNow(dateAccessLesson)) {
+            throw new NotAccessException(NOT_ACCESS_TO_LESSON);
+        }
+    }
+
+    private Payment subscribeToCourse(PaymentDto paymentDto, User user, Course course) {
+        Payment newPayment = paymentMapper.paymentDtoToPayment(paymentDto);
+        newPayment.setDatePayment(DateUtil.dateTimeNow());
+
+        user.addCourse(course);
+        user.addPayment(newPayment);
+
+        newPayment.setCourse(course);
+        newPayment.setCostumer(user);
+
+        course.increaseNumberSubscriptions();
+        return newPayment;
     }
 }

@@ -51,7 +51,31 @@ public class UserService implements IUserService {
     public UserDto getAccount(JwtUserDetails userDetails) {
         Long userId = userDetails.getId();
         User user = getUserById(userId);
+
         return userMapper.userToUserDto(user);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<PaymentDto> getPayments(JwtUserDetails userDetails) {
+        List<Payment> payments = getUserById(userDetails.getId()).getMyPayments();
+        return paymentMapper.toPaymentDto(payments);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<LessonDto> getLessonsSubscriptionByUser(JwtUserDetails userDetails) {
+        User user = getUserById(userDetails.getId());
+        Set<LessonSingle> lessonSubscriptions = user.getLessonSubscriptions();
+        return lessonMapper.toLessonDto(lessonSubscriptions);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<CourseDto> getCoursesSubscriptionByUser(JwtUserDetails userDetails) {
+        User user = getUserById(userDetails.getId());
+        Set<Course> courseSubscriptions = user.getCourseSubscriptions();
+        return courseMapper.toCourseDto(courseSubscriptions);
     }
 
     @Transactional
@@ -60,6 +84,7 @@ public class UserService implements IUserService {
         Long userId = userDetails.getId();
         User oldUser = getUserById(userId);
         User newUser = userMapper.updateUser(oldUser, userDto);
+
         userRepository.update(newUser);
         return userMapper.userToUserDto(newUser);
     }
@@ -89,29 +114,6 @@ public class UserService implements IUserService {
         userRepository.update(userForUpdate);
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public List<PaymentDto> getPayments(JwtUserDetails userDetails) {
-        List<Payment> payments = getUserById(userDetails.getId()).getMyPayments();
-        return paymentMapper.toPaymentDto(payments);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<LessonDto> getLessonsSubscriptionByUser(JwtUserDetails userDetails) {
-        User user = getUserById(userDetails.getId());
-        Set<LessonSingle> lessonSubscriptions = user.getLessonSubscriptions();
-        return lessonMapper.toLessonDto(lessonSubscriptions);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<CourseDto> getCoursesSubscriptionByUser(JwtUserDetails userDetails) {
-        User user = getUserById(userDetails.getId());
-        Set<Course> courseSubscriptions = user.getCourseSubscriptions();
-        return courseMapper.toCourseDto(courseSubscriptions);
-    }
-
     private User getUserById(Long id) {
         User user = userRepository.find(id);
         if (user == null) {
@@ -119,5 +121,4 @@ public class UserService implements IUserService {
         }
         return user;
     }
-
 }

@@ -57,7 +57,7 @@ public class LessonService implements ILessonService {
         this.paymentRepository = paymentRepository;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<LessonDto> getLessons(List<SearchCriteria> filters) {
         Map<String, List<SearchCriteria>> searchMap = filterProvider.createSearchMap(filters);
@@ -67,13 +67,49 @@ public class LessonService implements ILessonService {
         return lessonMapper.toLessonDto(lessons);
     }
 
+    // TODO: НАДО КАК ТО ОТПИСЫВАТЬ ПОЛЬЗОВАТЕЛЕЙ КОГДА ВРЕМЯ КУРСА КОНЧАЕТСЯ
+    @Transactional(readOnly = true)
+    @Override
+    public LessonDto getLesson(Long lessonId) {
+        LessonSingle lesson = getLessonById(lessonId);
+        return lessonMapper.lessonToLessonDto(lesson);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public LessonDto getLesson(JwtUserDetails userDetails, Long lessonId) {
+        List<LessonSingle> lessons = lessonRepository.findAllLessonsByUserId(userDetails.getId());
+        LessonSingle lessonSingle = lessons.stream()
+                .filter(lesson -> lesson.getId().equals(lessonId))
+                .findFirst()
+                .orElse(null);
+
+        if (lessonSingle == null) {
+            throw new NotAccessException(NOT_FOUND_LESSON_IN_SUBSCRIPTIONS);
+        }
+
+        if (DateUtil.isDateBeforeNow(lessonSingle.getStartLesson())) {
+            throw new NotAccessException(LESSON_NOT_START);
+        }
+        return lessonMapper.lessonToLessonDto(lessonSingle);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<LessonDto> getSchedule(JwtUserDetails userDetails) {
+        Long userId = userDetails.getId();
+        List<LessonSingle> allLessons = lessonRepository.findAllLessonsByUserId(userId);
+        return lessonMapper.toLessonDto(allLessons);
+    }
+
     @Transactional
     @Override
     public LessonDto createLesson(JwtUserDetails userDetails, LessonDto lessonDto) {
         Long userId = userDetails.getId();
-        User user = userRepository.find(userId);
+        User author = userRepository.find(userId);
+
         LessonSingle newLesson = lessonMapper.lessonDtoToLesson(lessonDto);
-        newLesson.setAuthor(user);
+        newLesson.setAuthor(author);
         // TODO : TEST
         lessonRepository.save(newLesson);
         LessonSingle update = lessonRepository.update(newLesson);
@@ -85,7 +121,9 @@ public class LessonService implements ILessonService {
     @Override
     public LessonDto editLesson(JwtUserDetails userDetails, Long lessonId, LessonDto lessonDto) {
         LessonSingle lessonBeforeUpdate = getLessonById(lessonId);
+
         checkAccessToLessonEdit(lessonBeforeUpdate.getAuthor().getId(), userDetails.getId());
+
         LessonSingle lessonAfterUpdate = lessonMapper.lessonDtoToLesson(lessonDto);
         updateLesson(lessonBeforeUpdate, lessonAfterUpdate);
         // TODO : TEST
@@ -108,19 +146,14 @@ public class LessonService implements ILessonService {
     public PaymentDto subscribeToLesson(JwtUserDetails userDetails, PaymentDto paymentDto, Long lessonId) {
         LessonSingle lesson = getLessonById(lessonId);
         User user = userRepository.find(userDetails.getId());
+
         if (lesson.getAuthor().getId().equals(user.getId())) {
             throw new SubscriptionNotPossibleException(SUB_TO_OWN_LESSON);
         }
 
         if (lesson.isSatisfactoryPrice(paymentDto.getPrice())) {
             if (lesson.isAvailableForSubscription(DateUtil.dateTimeNow())) {
-                Payment payment = paymentMapper.paymentDtoToPayment(paymentDto);
-                payment.setDatePayment(DateUtil.dateTimeNow());
-                user.addLesson(lesson);
-                user.addPayment(payment);
-                payment.setLesson(lesson);
-                payment.setCostumer(user);
-                lesson.increaseNumberSubscriptions();
+                Payment payment = subscribeToLesson(paymentDto, user, lesson);
                 paymentRepository.save(payment);
                 return paymentMapper.paymentToPaymentDto(payment);
             } else {
@@ -129,39 +162,6 @@ public class LessonService implements ILessonService {
         } else {
             throw new SubscriptionNotPossibleException(SUB_WITH_INCORRECT_PRICE);
         }
-    }
-
-    // TODO: НАДО КАК ТО ОТПИСЫВАТЬ ПОЛЬЗОВАТЕЛЕЙ КОГДА ВРЕМЯ КУРСА КОНЧАЕТСЯ
-    @Transactional
-    @Override
-    public LessonDto getLesson(Long lessonId) {
-        LessonSingle lesson = getLessonById(lessonId);
-        return lessonMapper.lessonToLessonDto(lesson);
-    }
-
-    @Transactional
-    @Override
-    public LessonDto getLesson(JwtUserDetails userDetails, Long lessonId) {
-        List<LessonSingle> lessons = lessonRepository.findAllLessonsByUserId(userDetails.getId());
-        LessonSingle lessonSingle = lessons.stream()
-                .filter(lesson -> lesson.getId().equals(lessonId))
-                .findFirst()
-                .orElse(null);
-        if (lessonSingle == null) {
-            throw new NotAccessException(NOT_FOUND_LESSON_IN_SUBSCRIPTIONS);
-        }
-        if (DateUtil.isDateBeforeNow(lessonSingle.getStartLesson())) {
-            throw new NotAccessException(LESSON_NOT_START);
-        }
-        return lessonMapper.lessonToLessonDto(lessonSingle);
-    }
-
-    @Transactional
-    @Override
-    public List<LessonDto> getSchedule(JwtUserDetails userDetails) {
-        Long userId = userDetails.getId();
-        List<LessonSingle> allLessons = lessonRepository.findAllLessonsByUserId(userId);
-        return lessonMapper.toLessonDto(allLessons);
     }
 
     private LessonSingle getLessonById(Long lessonId) throws LessonNotFoundException {
@@ -184,6 +184,17 @@ public class LessonService implements ILessonService {
         lessonAfterUpdate.setComments(lessonBeforeUpdate.getComments());
         lessonAfterUpdate.setUsersInLesson(lessonBeforeUpdate.getUsersInLesson());
         return lessonAfterUpdate;
+    }
+
+    private Payment subscribeToLesson(PaymentDto paymentDto, User user, LessonSingle lesson) {
+        Payment payment = paymentMapper.paymentDtoToPayment(paymentDto);
+        payment.setDatePayment(DateUtil.dateTimeNow());
+        user.addLesson(lesson);
+        user.addPayment(payment);
+        payment.setLesson(lesson);
+        payment.setCostumer(user);
+        lesson.increaseNumberSubscriptions();
+        return payment;
     }
 }
 

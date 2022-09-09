@@ -16,6 +16,7 @@ import java.util.List;
 
 @Service
 public class CommentService implements ICommentService {
+
     private final ICommentRepository commentRepository;
     private final IUserRepository userRepository;
     private final CommentMapper commentMapper;
@@ -28,14 +29,14 @@ public class CommentService implements ICommentService {
         this.commentMapper = commentMapper;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<CommentDto> getCommentsByCourse(Long courseId) {
         List<Comment> allCommentsByCourseId = commentRepository.findAllCommentsByCourseId(courseId);
         return commentMapper.toCommentsDto(allCommentsByCourseId);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<CommentDto> getCommentByLesson(Long lessonId) {
         List<Comment> allCommentsByLessonId = commentRepository.findAllCommentsByLessonId(lessonId);

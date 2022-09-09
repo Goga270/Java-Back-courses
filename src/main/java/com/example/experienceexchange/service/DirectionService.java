@@ -1,11 +1,10 @@
 package com.example.experienceexchange.service;
 
+import com.example.experienceexchange.dto.DirectionDto;
 import com.example.experienceexchange.exception.DirectionNotFoundException;
-import com.example.experienceexchange.exception.SectionNotFoundException;
 import com.example.experienceexchange.model.Direction;
 import com.example.experienceexchange.model.Section;
 import com.example.experienceexchange.repository.interfaceRepo.IDirectionRepository;
-import com.example.experienceexchange.dto.DirectionDto;
 import com.example.experienceexchange.service.interfaceService.IDirectionService;
 import com.example.experienceexchange.util.mapper.DirectionMapper;
 import org.springframework.stereotype.Service;
@@ -26,17 +25,17 @@ public class DirectionService implements IDirectionService {
         this.directionMapper = directionMapper;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<DirectionDto> getAllDirections() {
         List<Direction> directions = directionRepository.findAll();
         return directionMapper.toDirectionDto(directions);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
-    public DirectionDto getDirection(Long id) {
-        Direction direction = getDirectionById(id);
+    public DirectionDto getDirection(Long directionId) {
+        Direction direction = getDirectionById(directionId);
         return directionMapper.directionToDirectionDto(direction);
     }
 
@@ -44,6 +43,7 @@ public class DirectionService implements IDirectionService {
     @Override
     public DirectionDto createDirection(DirectionDto directionDto) {
         Direction direction = directionMapper.directionDtoToDirection(directionDto);
+
         direction.getSections()
                 .forEach(section -> section.setDirection(direction));
 
@@ -62,8 +62,8 @@ public class DirectionService implements IDirectionService {
             section.setDirection(direction);
         }
 
-        Direction update = directionRepository.update(direction);
-        return directionMapper.directionToDirectionDto(update);
+        Direction updateDirection = directionRepository.update(direction);
+        return directionMapper.directionToDirectionDto(updateDirection);
     }
 
     @Transactional

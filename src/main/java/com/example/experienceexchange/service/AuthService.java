@@ -47,7 +47,9 @@ public class AuthService implements IAuthService {
     public TokenDto authentication(LoginDto loginDto) {
         Authentication authentication = manager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
         JwtUserDetails userDetails = (JwtUserDetails) authentication.getPrincipal();
+
         String token = jwtTokenProvider.createToken(userDetails.getUsername(), userDetails.getRole());
+
         return TokenDtoFactory.createTokenDto(token, userDetails.getUsername());
     }
 
@@ -64,6 +66,7 @@ public class AuthService implements IAuthService {
         registrationDto.setRole(Role.ADMIN);
         registration(registrationDto);
     }
+
     // TODO : ЗАТЕСТИТЬ
     @Transactional
     @Override

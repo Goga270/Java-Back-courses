@@ -10,6 +10,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface LessonOnCourseMapper {
+
     @Mapping(target = "courseId", expression = "java(lesson.getCourse().getId())")
     LessonOnCourseDto lessonOnCourseToLessonOnCourseDto(LessonOnCourse lesson);
 

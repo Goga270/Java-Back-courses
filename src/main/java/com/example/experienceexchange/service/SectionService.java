@@ -1,11 +1,8 @@
 package com.example.experienceexchange.service;
 
 import com.example.experienceexchange.dto.SectionDto;
-import com.example.experienceexchange.exception.DirectionNotFoundException;
 import com.example.experienceexchange.exception.SectionNotFoundException;
-import com.example.experienceexchange.model.Direction;
 import com.example.experienceexchange.model.Section;
-import com.example.experienceexchange.repository.interfaceRepo.IDirectionRepository;
 import com.example.experienceexchange.repository.interfaceRepo.ISectionRepository;
 import com.example.experienceexchange.service.interfaceService.ISectionService;
 import com.example.experienceexchange.util.mapper.SectionMapper;
