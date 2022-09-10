@@ -15,6 +15,7 @@ import com.example.experienceexchange.util.mapper.CourseMapper;
 import com.example.experienceexchange.util.mapper.LessonMapper;
 import com.example.experienceexchange.util.mapper.PaymentMapper;
 import com.example.experienceexchange.util.mapper.UserMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 public class UserService implements IUserService {
 
@@ -49,6 +51,7 @@ public class UserService implements IUserService {
     @Transactional(readOnly = true)
     @Override
     public UserDto getAccount(JwtUserDetails userDetails) {
+        log.debug("Get account for user {}", userDetails.getId());
         Long userId = userDetails.getId();
         User user = getUserById(userId);
 
@@ -58,13 +61,15 @@ public class UserService implements IUserService {
     @Transactional(readOnly = true)
     @Override
     public List<PaymentDto> getPayments(JwtUserDetails userDetails) {
+        log.debug("Get payments for user {}", userDetails.getId());
         List<Payment> payments = getUserById(userDetails.getId()).getMyPayments();
         return paymentMapper.toPaymentDto(payments);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<LessonDto> getLessonsSubscriptionByUser(JwtUserDetails userDetails) {
+    public List<LessonDto> getLessonsSubscribedByUser(JwtUserDetails userDetails) {
+        log.debug("Get lessons user {} is subscribed", userDetails.getId());
         User user = getUserById(userDetails.getId());
         Set<LessonSingle> lessonSubscriptions = user.getLessonSubscriptions();
         return lessonMapper.toLessonDto(lessonSubscriptions);
@@ -72,7 +77,8 @@ public class UserService implements IUserService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<CourseDto> getCoursesSubscriptionByUser(JwtUserDetails userDetails) {
+    public List<CourseDto> getCoursesSubscribedByUser(JwtUserDetails userDetails) {
+        log.debug("Get courses user {} is subscribed", userDetails.getId());
         User user = getUserById(userDetails.getId());
         Set<Course> courseSubscriptions = user.getCourseSubscriptions();
         return courseMapper.toCourseDto(courseSubscriptions);
@@ -81,6 +87,7 @@ public class UserService implements IUserService {
     @Transactional
     @Override
     public UserDto editAccount(JwtUserDetails userDetails, UserDto userDto) {
+        log.debug("Edit user account {}", userDetails.getId());
         Long userId = userDetails.getId();
         User oldUser = getUserById(userId);
         User newUser = userMapper.updateUser(oldUser, userDto);
@@ -92,12 +99,14 @@ public class UserService implements IUserService {
     @Transactional
     @Override
     public void changePassword(JwtUserDetails userDetails, NewPasswordDto passwordDto) {
+        log.debug("Change user {} password", userDetails.getId());
         if (passwordDto.getNewPassword().equals(passwordDto.getNewPasswordSecond())) {
             User user = userRepository.find(userDetails.getId());
             String encodeNewPassword = passwordEncoder.encode(passwordDto.getNewPassword());
             user.setPassword(encodeNewPassword);
             userRepository.update(user);
         } else {
+            log.warn("Password not match ");
             throw new PasswordsNotMatchException();
         }
     }
@@ -105,8 +114,10 @@ public class UserService implements IUserService {
     @Transactional
     @Override
     public void changeEmail(JwtUserDetails jwtUserDetails, NewEmailDto newEmailDto) {
+        log.debug("Change user {} email", jwtUserDetails.getId());
         User user = userRepository.findByEmail(newEmailDto.getNewEmail());
         if (user != null) {
+            log.warn("New email for user {} is not unique", jwtUserDetails.getId());
             throw new EmailNotUniqueException();
         }
         User userForUpdate = userRepository.find(jwtUserDetails.getId());
@@ -117,6 +128,7 @@ public class UserService implements IUserService {
     private User getUserById(Long id) {
         User user = userRepository.find(id);
         if (user == null) {
+            log.warn("User {} not found", id);
             throw new UserNotFoundException(id);
         }
         return user;

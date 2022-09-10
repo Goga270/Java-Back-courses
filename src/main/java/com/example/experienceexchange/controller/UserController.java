@@ -23,13 +23,13 @@ public class UserController {
     @JsonView({LessonDto.DetailsForUserProfile.class})
     @GetMapping("/profile/lessons-subscriptions")
     public List<LessonDto> getLessonsSubscription(@AuthenticationPrincipal JwtUserDetails userDetails) {
-        return userService.getLessonsSubscriptionByUser(userDetails);
+        return userService.getLessonsSubscribedByUser(userDetails);
     }
 
     @JsonView({CourseDto.DetailsForUserProfile.class})
     @GetMapping("/profile/courses-subscriptions")
     public List<CourseDto> getCoursesSubscription(@AuthenticationPrincipal JwtUserDetails userDetails) {
-        return userService.getCoursesSubscriptionByUser(userDetails);
+        return userService.getCoursesSubscribedByUser(userDetails);
     }
 
     @GetMapping("/profile/payments")

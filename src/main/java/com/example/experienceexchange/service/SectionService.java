@@ -6,11 +6,13 @@ import com.example.experienceexchange.model.Section;
 import com.example.experienceexchange.repository.interfaceRepo.ISectionRepository;
 import com.example.experienceexchange.service.interfaceService.ISectionService;
 import com.example.experienceexchange.util.mapper.SectionMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityExistsException;
 
+@Slf4j
 @Service
 public class SectionService implements ISectionService {
 
@@ -25,26 +27,33 @@ public class SectionService implements ISectionService {
     @Transactional
     @Override
     public SectionDto createSection(SectionDto sectionDto) {
+        log.debug("Create section");
         Section newSection = sectionMapper.sectionDtoToSection(sectionDto);
         Section section = sectionRepository.save(newSection);
+        log.debug("Created section {}", section.getId());
         return sectionMapper.sectionToSectionDto(section);
     }
 
     @Transactional
     @Override
     public SectionDto editSection(Long id, SectionDto sectionDto) {
+        log.debug("Edit section {}", id);
         Section section = sectionMapper.sectionDtoToSection(sectionDto);
         section.setId(id);
         sectionRepository.update(section);
+        log.debug("Section {} updating", section.getId());
         return sectionMapper.sectionToSectionDto(section);
     }
 
     @Transactional
     @Override
     public void deleteSection(Long id) {
+        log.debug("Delete section {}", id);
         try {
             sectionRepository.deleteById(id);
+            log.debug("Section {} removed", id);
         } catch (EntityExistsException exception) {
+            log.warn("Section {} not found", id);
             throw new SectionNotFoundException(id);
         }
     }
@@ -53,6 +62,7 @@ public class SectionService implements ISectionService {
     private Section getSectionById(Long id) throws SectionNotFoundException {
         Section section = sectionRepository.find(id);
         if (section == null) {
+            log.warn("Section {} not found", id);
             throw new SectionNotFoundException(id);
         }
         return section;

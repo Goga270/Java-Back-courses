@@ -21,9 +21,10 @@ public class CourseRepository extends HibernateAbstractDao<Course, Long> impleme
                     "%s";
 
     @Override
-    public List<Course> findAllCourseByFilter(String filter) {
+    public List<Course> findAllCoursesByFilter(String filter) {
         String jpqlQuery = String.format(JPQL_FILTER_COURSE, filter);
         TypedQuery<Course> query = entityManager.createQuery(jpqlQuery, getClassEntity());
+        log.debug("Find courses with filter {}", filter);
         return query.getResultList();
     }
 }

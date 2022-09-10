@@ -18,6 +18,7 @@ import com.example.experienceexchange.service.interfaceService.ILessonService;
 import com.example.experienceexchange.util.date.DateUtil;
 import com.example.experienceexchange.util.mapper.LessonMapper;
 import com.example.experienceexchange.util.mapper.PaymentMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import javax.persistence.EntityExistsException;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class LessonService implements ILessonService {
 
@@ -60,6 +62,7 @@ public class LessonService implements ILessonService {
     @Transactional(readOnly = true)
     @Override
     public List<LessonDto> getLessons(List<SearchCriteria> filters) {
+        log.debug("Get lessons");
         Map<String, List<SearchCriteria>> searchMap = filterProvider.createSearchMap(filters);
         String filterQuery = filterProvider.createFilterQuery(searchMap);
 
@@ -71,6 +74,7 @@ public class LessonService implements ILessonService {
     @Transactional(readOnly = true)
     @Override
     public LessonDto getLesson(Long lessonId) {
+        log.debug("Get lesson with id {} for watch", lessonId);
         LessonSingle lesson = getLessonById(lessonId);
         return lessonMapper.lessonToLessonDto(lesson);
     }
@@ -78,6 +82,7 @@ public class LessonService implements ILessonService {
     @Transactional(readOnly = true)
     @Override
     public LessonDto getLesson(JwtUserDetails userDetails, Long lessonId) {
+        log.debug("Get lesson with id {} for subscriber", lessonId);
         List<LessonSingle> lessons = lessonRepository.findAllLessonsByUserId(userDetails.getId());
         LessonSingle lessonSingle = lessons.stream()
                 .filter(lesson -> lesson.getId().equals(lessonId))
@@ -85,10 +90,12 @@ public class LessonService implements ILessonService {
                 .orElse(null);
 
         if (lessonSingle == null) {
+            log.warn("No access to lesson {} for {}", lessonId, userDetails.getId());
             throw new NotAccessException(NOT_FOUND_LESSON_IN_SUBSCRIPTIONS);
         }
 
         if (DateUtil.isDateBeforeNow(lessonSingle.getStartLesson())) {
+            log.warn("No access to unstarted lesson {}", lessonId);
             throw new NotAccessException(LESSON_NOT_START);
         }
         return lessonMapper.lessonToLessonDto(lessonSingle);
@@ -97,6 +104,7 @@ public class LessonService implements ILessonService {
     @Transactional(readOnly = true)
     @Override
     public List<LessonDto> getSchedule(JwtUserDetails userDetails) {
+        log.debug("Get schedule lessons for user {}", userDetails.getId());
         Long userId = userDetails.getId();
         List<LessonSingle> allLessons = lessonRepository.findAllLessonsByUserId(userId);
         return lessonMapper.toLessonDto(allLessons);
@@ -105,6 +113,7 @@ public class LessonService implements ILessonService {
     @Transactional
     @Override
     public LessonDto createLesson(JwtUserDetails userDetails, LessonDto lessonDto) {
+        log.debug("Create lesson");
         Long userId = userDetails.getId();
         User author = userRepository.find(userId);
 
@@ -113,6 +122,7 @@ public class LessonService implements ILessonService {
         // TODO : TEST
         lessonRepository.save(newLesson);
         LessonSingle update = lessonRepository.update(newLesson);
+        log.debug("Lesson created with id {}", update.getId());
         return lessonMapper.lessonToLessonDto(update);
 
     }
@@ -120,6 +130,7 @@ public class LessonService implements ILessonService {
     @Transactional
     @Override
     public LessonDto editLesson(JwtUserDetails userDetails, Long lessonId, LessonDto lessonDto) {
+        log.debug("Edit lesson {}", lessonId);
         LessonSingle lessonBeforeUpdate = getLessonById(lessonId);
 
         checkAccessToLessonEdit(lessonBeforeUpdate.getAuthor().getId(), userDetails.getId());
@@ -134,9 +145,12 @@ public class LessonService implements ILessonService {
     @Transactional
     @Override
     public void deleteLesson(JwtUserDetails userDetails, Long id) {
+        log.debug("Delete lesson {}", id);
         try {
             lessonRepository.deleteById(id);
+            log.debug("Lesson {} removed", id);
         } catch (EntityExistsException e) {
+            log.warn("Not found lesson {}", id);
             throw new LessonNotFoundException(id);
         }
     }
@@ -144,10 +158,12 @@ public class LessonService implements ILessonService {
     @Transactional
     @Override
     public PaymentDto subscribeToLesson(JwtUserDetails userDetails, PaymentDto paymentDto, Long lessonId) {
+        log.debug("User {} subscribe to lesson {} ", userDetails.getId(), lessonId);
         LessonSingle lesson = getLessonById(lessonId);
         User user = userRepository.find(userDetails.getId());
 
         if (lesson.getAuthor().getId().equals(user.getId())) {
+            log.warn("User {} cannot subscribe to own lesson", userDetails.getId());
             throw new SubscriptionNotPossibleException(SUB_TO_OWN_LESSON);
         }
 
@@ -155,18 +171,23 @@ public class LessonService implements ILessonService {
             if (lesson.isAvailableForSubscription(DateUtil.dateTimeNow())) {
                 Payment payment = subscribeToLesson(paymentDto, user, lesson);
                 paymentRepository.save(payment);
+                log.debug("User {} subscribe to lesson {}", userDetails.getId(), lessonId);
                 return paymentMapper.paymentToPaymentDto(payment);
             } else {
+                log.warn("User {} cannot subscribe to close lesson", userDetails.getId());
                 throw new SubscriptionNotPossibleException(SUB_TO_CLOSE_LESSON);
             }
         } else {
+            log.warn("User {} cannot subscribe to close lesson with incorrect price {}", userDetails.getId(), paymentDto.getPrice());
             throw new SubscriptionNotPossibleException(SUB_WITH_INCORRECT_PRICE);
         }
     }
 
     private LessonSingle getLessonById(Long lessonId) throws LessonNotFoundException {
+        log.trace("Get lesson with id {}", lessonId);
         LessonSingle lesson = lessonRepository.find(lessonId);
         if (lesson == null) {
+            log.warn("Lesson with id {} not found", lessonId);
             throw new LessonNotFoundException(lessonId);
         }
         return lesson;
@@ -174,11 +195,13 @@ public class LessonService implements ILessonService {
 
     private void checkAccessToLessonEdit(Long authorId, Long authUserID) throws NotAccessException {
         if (!authorId.equals(authUserID)) {
+            log.warn("User {} does not have access to edit lesson", authUserID);
             throw new NotAccessException(NOT_ACCESS_EDIT);
         }
     }
 
     private LessonSingle updateLesson(LessonSingle lessonBeforeUpdate, LessonSingle lessonAfterUpdate) {
+        log.trace("Updating lesson {}", lessonBeforeUpdate.getId());
         lessonAfterUpdate.setAuthor(lessonBeforeUpdate.getAuthor());
         lessonAfterUpdate.setCurrentNumberUsers(lessonBeforeUpdate.getCurrentNumberUsers());
         lessonAfterUpdate.setComments(lessonBeforeUpdate.getComments());

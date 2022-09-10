@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private static final int STRENGTH_PASSWORD_ENCODER = 8;
+
     private final JwtConfigurer jwtConfigurer;
 
     public SecurityConfig(JwtConfigurer jwtConfigurer) {
@@ -60,6 +62,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(8);
+        return new BCryptPasswordEncoder(STRENGTH_PASSWORD_ENCODER);
     }
 }

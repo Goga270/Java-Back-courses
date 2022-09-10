@@ -17,7 +17,7 @@ public interface IUserService {
 
     List<PaymentDto> getPayments(JwtUserDetails userDetails);
 
-    List<LessonDto> getLessonsSubscriptionByUser(JwtUserDetails userDetails);
+    List<LessonDto> getLessonsSubscribedByUser(JwtUserDetails userDetails);
 
-    List<CourseDto> getCoursesSubscriptionByUser(JwtUserDetails userDetails);
+    List<CourseDto> getCoursesSubscribedByUser(JwtUserDetails userDetails);
 }

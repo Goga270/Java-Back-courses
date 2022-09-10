@@ -35,7 +35,7 @@ public abstract class HibernateAbstractDao<T, PK extends Serializable> implement
             try {
                 entityManager.remove(entity);
             } catch (Exception e) {
-                System.out.println(e.getMessage() + e.getClass().getName());
+                throw new EntityExistsException();
             }
         } else {
             throw new EntityExistsException();
@@ -48,7 +48,7 @@ public abstract class HibernateAbstractDao<T, PK extends Serializable> implement
             try {
                 entityManager.remove(entity);
             } catch (Exception e) {
-                System.out.println(e.getMessage() + e.getClass().getName());
+                throw new EntityExistsException();
             }
         } else {
             throw new EntityExistsException();
@@ -58,7 +58,7 @@ public abstract class HibernateAbstractDao<T, PK extends Serializable> implement
     @Override
     @SuppressWarnings("unchecked")
     public List<T> findAll() {
-        return entityManager.createQuery("from " + type.getName()).getResultList();
+        return entityManager.createQuery("FROM " + type.getName()).getResultList();
     }
 
     @Override

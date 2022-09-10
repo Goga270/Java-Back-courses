@@ -7,6 +7,7 @@ import com.example.experienceexchange.model.Section;
 import com.example.experienceexchange.repository.interfaceRepo.IDirectionRepository;
 import com.example.experienceexchange.service.interfaceService.IDirectionService;
 import com.example.experienceexchange.util.mapper.DirectionMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import javax.persistence.EntityExistsException;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 public class DirectionService implements IDirectionService {
 
@@ -28,6 +30,7 @@ public class DirectionService implements IDirectionService {
     @Transactional(readOnly = true)
     @Override
     public List<DirectionDto> getAllDirections() {
+        log.debug("Get all directions");
         List<Direction> directions = directionRepository.findAll();
         return directionMapper.toDirectionDto(directions);
     }
@@ -35,6 +38,7 @@ public class DirectionService implements IDirectionService {
     @Transactional(readOnly = true)
     @Override
     public DirectionDto getDirection(Long directionId) {
+        log.debug("Get direction by id={}", directionId);
         Direction direction = getDirectionById(directionId);
         return directionMapper.directionToDirectionDto(direction);
     }
@@ -42,18 +46,22 @@ public class DirectionService implements IDirectionService {
     @Transactional
     @Override
     public DirectionDto createDirection(DirectionDto directionDto) {
+        log.debug("Create new direction with name {}", directionDto.getHeader());
         Direction direction = directionMapper.directionDtoToDirection(directionDto);
 
         direction.getSections()
                 .forEach(section -> section.setDirection(direction));
 
         Direction save = directionRepository.save(direction);
+        log.debug("Created new direction with id {}", direction.getId());
         return directionMapper.directionToDirectionDto(save);
     }
 
+    // TODO : RESTART FUNCTION
     @Transactional
     @Override
     public DirectionDto editDirection(Long id, DirectionDto directionDto) {
+        log.debug("Editing direction with id={}", id);
         Direction direction = directionMapper.directionDtoToDirection(directionDto);
         direction.setId(id);
 
@@ -63,15 +71,19 @@ public class DirectionService implements IDirectionService {
         }
 
         Direction updateDirection = directionRepository.update(direction);
+        log.debug("Direction updating with id {}", id);
         return directionMapper.directionToDirectionDto(updateDirection);
     }
 
     @Transactional
     @Override
     public void deleteDirection(Long id) {
+        log.debug("Delete direction {}", id);
         try {
             directionRepository.deleteById(id);
+            log.debug("direction {} removed", id);
         } catch (EntityExistsException exception) {
+            log.warn("Direction {} not found", id);
             throw new DirectionNotFoundException(id);
         }
     }
@@ -79,6 +91,7 @@ public class DirectionService implements IDirectionService {
     private Direction getDirectionById(Long id) {
         Direction direction = directionRepository.find(id);
         if (direction == null) {
+            log.warn("Direction {} not found", id);
             throw new DirectionNotFoundException(id);
         }
         return direction;

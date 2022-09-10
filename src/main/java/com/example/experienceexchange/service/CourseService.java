@@ -23,6 +23,7 @@ import com.example.experienceexchange.util.date.DateUtil;
 import com.example.experienceexchange.util.mapper.CourseMapper;
 import com.example.experienceexchange.util.mapper.LessonOnCourseMapper;
 import com.example.experienceexchange.util.mapper.PaymentMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class CourseService implements ICourseService {
 
@@ -72,16 +74,18 @@ public class CourseService implements ICourseService {
     @Transactional(readOnly = true)
     @Override
     public List<CourseDto> getCourses(List<SearchCriteria> filters) {
+        log.debug("Get courses");
         Map<String, List<SearchCriteria>> searchMap = filterProvider.createSearchMap(filters);
         String filterQuery = filterProvider.createFilterQuery(searchMap);
 
-        List<Course> courses = courseRepository.findAllCourseByFilter(filterQuery);
+        List<Course> courses = courseRepository.findAllCoursesByFilter(filterQuery);
         return courseMapper.toCourseDto(courses);
     }
 
     @Transactional
     @Override
     public CourseDto createCourse(JwtUserDetails userDetails, CourseDto courseDto) {
+        log.debug("Create course");
         Long userId = userDetails.getId();
         User author = userRepository.find(userId);
         Course newCourse = courseMapper.courseDtoToCourse(courseDto);
@@ -92,13 +96,15 @@ public class CourseService implements ICourseService {
         }
         courseRepository.save(newCourse);
         courseRepository.update(newCourse);
+        log.debug("Course create with id={}", newCourse.getId());
         return courseMapper.courseToCourseDto(newCourse);
     }
 
     @Transactional
     @Override
-    public CourseDto editCourse(JwtUserDetails userDetails, Long id, CourseDto courseDto) {
-        Course courseBeforeUpdate = getCourseById(id);
+    public CourseDto editCourse(JwtUserDetails userDetails, Long courseId, CourseDto courseDto) {
+        log.debug("Edit course with id={}", courseId);
+        Course courseBeforeUpdate = getCourseById(courseId);
 
         checkAccessToCourseEdit(courseBeforeUpdate, userDetails.getId());
 
@@ -106,13 +112,17 @@ public class CourseService implements ICourseService {
         updateCourse(courseBeforeUpdate, courseAfterUpdate);
 
         courseRepository.update(courseAfterUpdate);  // TODO : затестить
-        courseAfterUpdate.getLessons().forEach(lesson -> lesson.setCourse(courseAfterUpdate));
+        courseAfterUpdate
+                .getLessons()
+                .forEach(lesson -> lesson.setCourse(courseAfterUpdate));
+        log.debug("Course with id={} updated", courseId);
         return courseMapper.courseToCourseDto(courseAfterUpdate);
     }
 
     @Transactional(readOnly = true)
     @Override
     public CourseDto getCourse(Long courseId) {
+        log.debug("Get Course with id={}", courseId);
         Course course = getCourseById(courseId);
         return courseMapper.courseToCourseDto(course);
     }
@@ -120,6 +130,7 @@ public class CourseService implements ICourseService {
     @Transactional(readOnly = true)
     @Override
     public List<LessonOnCourseDto> getSchedule(JwtUserDetails userDetails) {
+        log.debug("Get schedule for all courses");
         Long userId = userDetails.getId();
         List<LessonOnCourse> allLessonsOnCourseByUserId = lessonOnCourseRepository.findAllLessonsOnCourseByUserId(userId);
         return lessonMapper.toLessonOnCourseDto(allLessonsOnCourseByUserId);
@@ -128,6 +139,7 @@ public class CourseService implements ICourseService {
     @Transactional(readOnly = true)
     @Override
     public List<LessonOnCourseDto> getScheduleByCourse(JwtUserDetails userDetails, Long courseId) {
+        log.debug("Get schedule for course with id={}", courseId);
         Long userId = userDetails.getId();
         List<LessonOnCourse> lessons = lessonOnCourseRepository.findAllLessonsOnCourseByUserIdAndCourseId(userId, courseId);
         return lessonMapper.toLessonOnCourseDto(lessons);
@@ -137,8 +149,11 @@ public class CourseService implements ICourseService {
     @Transactional(readOnly = true)
     @Override
     public LessonOnCourseDto getLessonOnCourse(JwtUserDetails userDetails, Long courseId, Long lessonId) {
+        log.debug("Get lesson on course");
+        // TODO : ТУТ ДОПИСАТЬ
         List<LessonOnCourse> lessons = lessonOnCourseRepository.findAllLessonsOnCourseByUserIdAndCourseId(userDetails.getId(), courseId);
         if (lessons.isEmpty()) {
+            log.warn("Not access to course with id={} for user {}", courseId, userDetails.getId());
             throw new NotAccessException(NOT_ACCESS_TO_COURSE);
         }
         LessonOnCourse lessonOnCourse = lessons
@@ -148,6 +163,7 @@ public class CourseService implements ICourseService {
                 .orElse(null);
 
         if (lessonOnCourse == null) {
+            log.warn("Lesson not found with id={}", lessonId);
             throw new LessonNotFoundException(lessonId);
         }
 
@@ -158,11 +174,14 @@ public class CourseService implements ICourseService {
     @Transactional
     @Override
     public void deleteCourse(JwtUserDetails userDetails, Long courseId) {
+        log.debug("Delete course with id={}", courseId);
         Course course = getCourseById(courseId);
         checkAccessToCourseEdit(course, userDetails.getId());
         try {
             courseRepository.delete(course);
+            log.debug("Course with id={} deleted", courseId);
         } catch (EntityExistsException e) {
+            log.warn("Course not found with id={}", courseId);
             throw new CourseNotFoundException(courseId);
         }
     }
@@ -170,10 +189,12 @@ public class CourseService implements ICourseService {
     @Transactional
     @Override
     public PaymentDto subscribeToCourse(JwtUserDetails userDetails, PaymentDto paymentDto, Long courseId) {
+        log.debug("User {} subscribe to course {}", userDetails.getId(), courseId);
         Course course = getCourseById(courseId);
 
         User user = userRepository.find(userDetails.getId());
         if (course.getAuthor().getId().equals(user.getId())) {
+            log.warn("User {} cannot subscribe to own course", userDetails.getId());
             throw new SubscriptionNotPossibleException(SUB_TO_OWN_COURSE);
         }
 
@@ -181,11 +202,14 @@ public class CourseService implements ICourseService {
             if (course.isAvailableForSubscription(DateUtil.dateTimeNow())) {
                 Payment payment = subscribeToCourse(paymentDto, user, course);
                 paymentRepository.save(payment);
+                log.debug("User {} subscribe to course {}", userDetails.getId(), courseId);
                 return paymentMapper.paymentToPaymentDto(payment);
             } else {
+                log.warn("User {} cannot subscribe to close course", userDetails.getId());
                 throw new SubscriptionNotPossibleException(SUB_TO_CLOSE_COURSE);
             }
         } else {
+            log.warn("User {} cannot subscribe to close course with incorrect price {}", userDetails.getId(), paymentDto.getPrice());
             throw new SubscriptionNotPossibleException(SUB_WITH_INCORRECT_PRICE);
         }
     }
@@ -193,6 +217,7 @@ public class CourseService implements ICourseService {
     @Transactional
     @Override
     public CourseDto createLessonOnCourse(JwtUserDetails userDetails, Long courseId, LessonOnCourseDto lessonDto) {
+        log.debug("Create lesson on course {}", courseId);
         Course course = getCourseById(courseId);
 
         checkAccessToCourseEdit(course, userDetails.getId());
@@ -202,12 +227,14 @@ public class CourseService implements ICourseService {
         course.addLesson(lessonOnCourse);
 
         lessonOnCourseRepository.save(lessonOnCourse);
+        log.debug("Created course on lesson with id={}", lessonOnCourse.getId());
         return courseMapper.courseToCourseDto(course);
     }
 
     private Course getCourseById(Long id) throws CourseNotFoundException {
         Course course = courseRepository.find(id);
         if (course == null) {
+            log.warn("Course with id={} not found", id);
             throw new CourseNotFoundException(id);
         }
         return course;
@@ -215,11 +242,13 @@ public class CourseService implements ICourseService {
 
     private void checkAccessToCourseEdit(Course course, Long userId) throws NotAccessException {
         if (!course.getAuthor().getId().equals(userId)) {
+            log.warn("User {} does not have access to edit course {}", userId, course.getId());
             throw new NotAccessException(NOT_ACCESS_EDIT);
         }
     }
 
     private Course updateCourse(Course courseBeforeUpdate, Course courseAfterUpdate) {
+        log.trace("Updating course {}", courseBeforeUpdate.getId());
         courseAfterUpdate.setAuthor(courseBeforeUpdate.getAuthor());
         courseAfterUpdate.setCurrentNumberUsers(courseBeforeUpdate.getCurrentNumberUsers());
         courseAfterUpdate.setComments(courseBeforeUpdate.getComments());
@@ -228,9 +257,11 @@ public class CourseService implements ICourseService {
     }
 
     private void checkAccessToLessonGet(LessonOnCourse lesson) throws NotAccessException {
+        log.trace("Check access to lesson");
         Date dateStartLesson = lesson.getStartLesson();
         Date dateAccessLesson = DateUtil.addDays(dateStartLesson, lesson.getAccessDuration());
         if (DateUtil.isDateAfterNow(dateStartLesson) && DateUtil.isDateBeforeNow(dateAccessLesson)) {
+            log.warn("Lesson not available");
             throw new NotAccessException(NOT_ACCESS_TO_LESSON);
         }
     }

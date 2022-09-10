@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ICourseRepository extends GenericDao<Course, Long> {
 
-    List<Course> findAllCourseByFilter(String filter);
+    List<Course> findAllCoursesByFilter(String filter);
 }

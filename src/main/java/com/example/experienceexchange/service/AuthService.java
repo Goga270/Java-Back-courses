@@ -15,6 +15,7 @@ import com.example.experienceexchange.service.interfaceService.IAuthService;
 import com.example.experienceexchange.util.date.DateUtil;
 import com.example.experienceexchange.util.factory.TokenDtoFactory;
 import com.example.experienceexchange.util.mapper.UserMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 public class AuthService implements IAuthService {
 
@@ -45,11 +47,13 @@ public class AuthService implements IAuthService {
     @Transactional
     @Override
     public TokenDto authentication(LoginDto loginDto) {
+        log.debug("Authentication user");
         Authentication authentication = manager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
         JwtUserDetails userDetails = (JwtUserDetails) authentication.getPrincipal();
 
         String token = jwtTokenProvider.createToken(userDetails.getUsername(), userDetails.getRole());
 
+        log.debug("User with id={} is authenticated", userDetails.getId());
         return TokenDtoFactory.createTokenDto(token, userDetails.getUsername());
     }
 
@@ -71,18 +75,23 @@ public class AuthService implements IAuthService {
     @Transactional
     @Override
     public void blockUser(Long id) {
+        log.debug("Block user with id={}", id);
         User user = userRepository.find(id);
         if (user != null) {
             user.setStatus(Status.NOT_ACTIVE);
             userRepository.update(user);
         } else {
+            log.warn("User is not found with id={}", id);
+            log.warn("user is not blocked");
             throw new UserNotFoundException(id);
         }
     }
 
     private void registration(UserDto userDto) {
+        log.debug("Registration new user");
         User account = userRepository.findByEmail(userDto.getEmail());
         if (account != null) {
+            log.warn("Email not unique");
             throw new EmailNotUniqueException();
         }
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
@@ -91,5 +100,6 @@ public class AuthService implements IAuthService {
         userDto.setUpdated(DateUtil.dateTimeNow());
         User newUser = userMapper.userDtoToUser(userDto);
         userRepository.save(newUser);
+        log.debug("Registration new {} with id={}", userDto.getRole(), newUser.getId());
     }
 }

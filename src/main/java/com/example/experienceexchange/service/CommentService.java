@@ -9,11 +9,13 @@ import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.ICommentService;
 import com.example.experienceexchange.util.date.DateUtil;
 import com.example.experienceexchange.util.mapper.CommentMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class CommentService implements ICommentService {
 
@@ -32,6 +34,7 @@ public class CommentService implements ICommentService {
     @Transactional(readOnly = true)
     @Override
     public List<CommentDto> getCommentsByCourse(Long courseId) {
+        log.debug("Get comments for course id={}", courseId);
         List<Comment> allCommentsByCourseId = commentRepository.findAllCommentsByCourseId(courseId);
         return commentMapper.toCommentsDto(allCommentsByCourseId);
     }
@@ -39,6 +42,7 @@ public class CommentService implements ICommentService {
     @Transactional(readOnly = true)
     @Override
     public List<CommentDto> getCommentByLesson(Long lessonId) {
+        log.debug("Get comments for lesson id={}", lessonId);
         List<Comment> allCommentsByLessonId = commentRepository.findAllCommentsByLessonId(lessonId);
         return commentMapper.toCommentsDto(allCommentsByLessonId);
     }
@@ -46,6 +50,7 @@ public class CommentService implements ICommentService {
     @Transactional
     @Override
     public CommentDto createComment(JwtUserDetails userDetails, CommentDto commentDto) {
+        log.debug("Create comment");
         Comment comment = commentMapper.commentDtoToComment(commentDto);
         User authorComment = userRepository.find(userDetails.getId());
         comment.setCreated(DateUtil.dateTimeNow());

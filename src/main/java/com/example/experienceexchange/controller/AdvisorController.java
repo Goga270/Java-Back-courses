@@ -59,7 +59,7 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
             CourseNotFoundException.class})
     protected ResponseEntity<Object> handleNotFound(Exception exception, WebRequest request) {
         Map<String, String> body = new HashMap<>();
-        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        HttpStatus httpStatus = HttpStatus.NOT_FOUND;
         return getObjectResponseEntity(exception, request, body, httpStatus);
     }
 

@@ -4,6 +4,7 @@ import com.example.experienceexchange.dto.CommentDto;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.ICommentService;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,7 @@ public class CommentController {
 
     @JsonView({CommentDto.CreateForCourse.class})
     @PostMapping("courses/new-comment")
+    @ResponseStatus(HttpStatus.CREATED)
     public CommentDto createCommentForCourse(
             @AuthenticationPrincipal JwtUserDetails userDetails,
             @RequestBody @Validated(CommentDto.CreateForCourse.class) CommentDto commentDto) {
@@ -42,6 +44,7 @@ public class CommentController {
 
     @JsonView({CommentDto.CreateForLesson.class})
     @PostMapping("lessons/new-comment")
+    @ResponseStatus(HttpStatus.CREATED)
     public CommentDto createCommentForLesson(
             @AuthenticationPrincipal JwtUserDetails userDetails,
             @RequestBody @Validated(CommentDto.CreateForLesson.class) CommentDto commentDto) {

@@ -2,11 +2,13 @@ package com.example.experienceexchange.repository;
 
 import com.example.experienceexchange.model.LessonSingle;
 import com.example.experienceexchange.repository.interfaceRepo.ILessonRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
 import java.util.List;
 
+@Slf4j
 @Repository
 public class LessonRepository extends HibernateAbstractDao<LessonSingle, Long> implements ILessonRepository {
 
@@ -34,7 +36,9 @@ public class LessonRepository extends HibernateAbstractDao<LessonSingle, Long> i
     @Override
     public List<LessonSingle> findAllLessonsByFilter(String filter) {
         String jpqlQuery = String.format(JPQL_FILTER_LESSON, filter);
+
         TypedQuery<LessonSingle> query = entityManager.createQuery(jpqlQuery, getClassEntity());
+        log.debug("Find all lessons with filter {}", filter);
         return query.getResultList();
     }
 }

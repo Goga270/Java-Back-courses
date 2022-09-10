@@ -7,6 +7,7 @@ import com.example.experienceexchange.repository.filter.IPredicateBuilder;
 import com.example.experienceexchange.repository.filter.JpqlFilterProvider;
 import com.example.experienceexchange.repository.filter.PredicateBuilder;
 import com.example.experienceexchange.repository.interfaceRepo.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -23,7 +24,9 @@ import javax.sql.DataSource;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.TimeZone;
 
+@Slf4j
 @Configuration
 @ComponentScan(basePackages = {"com.example.experienceexchange"})
 @PropertySource("classpath:/application.properties")
@@ -47,6 +50,16 @@ public class ApplicationContextConfiguration {
     private String DIALECT;
     @Value("${spring.jpa.properties.packagesToScan}")
     private String PACKAGES_TO_SCAN;
+    @Value("${spring.timezone}")
+    private String TIME_ZONE;
+
+    @Bean
+    public TimeZone timeZone() {
+        log.info("Selected time zone = {}", TIME_ZONE);
+        TimeZone defaultTimeZone = TimeZone.getTimeZone(TIME_ZONE);
+        TimeZone.setDefault(defaultTimeZone);
+        return defaultTimeZone;
+    }
 
     @Bean
     public IFilterProvider courseFilter() {
@@ -133,6 +146,7 @@ public class ApplicationContextConfiguration {
     public PlatformTransactionManager transactionManager() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+        log.info("Created JPA transaction manager");
         return transactionManager;
     }
 
@@ -148,6 +162,7 @@ public class ApplicationContextConfiguration {
         dataSource.setDriverClassName(DRIVER_CLASS_NAME);
         dataSource.setPassword(PASSWORD);
         dataSource.setUrl(URL);
+        log.info("Selected data source for database: username:{},driver class name:{}, password:{},url:{}",USERNAME,DRIVER_CLASS_NAME,PASSWORD,URL);
         return dataSource;
     }
 
@@ -156,10 +171,12 @@ public class ApplicationContextConfiguration {
         LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setDataSource(dataSource());
         entityManagerFactory.setPackagesToScan(PACKAGES_TO_SCAN);
+        log.info("Created entityManagerFactory");
 
         JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         entityManagerFactory.setJpaVendorAdapter(vendorAdapter);
         entityManagerFactory.setJpaProperties(additionalProperties());
+        log.info("Created JpaVendorAdapter");
         return entityManagerFactory;
     }
 
