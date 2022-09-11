@@ -13,8 +13,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/courses")
 public class CourseController {
@@ -27,7 +29,7 @@ public class CourseController {
 
     @JsonView({CourseDto.Details.class})
     @GetMapping("")
-    public List<CourseDto> getCoursesByFilter(@RequestBody List<SearchCriteria> filters) {
+    public List<CourseDto> getCoursesByFilter(@RequestBody @Valid List<SearchCriteria> filters) {
         return courseService.getCourses(filters);
     }
 
@@ -79,6 +81,12 @@ public class CourseController {
                                 @PathVariable Long id,
                                 @RequestBody @Validated(value = CourseDto.Edit.class) CourseDto courseDto) {
         return courseService.editCourse(userDetails, id, courseDto);
+    }
+
+    @PutMapping("/restart-course")
+    public CourseDto restartCourse(@AuthenticationPrincipal JwtUserDetails userDetails,
+                                   @RequestBody @Validated(value = CourseDto.Edit.class) CourseDto courseDto) {
+        return courseService.restartCourse(userDetails, courseDto);
     }
 
     @JsonView({PaymentDto.CreateCourse.class})

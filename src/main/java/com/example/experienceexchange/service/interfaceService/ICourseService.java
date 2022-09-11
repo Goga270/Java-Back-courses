@@ -29,4 +29,6 @@ public interface ICourseService {
     List<LessonOnCourseDto> getScheduleByCourse(JwtUserDetails userDetails, Long courseId);
 
     LessonOnCourseDto getLessonOnCourse(JwtUserDetails userDetails, Long courseId, Long lessonId);
+
+    CourseDto restartCourse(JwtUserDetails userDetails, CourseDto courseDto);
 }

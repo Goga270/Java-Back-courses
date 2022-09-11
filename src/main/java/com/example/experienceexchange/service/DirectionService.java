@@ -57,7 +57,6 @@ public class DirectionService implements IDirectionService {
         return directionMapper.directionToDirectionDto(save);
     }
 
-    // TODO : RESTART FUNCTION
     @Transactional
     @Override
     public DirectionDto editDirection(Long id, DirectionDto directionDto) {

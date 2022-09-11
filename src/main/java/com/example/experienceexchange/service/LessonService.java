@@ -2,6 +2,7 @@ package com.example.experienceexchange.service;
 
 import com.example.experienceexchange.dto.LessonDto;
 import com.example.experienceexchange.dto.PaymentDto;
+import com.example.experienceexchange.exception.IllegalSearchCriteriaException;
 import com.example.experienceexchange.exception.LessonNotFoundException;
 import com.example.experienceexchange.exception.NotAccessException;
 import com.example.experienceexchange.exception.SubscriptionNotPossibleException;
@@ -20,6 +21,7 @@ import com.example.experienceexchange.util.mapper.LessonMapper;
 import com.example.experienceexchange.util.mapper.PaymentMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +39,9 @@ public class LessonService implements ILessonService {
     private static final String NOT_ACCESS_EDIT = "No access to edit resource";
     private static final String NOT_FOUND_LESSON_IN_SUBSCRIPTIONS = "lesson not found in subscriptions";
     private static final String LESSON_NOT_START = "lesson has not started";
+    private static final String ILLEGAL_FILTER = "Entered search criteria is incorrect";
+    private static final String LESSON_NOT_END = "Lesson is not ended";
+
 
     private final ILessonRepository lessonRepository;
     private final IUserRepository userRepository;
@@ -65,12 +70,15 @@ public class LessonService implements ILessonService {
         log.debug("Get lessons");
         Map<String, List<SearchCriteria>> searchMap = filterProvider.createSearchMap(filters);
         String filterQuery = filterProvider.createFilterQuery(searchMap);
-
-        List<LessonSingle> lessons = lessonRepository.findAllLessonsByFilter(filterQuery);
-        return lessonMapper.toLessonDto(lessons);
+        try {
+            List<LessonSingle> lessons = lessonRepository.findAllLessonsByFilter(filterQuery);
+            return lessonMapper.toLessonDto(lessons);
+        } catch (InvalidDataAccessResourceUsageException e) {
+            log.warn("Incorrect filter {} for query", filterQuery);
+            throw new IllegalSearchCriteriaException(ILLEGAL_FILTER);
+        }
     }
 
-    // TODO: НАДО КАК ТО ОТПИСЫВАТЬ ПОЛЬЗОВАТЕЛЕЙ КОГДА ВРЕМЯ КУРСА КОНЧАЕТСЯ
     @Transactional(readOnly = true)
     @Override
     public LessonDto getLesson(Long lessonId) {
@@ -94,7 +102,7 @@ public class LessonService implements ILessonService {
             throw new NotAccessException(NOT_FOUND_LESSON_IN_SUBSCRIPTIONS);
         }
 
-        if (DateUtil.isDateBeforeNow(lessonSingle.getStartLesson())) {
+        if (DateUtil.isDateAfterNow(lessonSingle.getStartLesson())) {
             log.warn("No access to unstarted lesson {}", lessonId);
             throw new NotAccessException(LESSON_NOT_START);
         }
@@ -119,12 +127,35 @@ public class LessonService implements ILessonService {
 
         LessonSingle newLesson = lessonMapper.lessonDtoToLesson(lessonDto);
         newLesson.setAuthor(author);
-        // TODO : TEST
-        lessonRepository.save(newLesson);
-        LessonSingle update = lessonRepository.update(newLesson);
-        log.debug("Created lesson {}", update.getId());
-        return lessonMapper.lessonToLessonDto(update);
 
+        lessonRepository.save(newLesson);
+        lessonRepository.update(newLesson);
+        log.debug("Created lesson {}", newLesson.getId());
+
+        return lessonMapper.lessonToLessonDto(newLesson);
+    }
+
+    @Transactional
+    @Override
+    public LessonDto restartLesson(JwtUserDetails userDetails, LessonDto lessonDto) {
+        log.debug("Restart lesson");
+        User author = userRepository.find(userDetails.getId());
+        LessonSingle lesson = getLessonById(lessonDto.getId());
+
+        checkAccessToLessonEdit(lesson.getAuthor().getId(), author.getId());
+
+        if (DateUtil.isDateAfterNow(lesson.getEndLesson())) {
+            log.warn("Lesson not restarted because it hasn't finished");
+            throw new NotAccessException(LESSON_NOT_END);
+        }
+        LessonSingle restartedLesson = lessonMapper.lessonDtoToLesson(lessonDto);
+        restartedLesson.setAuthor(author);
+        restartedLesson.setCurrentNumberUsers(0);
+        restartedLesson.setComments(lesson.getComments());
+
+        LessonSingle update = lessonRepository.update(restartedLesson);
+        log.debug("Restarted lesson {}", lessonDto.getId());
+        return lessonMapper.lessonToLessonDto(update);
     }
 
     @Transactional
@@ -137,7 +168,7 @@ public class LessonService implements ILessonService {
 
         LessonSingle lessonAfterUpdate = lessonMapper.lessonDtoToLesson(lessonDto);
         updateLesson(lessonBeforeUpdate, lessonAfterUpdate);
-        // TODO : TEST
+
         LessonSingle updateLesson = lessonRepository.update(lessonAfterUpdate);
         log.debug("Updated lesson {}", lessonId);
         return lessonMapper.lessonToLessonDto(updateLesson);

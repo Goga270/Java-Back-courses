@@ -1,6 +1,5 @@
 package com.example.experienceexchange.repository.interfaceRepo;
 
-import com.example.experienceexchange.model.Lesson;
 import com.example.experienceexchange.model.LessonSingle;
 
 import java.util.List;

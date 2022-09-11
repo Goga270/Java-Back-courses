@@ -19,6 +19,8 @@ public interface ILessonService {
 
     LessonDto createLesson(JwtUserDetails userDetails, LessonDto lessonDto);
 
+    LessonDto restartLesson(JwtUserDetails userDetails, LessonDto lessonDto);
+
     LessonDto editLesson(JwtUserDetails userDetails, Long lessonId, LessonDto lessonDto);
 
     PaymentDto subscribeToLesson(JwtUserDetails userDetails, PaymentDto paymentDto, Long lessonId);

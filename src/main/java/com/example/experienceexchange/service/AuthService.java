@@ -71,7 +71,6 @@ public class AuthService implements IAuthService {
         registration(registrationDto);
     }
 
-    // TODO : ЗАТЕСТИТЬ
     @Transactional
     @Override
     public void blockUser(Long id) {
@@ -83,6 +82,21 @@ public class AuthService implements IAuthService {
             log.debug("Blocked user {}", id);
         } else {
             log.warn("User {} is not found, user is not blocked", id);
+            throw new UserNotFoundException(id);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void unblockUser(Long id) {
+        log.debug("Unblock user with id={}", id);
+        User user = userRepository.find(id);
+        if (user != null) {
+            user.setStatus(Status.ACTIVE);
+            userRepository.update(user);
+            log.debug("Unblocked user {}", id);
+        } else {
+            log.warn("User {} is not found, user is not unblocked", id);
             throw new UserNotFoundException(id);
         }
     }

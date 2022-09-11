@@ -3,10 +3,7 @@ package com.example.experienceexchange.service;
 import com.example.experienceexchange.dto.CourseDto;
 import com.example.experienceexchange.dto.LessonOnCourseDto;
 import com.example.experienceexchange.dto.PaymentDto;
-import com.example.experienceexchange.exception.CourseNotFoundException;
-import com.example.experienceexchange.exception.LessonNotFoundException;
-import com.example.experienceexchange.exception.NotAccessException;
-import com.example.experienceexchange.exception.SubscriptionNotPossibleException;
+import com.example.experienceexchange.exception.*;
 import com.example.experienceexchange.model.Course;
 import com.example.experienceexchange.model.LessonOnCourse;
 import com.example.experienceexchange.model.Payment;
@@ -25,6 +22,7 @@ import com.example.experienceexchange.util.mapper.LessonOnCourseMapper;
 import com.example.experienceexchange.util.mapper.PaymentMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +41,8 @@ public class CourseService implements ICourseService {
     private static final String NOT_ACCESS_EDIT = "No access to edit resource";
     private static final String NOT_ACCESS_TO_COURSE = "no access to course";
     private static final String NOT_ACCESS_TO_LESSON = "no access to lesson on course";
+    private static final String COURSE_NOT_END = "Course is not ended";
+    private static final String ILLEGAL_FILTER = "Entered search criteria is incorrect";
 
     private final ICourseRepository courseRepository;
     private final IUserRepository userRepository;
@@ -77,9 +77,91 @@ public class CourseService implements ICourseService {
         log.debug("Get courses by filter");
         Map<String, List<SearchCriteria>> searchMap = filterProvider.createSearchMap(filters);
         String filterQuery = filterProvider.createFilterQuery(searchMap);
+        try {
+            List<Course> courses = courseRepository.findAllCoursesByFilter(filterQuery);
+            return courseMapper.toCourseDto(courses);
+        } catch (InvalidDataAccessResourceUsageException e) {
+            log.warn("Incorrect filter {} for query", filterQuery);
+            throw new IllegalSearchCriteriaException(ILLEGAL_FILTER);
+        }
+    }
 
-        List<Course> courses = courseRepository.findAllCoursesByFilter(filterQuery);
-        return courseMapper.toCourseDto(courses);
+    @Transactional(readOnly = true)
+    @Override
+    public CourseDto getCourse(Long courseId) {
+        log.debug("Get course {}", courseId);
+        Course course = getCourseById(courseId);
+        return courseMapper.courseToCourseDto(course);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<LessonOnCourseDto> getSchedule(JwtUserDetails userDetails) {
+        log.debug("Get schedule of courses for user {}", userDetails.getId());
+        Long userId = userDetails.getId();
+        List<LessonOnCourse> allLessonsOnCourseByUserId = lessonOnCourseRepository.findAllLessonsOnCourseByUserId(userId);
+        return lessonMapper.toLessonOnCourseDto(allLessonsOnCourseByUserId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<LessonOnCourseDto> getScheduleByCourse(JwtUserDetails userDetails, Long courseId) {
+        log.debug("Get schedule of course {}", courseId);
+        Long userId = userDetails.getId();
+        List<LessonOnCourse> lessons = lessonOnCourseRepository.findAllLessonsOnCourseByUserIdAndCourseId(userId, courseId);
+        return lessonMapper.toLessonOnCourseDto(lessons);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public LessonOnCourseDto getLessonOnCourse(JwtUserDetails userDetails, Long courseId, Long lessonId) {
+        log.debug("Get lesson {} on course {}", lessonId, courseId);
+
+        List<LessonOnCourse> lessons = lessonOnCourseRepository.findAllLessonsOnCourseByUserIdAndCourseId(userDetails.getId(), courseId);
+        if (lessons.isEmpty()) {
+            log.warn("No access to course {} for user {}", courseId, userDetails.getId());
+            throw new NotAccessException(NOT_ACCESS_TO_COURSE);
+        }
+        LessonOnCourse lessonOnCourse = lessons
+                .stream()
+                .filter(lesson -> lesson.getId().equals(lessonId))
+                .findFirst()
+                .orElse(null);
+
+        if (lessonOnCourse == null) {
+            log.warn("Lesson {} is not found", lessonId);
+            throw new LessonNotFoundException(lessonId);
+        }
+
+        checkAccessToLessonUse(lessonOnCourse);
+        return lessonMapper.lessonOnCourseToLessonOnCourseDto(lessonOnCourse);
+    }
+
+    @Transactional
+    @Override
+    public CourseDto restartCourse(JwtUserDetails userDetails, CourseDto courseDto) {
+        log.debug("Restart course");
+        User author = userRepository.find(userDetails.getId());
+        Course courseToRestart = getCourseById(courseDto.getId());
+
+        checkAccessToCourseEdit(courseToRestart, author.getId());
+
+        if (DateUtil.isDateAfterNow(courseToRestart.getDateEnd())) {
+            log.warn("Course not restarted because it hasn't finished");
+            throw new NotAccessException(COURSE_NOT_END);
+        }
+        Course restartedCourse = courseMapper.courseDtoToCourse(courseDto);
+        restartedCourse.setAuthor(author);
+        restartedCourse.setCurrentNumberUsers(0);
+        restartedCourse.setComments(courseToRestart.getComments());
+
+        restartedCourse
+                .getLessons()
+                .forEach(lesson -> lesson.setCourse(restartedCourse));
+
+        Course update = courseRepository.update(restartedCourse);
+        log.debug("Restarted course {}", courseDto.getId());
+        return courseMapper.courseToCourseDto(update);
     }
 
     @Transactional
@@ -111,64 +193,12 @@ public class CourseService implements ICourseService {
         Course courseAfterUpdate = courseMapper.courseDtoToCourse(courseDto);
         updateCourse(courseBeforeUpdate, courseAfterUpdate);
 
-        courseRepository.update(courseAfterUpdate);  // TODO : затестить
         courseAfterUpdate
                 .getLessons()
                 .forEach(lesson -> lesson.setCourse(courseAfterUpdate));
+        Course update = courseRepository.update(courseAfterUpdate);
         log.debug("Updated course {}", courseId);
-        return courseMapper.courseToCourseDto(courseAfterUpdate);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public CourseDto getCourse(Long courseId) {
-        log.debug("Get course {}", courseId);
-        Course course = getCourseById(courseId);
-        return courseMapper.courseToCourseDto(course);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<LessonOnCourseDto> getSchedule(JwtUserDetails userDetails) {
-        log.debug("Get schedule of courses for user {}", userDetails.getId());
-        Long userId = userDetails.getId();
-        List<LessonOnCourse> allLessonsOnCourseByUserId = lessonOnCourseRepository.findAllLessonsOnCourseByUserId(userId);
-        return lessonMapper.toLessonOnCourseDto(allLessonsOnCourseByUserId);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<LessonOnCourseDto> getScheduleByCourse(JwtUserDetails userDetails, Long courseId) {
-        log.debug("Get schedule of course {}", courseId);
-        Long userId = userDetails.getId();
-        List<LessonOnCourse> lessons = lessonOnCourseRepository.findAllLessonsOnCourseByUserIdAndCourseId(userId, courseId);
-        return lessonMapper.toLessonOnCourseDto(lessons);
-    }
-
-    // TODO : TEST
-    @Transactional(readOnly = true)
-    @Override
-    public LessonOnCourseDto getLessonOnCourse(JwtUserDetails userDetails, Long courseId, Long lessonId) {
-        log.debug("Get lesson {} on course {}", lessonId, courseId);
-
-        List<LessonOnCourse> lessons = lessonOnCourseRepository.findAllLessonsOnCourseByUserIdAndCourseId(userDetails.getId(), courseId);
-        if (lessons.isEmpty()) {
-            log.warn("No access to course {} for user {}", courseId, userDetails.getId());
-            throw new NotAccessException(NOT_ACCESS_TO_COURSE);
-        }
-        LessonOnCourse lessonOnCourse = lessons
-                .stream()
-                .filter(lesson -> lesson.getId().equals(lessonId))
-                .findFirst()
-                .orElse(null);
-
-        if (lessonOnCourse == null) {
-            log.warn("Lesson {} is not found", lessonId);
-            throw new LessonNotFoundException(lessonId);
-        }
-
-        checkAccessToLessonUse(lessonOnCourse);
-        return lessonMapper.lessonOnCourseToLessonOnCourseDto(lessonOnCourse);
+        return courseMapper.courseToCourseDto(update);
     }
 
     @Transactional
@@ -260,7 +290,7 @@ public class CourseService implements ICourseService {
         log.trace("Check if the lesson {} is available for use", lesson.getId());
         Date dateStartLesson = lesson.getStartLesson();
         Date dateAccessLesson = DateUtil.addDays(dateStartLesson, lesson.getAccessDuration());
-        if (DateUtil.isDateAfterNow(dateStartLesson) && DateUtil.isDateBeforeNow(dateAccessLesson)) {
+        if (DateUtil.isDateAfterNow(dateStartLesson) || DateUtil.isDateBeforeNow(dateAccessLesson)) {
             log.warn("Lesson {} not available", lesson.getId());
             throw new NotAccessException(NOT_ACCESS_TO_LESSON);
         }

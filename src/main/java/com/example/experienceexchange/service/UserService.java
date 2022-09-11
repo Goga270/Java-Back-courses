@@ -60,6 +60,16 @@ public class UserService implements IUserService {
 
     @Transactional(readOnly = true)
     @Override
+    public List<CourseDto> getCreatedCoursesByUser(JwtUserDetails userDetails) {
+        log.debug("Get courses created by user {} ", userDetails.getId());
+        User author = getUserById(userDetails.getId());
+        Set<Course> courses = author.getCreatedCourses();
+
+        return courseMapper.toCourseDto(courses);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
     public List<PaymentDto> getPayments(JwtUserDetails userDetails) {
         log.debug("Get payments for user {}", userDetails.getId());
         List<Payment> payments = getUserById(userDetails.getId()).getMyPayments();
@@ -82,6 +92,16 @@ public class UserService implements IUserService {
         User user = getUserById(userDetails.getId());
         Set<Course> courseSubscriptions = user.getCourseSubscriptions();
         return courseMapper.toCourseDto(courseSubscriptions);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<LessonDto> getCreatedLessonsByUser(JwtUserDetails userDetails) {
+        log.debug("Get lessons created by user {} ", userDetails.getId());
+        User author = getUserById(userDetails.getId());
+        Set<LessonSingle> lessons = author.getCreatedLessons();
+
+        return lessonMapper.toLessonDto(lessons);
     }
 
     @Transactional

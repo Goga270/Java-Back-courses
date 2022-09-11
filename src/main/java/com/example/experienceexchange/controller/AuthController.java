@@ -40,4 +40,10 @@ public class AuthController {
     public void blockUser(@RequestParam(name = "id") Long id) {
         authService.blockUser(id);
     }
+
+    @PatchMapping("/unblock-user")
+    @ResponseStatus(HttpStatus.OK)
+    public void unblockUser(@RequestParam(name = "id") Long id) {
+        authService.unblockUser(id);
+    }
 }

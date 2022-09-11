@@ -32,6 +32,16 @@ public class UserController {
         return userService.getCoursesSubscribedByUser(userDetails);
     }
 
+    @GetMapping("profile/created-courses")
+    public List<CourseDto> getCreatedCoursesByUser(@AuthenticationPrincipal JwtUserDetails userDetails) {
+        return userService.getCreatedCoursesByUser(userDetails);
+    }
+
+    @GetMapping("profile/created-lessons")
+    public List<LessonDto> getCreatedLessonsByUser(@AuthenticationPrincipal JwtUserDetails userDetails) {
+        return userService.getCreatedLessonsByUser(userDetails);
+    }
+
     @GetMapping("/profile/payments")
     public List<PaymentDto> getPayments(@AuthenticationPrincipal JwtUserDetails userDetails) {
         return userService.getPayments(userDetails);

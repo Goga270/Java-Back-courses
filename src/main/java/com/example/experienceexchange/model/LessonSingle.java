@@ -65,7 +65,7 @@ public class LessonSingle extends Lesson {
     )
     private Set<Skill> skills = new HashSet<>();
 
-    @OneToMany(cascade = {
+    @OneToMany(mappedBy = "lesson", cascade = {
             CascadeType.PERSIST,
             CascadeType.DETACH,
             CascadeType.REMOVE}, orphanRemoval = true)

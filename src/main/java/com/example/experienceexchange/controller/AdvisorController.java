@@ -25,14 +25,13 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
     private static final String DATE_PATTERN = "dd-MM-yyyy HH:mm:ss X";
     private static final String SOLUTION_EMAIL_NOT_UNIQUE = "Write another email";
     private static final String SOLUTION_PASSWORD_NOT_MATCH = "Try entering passwords again";
-    private static final String SOLUTION_NUMBER_FORMAT = "Check your search filters";
+    private static final String SOLUTION_ILLEGAL_FILTER = "Check entered search filters";
 
-    // TODO : ВСЕ ЛИ ЛОВЛЮ ?
-    @ExceptionHandler({NumberFormatException.class})
-    protected ResponseEntity<Object> handleNumberFormat(NumberFormatException exception, WebRequest request) {
+    @ExceptionHandler({IllegalSearchCriteriaException.class})
+    protected ResponseEntity<Object> handleIllegalSearchCriteria(IllegalSearchCriteriaException exception, WebRequest request) {
         Map<String, String> body = new HashMap<>();
-        HttpStatus httpStatus = HttpStatus.FORBIDDEN;
-        body.put("solution", SOLUTION_NUMBER_FORMAT);
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        body.put("solution", SOLUTION_ILLEGAL_FILTER);
         return getObjectResponseEntity(exception, request, body, httpStatus);
     }
 
@@ -90,12 +89,15 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException exception, WebRequest request) {
         Map<String, String> body = new HashMap<>();
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        body.put("timestamp", new SimpleDateFormat(DATE_PATTERN).format(DateUtil.dateTimeNow()));
+        body.put("error", httpStatus.name());
+        body.put("status", String.valueOf(httpStatus.value()));
         exception.getConstraintViolations().forEach(w -> {
             String propertyPath = w.getPropertyPath().toString();
             String message = w.getMessage();
             body.put(propertyPath, message);
         });
-        return getObjectResponseEntity(exception, request, body, httpStatus);
+        return handleExceptionInternal(exception, body, new HttpHeaders(), httpStatus, request);
     }
 
     @Override

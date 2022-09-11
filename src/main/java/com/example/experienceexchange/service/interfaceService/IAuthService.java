@@ -13,4 +13,6 @@ public interface IAuthService {
     void registrationAdmin(UserDto registrationDto);
 
     void blockUser(Long id);
+
+    void unblockUser(Long id);
 }

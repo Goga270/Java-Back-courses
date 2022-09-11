@@ -1,5 +1,6 @@
 package com.example.experienceexchange.controller;
 
+import com.example.experienceexchange.dto.CourseDto;
 import com.example.experienceexchange.dto.LessonDto;
 import com.example.experienceexchange.dto.PaymentDto;
 import com.example.experienceexchange.repository.filter.SearchCriteria;
@@ -11,8 +12,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/lessons")
 public class LessonController {
@@ -25,7 +28,7 @@ public class LessonController {
 
     @JsonView({LessonDto.Details.class})
     @GetMapping({""})
-    public List<LessonDto> getLessons(@RequestBody List<SearchCriteria> filters) {
+    public List<LessonDto> getLessons(@RequestBody @Valid List<SearchCriteria> filters) {
         return lessonService.getLessons(filters);
     }
 
@@ -35,7 +38,6 @@ public class LessonController {
         return lessonService.getLesson(lessonId);
     }
 
-    // TODO : TEST
     @JsonView({LessonDto.DetailsForSubscriber.class})
     @GetMapping("/subscriptions/{id}")
     public LessonDto getLesson(@AuthenticationPrincipal JwtUserDetails userDetails,
@@ -63,6 +65,12 @@ public class LessonController {
                                         @PathVariable("id") Long lessonId,
                                         @RequestBody @Validated(PaymentDto.CreateLesson.class) PaymentDto paymentDto) {
         return lessonService.subscribeToLesson(userDetails, paymentDto, lessonId);
+    }
+
+    @PutMapping("/restart-lesson")
+    public LessonDto restartCourse(@AuthenticationPrincipal JwtUserDetails userDetails,
+                                   @RequestBody @Validated(value = LessonDto.Edit.class) LessonDto lessonDto) {
+        return lessonService.restartLesson(userDetails, lessonDto);
     }
 
     @PutMapping("/{lessonId}/settings")
