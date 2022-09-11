@@ -80,9 +80,9 @@ public class AuthService implements IAuthService {
         if (user != null) {
             user.setStatus(Status.NOT_ACTIVE);
             userRepository.update(user);
+            log.debug("Blocked user {}", id);
         } else {
-            log.warn("User is not found with id={}", id);
-            log.warn("user is not blocked");
+            log.warn("User {} is not found, user is not blocked", id);
             throw new UserNotFoundException(id);
         }
     }
@@ -91,7 +91,7 @@ public class AuthService implements IAuthService {
         log.debug("Registration new user");
         User account = userRepository.findByEmail(userDto.getEmail());
         if (account != null) {
-            log.warn("Email not unique");
+            log.warn("Email is not unique, new user not registered");
             throw new EmailNotUniqueException();
         }
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
@@ -100,6 +100,6 @@ public class AuthService implements IAuthService {
         userDto.setUpdated(DateUtil.dateTimeNow());
         User newUser = userMapper.userDtoToUser(userDto);
         userRepository.save(newUser);
-        log.debug("Registration new {} with id={}", userDto.getRole(), newUser.getId());
+        log.debug("Registered new user {} with role={}", userDto.getRole(), newUser.getId());
     }
 }

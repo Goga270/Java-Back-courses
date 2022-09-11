@@ -74,7 +74,7 @@ public class LessonService implements ILessonService {
     @Transactional(readOnly = true)
     @Override
     public LessonDto getLesson(Long lessonId) {
-        log.debug("Get lesson with id {} for watch", lessonId);
+        log.debug("Get lesson {}", lessonId);
         LessonSingle lesson = getLessonById(lessonId);
         return lessonMapper.lessonToLessonDto(lesson);
     }
@@ -82,7 +82,7 @@ public class LessonService implements ILessonService {
     @Transactional(readOnly = true)
     @Override
     public LessonDto getLesson(JwtUserDetails userDetails, Long lessonId) {
-        log.debug("Get lesson with id {} for subscriber", lessonId);
+        log.debug("Get lesson {} for subscriber", lessonId);
         List<LessonSingle> lessons = lessonRepository.findAllLessonsByUserId(userDetails.getId());
         LessonSingle lessonSingle = lessons.stream()
                 .filter(lesson -> lesson.getId().equals(lessonId))
@@ -104,7 +104,7 @@ public class LessonService implements ILessonService {
     @Transactional(readOnly = true)
     @Override
     public List<LessonDto> getSchedule(JwtUserDetails userDetails) {
-        log.debug("Get schedule lessons for user {}", userDetails.getId());
+        log.debug("Get schedule of lessons for user {}", userDetails.getId());
         Long userId = userDetails.getId();
         List<LessonSingle> allLessons = lessonRepository.findAllLessonsByUserId(userId);
         return lessonMapper.toLessonDto(allLessons);
@@ -122,7 +122,7 @@ public class LessonService implements ILessonService {
         // TODO : TEST
         lessonRepository.save(newLesson);
         LessonSingle update = lessonRepository.update(newLesson);
-        log.debug("Lesson created with id {}", update.getId());
+        log.debug("Created lesson {}", update.getId());
         return lessonMapper.lessonToLessonDto(update);
 
     }
@@ -139,6 +139,7 @@ public class LessonService implements ILessonService {
         updateLesson(lessonBeforeUpdate, lessonAfterUpdate);
         // TODO : TEST
         LessonSingle updateLesson = lessonRepository.update(lessonAfterUpdate);
+        log.debug("Updated lesson {}", lessonId);
         return lessonMapper.lessonToLessonDto(updateLesson);
     }
 
@@ -148,9 +149,9 @@ public class LessonService implements ILessonService {
         log.debug("Delete lesson {}", id);
         try {
             lessonRepository.deleteById(id);
-            log.debug("Lesson {} removed", id);
+            log.debug("Lesson {} deleted", id);
         } catch (EntityExistsException e) {
-            log.warn("Not found lesson {}", id);
+            log.warn("Lesson {} is not found", id);
             throw new LessonNotFoundException(id);
         }
     }
@@ -158,7 +159,7 @@ public class LessonService implements ILessonService {
     @Transactional
     @Override
     public PaymentDto subscribeToLesson(JwtUserDetails userDetails, PaymentDto paymentDto, Long lessonId) {
-        log.debug("User {} subscribe to lesson {} ", userDetails.getId(), lessonId);
+        log.debug("User {} tries to subscribe to lesson {} ", userDetails.getId(), lessonId);
         LessonSingle lesson = getLessonById(lessonId);
         User user = userRepository.find(userDetails.getId());
 
@@ -184,10 +185,9 @@ public class LessonService implements ILessonService {
     }
 
     private LessonSingle getLessonById(Long lessonId) throws LessonNotFoundException {
-        log.trace("Get lesson with id {}", lessonId);
         LessonSingle lesson = lessonRepository.find(lessonId);
         if (lesson == null) {
-            log.warn("Lesson with id {} not found", lessonId);
+            log.warn("Lesson {} not found", lessonId);
             throw new LessonNotFoundException(lessonId);
         }
         return lesson;

@@ -38,7 +38,7 @@ public class LessonRepository extends HibernateAbstractDao<LessonSingle, Long> i
         String jpqlQuery = String.format(JPQL_FILTER_LESSON, filter);
 
         TypedQuery<LessonSingle> query = entityManager.createQuery(jpqlQuery, getClassEntity());
-        log.debug("Find all lessons with filter {}", filter);
+        log.debug("Find lessons with filter {}", filter);
         return query.getResultList();
     }
 }

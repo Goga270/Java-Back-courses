@@ -30,7 +30,7 @@ public class DirectionService implements IDirectionService {
     @Transactional(readOnly = true)
     @Override
     public List<DirectionDto> getAllDirections() {
-        log.debug("Get all directions");
+        log.debug("Get directions");
         List<Direction> directions = directionRepository.findAll();
         return directionMapper.toDirectionDto(directions);
     }
@@ -38,7 +38,7 @@ public class DirectionService implements IDirectionService {
     @Transactional(readOnly = true)
     @Override
     public DirectionDto getDirection(Long directionId) {
-        log.debug("Get direction by id={}", directionId);
+        log.debug("Get direction {}", directionId);
         Direction direction = getDirectionById(directionId);
         return directionMapper.directionToDirectionDto(direction);
     }
@@ -53,7 +53,7 @@ public class DirectionService implements IDirectionService {
                 .forEach(section -> section.setDirection(direction));
 
         Direction save = directionRepository.save(direction);
-        log.debug("Created new direction with id {}", direction.getId());
+        log.debug("Created new direction {}", direction.getId());
         return directionMapper.directionToDirectionDto(save);
     }
 
@@ -61,7 +61,7 @@ public class DirectionService implements IDirectionService {
     @Transactional
     @Override
     public DirectionDto editDirection(Long id, DirectionDto directionDto) {
-        log.debug("Editing direction with id={}", id);
+        log.debug("Editing direction {}", id);
         Direction direction = directionMapper.directionDtoToDirection(directionDto);
         direction.setId(id);
 
@@ -71,7 +71,7 @@ public class DirectionService implements IDirectionService {
         }
 
         Direction updateDirection = directionRepository.update(direction);
-        log.debug("Direction updating with id {}", id);
+        log.debug("Updated direction {}", id);
         return directionMapper.directionToDirectionDto(updateDirection);
     }
 
@@ -81,9 +81,9 @@ public class DirectionService implements IDirectionService {
         log.debug("Delete direction {}", id);
         try {
             directionRepository.deleteById(id);
-            log.debug("direction {} removed", id);
+            log.debug("Direction {} deleted", id);
         } catch (EntityExistsException exception) {
-            log.warn("Direction {} not found", id);
+            log.warn("Direction {} is not found", id);
             throw new DirectionNotFoundException(id);
         }
     }
@@ -91,7 +91,7 @@ public class DirectionService implements IDirectionService {
     private Direction getDirectionById(Long id) {
         Direction direction = directionRepository.find(id);
         if (direction == null) {
-            log.warn("Direction {} not found", id);
+            log.warn("Direction {} is not found", id);
             throw new DirectionNotFoundException(id);
         }
         return direction;

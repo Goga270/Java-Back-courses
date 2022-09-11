@@ -34,7 +34,7 @@ public class CommentService implements ICommentService {
     @Transactional(readOnly = true)
     @Override
     public List<CommentDto> getCommentsByCourse(Long courseId) {
-        log.debug("Get comments for course id={}", courseId);
+        log.debug("Get comments for course {}", courseId);
         List<Comment> allCommentsByCourseId = commentRepository.findAllCommentsByCourseId(courseId);
         return commentMapper.toCommentsDto(allCommentsByCourseId);
     }
@@ -42,7 +42,7 @@ public class CommentService implements ICommentService {
     @Transactional(readOnly = true)
     @Override
     public List<CommentDto> getCommentByLesson(Long lessonId) {
-        log.debug("Get comments for lesson id={}", lessonId);
+        log.debug("Get comments for lesson {}", lessonId);
         List<Comment> allCommentsByLessonId = commentRepository.findAllCommentsByLessonId(lessonId);
         return commentMapper.toCommentsDto(allCommentsByLessonId);
     }
@@ -50,12 +50,13 @@ public class CommentService implements ICommentService {
     @Transactional
     @Override
     public CommentDto createComment(JwtUserDetails userDetails, CommentDto commentDto) {
-        log.debug("Create comment");
+        log.debug("Create new comment");
         Comment comment = commentMapper.commentDtoToComment(commentDto);
         User authorComment = userRepository.find(userDetails.getId());
         comment.setCreated(DateUtil.dateTimeNow());
         comment.setAuthor(authorComment);
         Comment save = commentRepository.save(comment);
+        log.debug("Created new comment {}", save.getId());
         return commentMapper.commentToCommentDto(save);
     }
 }

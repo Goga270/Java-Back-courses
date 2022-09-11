@@ -41,7 +41,7 @@ public class SectionService implements ISectionService {
         Section section = sectionMapper.sectionDtoToSection(sectionDto);
         section.setId(id);
         sectionRepository.update(section);
-        log.debug("Section {} updating", section.getId());
+        log.debug("Updated section {}", section.getId());
         return sectionMapper.sectionToSectionDto(section);
     }
 
@@ -51,9 +51,9 @@ public class SectionService implements ISectionService {
         log.debug("Delete section {}", id);
         try {
             sectionRepository.deleteById(id);
-            log.debug("Section {} removed", id);
+            log.debug("Section {} deleted", id);
         } catch (EntityExistsException exception) {
-            log.warn("Section {} not found", id);
+            log.warn("Section {} is not found", id);
             throw new SectionNotFoundException(id);
         }
     }
@@ -62,7 +62,7 @@ public class SectionService implements ISectionService {
     private Section getSectionById(Long id) throws SectionNotFoundException {
         Section section = sectionRepository.find(id);
         if (section == null) {
-            log.warn("Section {} not found", id);
+            log.warn("Section {} is not found", id);
             throw new SectionNotFoundException(id);
         }
         return section;

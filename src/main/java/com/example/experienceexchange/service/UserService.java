@@ -69,7 +69,7 @@ public class UserService implements IUserService {
     @Transactional(readOnly = true)
     @Override
     public List<LessonDto> getLessonsSubscribedByUser(JwtUserDetails userDetails) {
-        log.debug("Get lessons user {} is subscribed", userDetails.getId());
+        log.debug("Get lessons user {} is subscribed to", userDetails.getId());
         User user = getUserById(userDetails.getId());
         Set<LessonSingle> lessonSubscriptions = user.getLessonSubscriptions();
         return lessonMapper.toLessonDto(lessonSubscriptions);
@@ -78,7 +78,7 @@ public class UserService implements IUserService {
     @Transactional(readOnly = true)
     @Override
     public List<CourseDto> getCoursesSubscribedByUser(JwtUserDetails userDetails) {
-        log.debug("Get courses user {} is subscribed", userDetails.getId());
+        log.debug("Get courses user {} is subscribed to", userDetails.getId());
         User user = getUserById(userDetails.getId());
         Set<Course> courseSubscriptions = user.getCourseSubscriptions();
         return courseMapper.toCourseDto(courseSubscriptions);
@@ -106,7 +106,7 @@ public class UserService implements IUserService {
             user.setPassword(encodeNewPassword);
             userRepository.update(user);
         } else {
-            log.warn("Password not match ");
+            log.warn("Password not match, password not changed");
             throw new PasswordsNotMatchException();
         }
     }
@@ -117,7 +117,7 @@ public class UserService implements IUserService {
         log.debug("Change user {} email", jwtUserDetails.getId());
         User user = userRepository.findByEmail(newEmailDto.getNewEmail());
         if (user != null) {
-            log.warn("New email for user {} is not unique", jwtUserDetails.getId());
+            log.warn("New email for user {} is not unique, email not changed", jwtUserDetails.getId());
             throw new EmailNotUniqueException();
         }
         User userForUpdate = userRepository.find(jwtUserDetails.getId());
@@ -128,7 +128,7 @@ public class UserService implements IUserService {
     private User getUserById(Long id) {
         User user = userRepository.find(id);
         if (user == null) {
-            log.warn("User {} not found", id);
+            log.warn("User {} is not found", id);
             throw new UserNotFoundException(id);
         }
         return user;
