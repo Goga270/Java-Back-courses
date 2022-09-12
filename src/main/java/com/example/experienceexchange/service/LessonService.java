@@ -45,23 +45,26 @@ public class LessonService implements ILessonService {
 
     private final ILessonRepository lessonRepository;
     private final IUserRepository userRepository;
+    private final IPaymentRepository paymentRepository;
     private final IFilterProvider filterProvider;
     private final LessonMapper lessonMapper;
     private final PaymentMapper paymentMapper;
-    private final IPaymentRepository paymentRepository;
+    private final DateUtil dateUtil;
 
     public LessonService(ILessonRepository lessonRepository,
                          IUserRepository userRepository,
                          @Qualifier("lessonFilter") IFilterProvider jpqlFilterProvider,
                          LessonMapper lessonMapper,
                          PaymentMapper paymentMapper,
-                         IPaymentRepository paymentRepository) {
+                         IPaymentRepository paymentRepository,
+                         DateUtil dateUtil) {
         this.lessonRepository = lessonRepository;
         this.userRepository = userRepository;
         this.filterProvider = jpqlFilterProvider;
         this.lessonMapper = lessonMapper;
         this.paymentMapper = paymentMapper;
         this.paymentRepository = paymentRepository;
+        this.dateUtil = dateUtil;
     }
 
     @Transactional(readOnly = true)
@@ -102,7 +105,7 @@ public class LessonService implements ILessonService {
             throw new NotAccessException(NOT_FOUND_LESSON_IN_SUBSCRIPTIONS);
         }
 
-        if (DateUtil.isDateAfterNow(lessonSingle.getStartLesson())) {
+        if (dateUtil.isDateAfterNow(lessonSingle.getStartLesson())) {
             log.warn("No access to unstarted lesson {}", lessonId);
             throw new NotAccessException(LESSON_NOT_START);
         }
@@ -144,7 +147,7 @@ public class LessonService implements ILessonService {
 
         checkAccessToLessonEdit(lesson.getAuthor().getId(), author.getId());
 
-        if (DateUtil.isDateAfterNow(lesson.getEndLesson())) {
+        if (dateUtil.isDateAfterNow(lesson.getEndLesson())) {
             log.warn("Lesson not restarted because it hasn't finished");
             throw new NotAccessException(LESSON_NOT_END);
         }
@@ -200,7 +203,7 @@ public class LessonService implements ILessonService {
         }
 
         if (lesson.isSatisfactoryPrice(paymentDto.getPrice())) {
-            if (lesson.isAvailableForSubscription(DateUtil.dateTimeNow())) {
+            if (lesson.isAvailableForSubscription(dateUtil.dateTimeNow())) {
                 Payment payment = subscribeToLesson(paymentDto, user, lesson);
                 paymentRepository.save(payment);
                 log.debug("User {} subscribe to lesson {}", userDetails.getId(), lessonId);
@@ -242,7 +245,7 @@ public class LessonService implements ILessonService {
 
     private Payment subscribeToLesson(PaymentDto paymentDto, User user, LessonSingle lesson) {
         Payment payment = paymentMapper.paymentDtoToPayment(paymentDto);
-        payment.setDatePayment(DateUtil.dateTimeNow());
+        payment.setDatePayment(dateUtil.dateTimeNow());
         user.addLesson(lesson);
         user.addPayment(payment);
         payment.setLesson(lesson);

@@ -11,5 +11,7 @@ public interface ICommentService {
 
     List<CommentDto> getCommentByLesson(Long lessonId);
 
-    CommentDto createComment(JwtUserDetails userDetails, CommentDto commentDto);
+    CommentDto createCommentForCourse(JwtUserDetails userDetails, CommentDto commentDto);
+
+    CommentDto createCommentForLesson(JwtUserDetails userDetails, CommentDto commentDto);
 }

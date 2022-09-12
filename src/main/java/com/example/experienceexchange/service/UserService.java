@@ -121,7 +121,7 @@ public class UserService implements IUserService {
     public void changePassword(JwtUserDetails userDetails, NewPasswordDto passwordDto) {
         log.debug("Change user {} password", userDetails.getId());
         if (passwordDto.getNewPassword().equals(passwordDto.getNewPasswordSecond())) {
-            User user = userRepository.find(userDetails.getId());
+            User user = getUserById(userDetails.getId());
             String encodeNewPassword = passwordEncoder.encode(passwordDto.getNewPassword());
             user.setPassword(encodeNewPassword);
             userRepository.update(user);
@@ -133,14 +133,14 @@ public class UserService implements IUserService {
 
     @Transactional
     @Override
-    public void changeEmail(JwtUserDetails jwtUserDetails, NewEmailDto newEmailDto) {
-        log.debug("Change user {} email", jwtUserDetails.getId());
+    public void changeEmail(JwtUserDetails userDetails, NewEmailDto newEmailDto) {
+        log.debug("Change user {} email", userDetails.getId());
         User user = userRepository.findByEmail(newEmailDto.getNewEmail());
         if (user != null) {
-            log.warn("New email for user {} is not unique, email not changed", jwtUserDetails.getId());
+            log.warn("New email for user {} is not unique, email not changed", userDetails.getId());
             throw new EmailNotUniqueException();
         }
-        User userForUpdate = userRepository.find(jwtUserDetails.getId());
+        User userForUpdate = getUserById(userDetails.getId());
         userForUpdate.setEmail(newEmailDto.getNewEmail());
         userRepository.update(userForUpdate);
     }

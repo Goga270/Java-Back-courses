@@ -39,7 +39,7 @@ public class CommentController {
     public CommentDto createCommentForCourse(
             @AuthenticationPrincipal JwtUserDetails userDetails,
             @RequestBody @Validated(CommentDto.CreateForCourse.class) CommentDto commentDto) {
-        return commentService.createComment(userDetails, commentDto);
+        return commentService.createCommentForCourse(userDetails, commentDto);
     }
 
     @JsonView({CommentDto.CreateForLesson.class})
@@ -48,6 +48,6 @@ public class CommentController {
     public CommentDto createCommentForLesson(
             @AuthenticationPrincipal JwtUserDetails userDetails,
             @RequestBody @Validated(CommentDto.CreateForLesson.class) CommentDto commentDto) {
-        return commentService.createComment(userDetails, commentDto);
+        return commentService.createCommentForLesson(userDetails, commentDto);
     }
 }

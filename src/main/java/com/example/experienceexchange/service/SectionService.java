@@ -29,7 +29,9 @@ public class SectionService implements ISectionService {
     public SectionDto createSection(SectionDto sectionDto) {
         log.debug("Create section");
         Section newSection = sectionMapper.sectionDtoToSection(sectionDto);
+
         Section section = sectionRepository.save(newSection);
+
         log.debug("Created section {}", section.getId());
         return sectionMapper.sectionToSectionDto(section);
     }
@@ -40,19 +42,21 @@ public class SectionService implements ISectionService {
         log.debug("Edit section {}", id);
         Section section = sectionMapper.sectionDtoToSection(sectionDto);
         section.setId(id);
-        sectionRepository.update(section);
-        log.debug("Updated section {}", section.getId());
-        return sectionMapper.sectionToSectionDto(section);
+
+        Section save = sectionRepository.update(section);
+
+        log.debug("Updated section {}", save.getId());
+        return sectionMapper.sectionToSectionDto(save);
     }
 
     @Transactional
     @Override
     public void deleteSection(Long id) {
         log.debug("Delete section {}", id);
-        try {
+        if (sectionRepository.exists(id)) {
             sectionRepository.deleteById(id);
             log.debug("Section {} deleted", id);
-        } catch (EntityExistsException exception) {
+        } else {
             log.warn("Section {} is not found", id);
             throw new SectionNotFoundException(id);
         }

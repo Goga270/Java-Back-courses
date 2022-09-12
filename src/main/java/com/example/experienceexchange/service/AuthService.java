@@ -32,16 +32,23 @@ public class AuthService implements IAuthService {
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final TokenDtoFactory tokenDtoFactory;
+    private final DateUtil dateUtil;
 
     public AuthService(AuthenticationManager manager,
                        IJwtTokenProvider jwtTokenProvider,
                        IUserRepository userRepository,
-                       PasswordEncoder passwordEncoder, UserMapper userMapper) {
+                       PasswordEncoder passwordEncoder,
+                       UserMapper userMapper,
+                       TokenDtoFactory tokenDtoFactory,
+                       DateUtil dateUtil) {
         this.manager = manager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
+        this.tokenDtoFactory = tokenDtoFactory;
+        this.dateUtil = dateUtil;
     }
 
     @Transactional
@@ -54,7 +61,7 @@ public class AuthService implements IAuthService {
         String token = jwtTokenProvider.createToken(userDetails.getUsername(), userDetails.getRole());
 
         log.debug("User with id={} is authenticated", userDetails.getId());
-        return TokenDtoFactory.createTokenDto(token, userDetails.getUsername());
+        return tokenDtoFactory.createTokenDto(token, userDetails.getUsername());
     }
 
     @Transactional
@@ -75,30 +82,16 @@ public class AuthService implements IAuthService {
     @Override
     public void blockUser(Long id) {
         log.debug("Block user with id={}", id);
-        User user = userRepository.find(id);
-        if (user != null) {
-            user.setStatus(Status.NOT_ACTIVE);
-            userRepository.update(user);
-            log.debug("Blocked user {}", id);
-        } else {
-            log.warn("User {} is not found, user is not blocked", id);
-            throw new UserNotFoundException(id);
-        }
+        changeStatusUser(id, Status.NOT_ACTIVE);
+        log.debug("Blocked user {}", id);
     }
 
     @Transactional
     @Override
     public void unblockUser(Long id) {
         log.debug("Unblock user with id={}", id);
-        User user = userRepository.find(id);
-        if (user != null) {
-            user.setStatus(Status.ACTIVE);
-            userRepository.update(user);
-            log.debug("Unblocked user {}", id);
-        } else {
-            log.warn("User {} is not found, user is not unblocked", id);
-            throw new UserNotFoundException(id);
-        }
+        changeStatusUser(id, Status.ACTIVE);
+        log.debug("Unblocked user {}", id);
     }
 
     private void registration(UserDto userDto) {
@@ -110,10 +103,21 @@ public class AuthService implements IAuthService {
         }
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userDto.setStatus(Status.ACTIVE);
-        userDto.setCreated(DateUtil.dateTimeNow());
-        userDto.setUpdated(DateUtil.dateTimeNow());
+        userDto.setCreated(dateUtil.dateTimeNow());
+        userDto.setUpdated(dateUtil.dateTimeNow());
         User newUser = userMapper.userDtoToUser(userDto);
         userRepository.save(newUser);
         log.debug("Registered new user {} with role={}", userDto.getRole(), newUser.getId());
+    }
+
+    private void changeStatusUser(Long id, Status newStatus) {
+        User user = userRepository.find(id);
+        if (user != null) {
+            user.setStatus(newStatus);
+            userRepository.update(user);
+        } else {
+            log.warn("User {} is not found", id);
+            throw new UserNotFoundException(id);
+        }
     }
 }

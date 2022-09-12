@@ -61,13 +61,17 @@ public class DirectionService implements IDirectionService {
     @Override
     public DirectionDto editDirection(Long id, DirectionDto directionDto) {
         log.debug("Editing direction {}", id);
+
+        if (!directionRepository.exists(id)) {
+            log.warn("Direction {} not found", id);
+            throw new DirectionNotFoundException(id);
+        }
+
         Direction direction = directionMapper.directionDtoToDirection(directionDto);
         direction.setId(id);
 
-        Set<Section> sections = direction.getSections();
-        for (Section section : sections) {
-            section.setDirection(direction);
-        }
+        direction.getSections()
+                .forEach(section -> section.setDirection(direction));
 
         Direction updateDirection = directionRepository.update(direction);
         log.debug("Updated direction {}", id);
@@ -78,10 +82,10 @@ public class DirectionService implements IDirectionService {
     @Override
     public void deleteDirection(Long id) {
         log.debug("Delete direction {}", id);
-        try {
+        if (directionRepository.exists(id)) {
             directionRepository.deleteById(id);
             log.debug("Direction {} deleted", id);
-        } catch (EntityExistsException exception) {
+        } else {
             log.warn("Direction {} is not found", id);
             throw new DirectionNotFoundException(id);
         }

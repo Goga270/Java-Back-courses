@@ -52,6 +52,7 @@ public class CourseService implements ICourseService {
     private final PaymentMapper paymentMapper;
     private final CourseMapper courseMapper;
     private final LessonOnCourseMapper lessonMapper;
+    private final DateUtil dateUtil;
 
     public CourseService(ICourseRepository courseRepository,
                          IUserRepository userRepository,
@@ -60,7 +61,8 @@ public class CourseService implements ICourseService {
                          @Qualifier("courseFilter") IFilterProvider filterProvider,
                          PaymentMapper paymentMapper,
                          CourseMapper courseMapper,
-                         LessonOnCourseMapper lessonMapper) {
+                         LessonOnCourseMapper lessonMapper,
+                         DateUtil dateUtil) {
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
         this.lessonOnCourseRepository = lessonOnCourseRepository;
@@ -69,6 +71,7 @@ public class CourseService implements ICourseService {
         this.paymentMapper = paymentMapper;
         this.courseMapper = courseMapper;
         this.lessonMapper = lessonMapper;
+        this.dateUtil = dateUtil;
     }
 
     @Transactional(readOnly = true)
@@ -146,7 +149,7 @@ public class CourseService implements ICourseService {
 
         checkAccessToCourseEdit(courseToRestart, author.getId());
 
-        if (DateUtil.isDateAfterNow(courseToRestart.getDateEnd())) {
+        if (dateUtil.isDateAfterNow(courseToRestart.getDateEnd())) {
             log.warn("Course not restarted because it hasn't finished");
             throw new NotAccessException(COURSE_NOT_END);
         }
@@ -229,7 +232,7 @@ public class CourseService implements ICourseService {
         }
 
         if (course.isSatisfactoryPrice(paymentDto.getPrice())) {
-            if (course.isAvailableForSubscription(DateUtil.dateTimeNow())) {
+            if (course.isAvailableForSubscription(dateUtil.dateTimeNow())) {
                 Payment payment = subscribeToCourse(paymentDto, user, course);
                 paymentRepository.save(payment);
                 log.debug("User {} subscribe to course {}", userDetails.getId(), courseId);
@@ -289,8 +292,8 @@ public class CourseService implements ICourseService {
     private void checkAccessToLessonUse(LessonOnCourse lesson) throws NotAccessException {
         log.trace("Check if the lesson {} is available for use", lesson.getId());
         Date dateStartLesson = lesson.getStartLesson();
-        Date dateAccessLesson = DateUtil.addDays(dateStartLesson, lesson.getAccessDuration());
-        if (DateUtil.isDateAfterNow(dateStartLesson) || DateUtil.isDateBeforeNow(dateAccessLesson)) {
+        Date dateAccessLesson = dateUtil.addDays(dateStartLesson, lesson.getAccessDuration());
+        if (dateUtil.isDateAfterNow(dateStartLesson) || dateUtil.isDateBeforeNow(dateAccessLesson)) {
             log.warn("Lesson {} not available", lesson.getId());
             throw new NotAccessException(NOT_ACCESS_TO_LESSON);
         }
@@ -298,7 +301,7 @@ public class CourseService implements ICourseService {
 
     private Payment subscribeToCourse(PaymentDto paymentDto, User user, Course course) {
         Payment newPayment = paymentMapper.paymentDtoToPayment(paymentDto);
-        newPayment.setDatePayment(DateUtil.dateTimeNow());
+        newPayment.setDatePayment(dateUtil.dateTimeNow());
 
         user.addCourse(course);
         user.addPayment(newPayment);

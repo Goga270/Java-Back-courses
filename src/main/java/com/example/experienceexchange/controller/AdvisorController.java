@@ -15,7 +15,9 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.validation.ConstraintViolationException;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,7 +91,7 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException exception, WebRequest request) {
         Map<String, String> body = new HashMap<>();
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-        body.put("timestamp", new SimpleDateFormat(DATE_PATTERN).format(DateUtil.dateTimeNow()));
+        body.put("timestamp", new SimpleDateFormat(DATE_PATTERN).format(Date.from(Instant.now())));
         body.put("error", httpStatus.name());
         body.put("status", String.valueOf(httpStatus.value()));
         exception.getConstraintViolations().forEach(w -> {
@@ -105,7 +107,7 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
         Map<String, String> body = new HashMap<>();
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-        body.put("timestamp", new SimpleDateFormat(DATE_PATTERN).format(DateUtil.dateTimeNow()));
+        body.put("timestamp", new SimpleDateFormat(DATE_PATTERN).format(Date.from(Instant.now())));
         body.put("error", httpStatus.name());
         body.put("status", String.valueOf(httpStatus.value()));
         exception.getBindingResult().getAllErrors().forEach((error) -> {
@@ -119,7 +121,7 @@ public class AdvisorController extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> getObjectResponseEntity(Exception exception,
                                                            WebRequest request, Map<String, String> body, HttpStatus httpStatus) {
-        body.put("timestamp", new SimpleDateFormat(DATE_PATTERN).format(DateUtil.dateTimeNow()));
+        body.put("timestamp", new SimpleDateFormat(DATE_PATTERN).format(Date.from(Instant.now())));
         body.put("error", httpStatus.name());
         body.put("status", String.valueOf(httpStatus.value()));
         body.put("message", exception.getMessage());
