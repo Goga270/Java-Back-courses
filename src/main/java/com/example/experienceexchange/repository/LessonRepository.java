@@ -5,6 +5,7 @@ import com.example.experienceexchange.repository.interfaceRepo.ILessonRepository
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
@@ -15,8 +16,14 @@ public class LessonRepository extends HibernateAbstractDao<LessonSingle, Long> i
     private static final String JPQL_FIND_LESSONS_BY_USER =
             "SELECT ln FROM LessonSingle ln " +
                     "JOIN FETCH ln.usersInLesson u " +
-                    "WHERE u.id =: userId " +
+                    "WHERE u.id = :userId " +
                     "ORDER BY ln.startLesson ASC";
+
+    private static final String JPQL_FIND_LESSONS_BY_ID_AND_BY_USER =
+            "SELECT ln FROM LessonSingle ln " +
+                    "JOIN FETCH ln.usersInLesson u " +
+                    "WHERE u.id = :userId " +
+                    "AND ln.id= :lessonId";
 
     private static final String JPQL_FILTER_LESSON =
             "SELECT DISTINCT lesson FROM LessonSingle lesson " +
@@ -40,5 +47,17 @@ public class LessonRepository extends HibernateAbstractDao<LessonSingle, Long> i
         TypedQuery<LessonSingle> query = entityManager.createQuery(jpqlQuery, getClassEntity());
         log.debug("Find lessons with filter {}", filter);
         return query.getResultList();
+    }
+
+    @Override
+    public LessonSingle findLessonSingleByUserIdAndLessonId(Long userId, Long lessonId) {
+        TypedQuery<LessonSingle> query = entityManager.createQuery(JPQL_FIND_LESSONS_BY_ID_AND_BY_USER, getClassEntity());
+        query.setParameter("userId", userId);
+        query.setParameter("lessonId", lessonId);
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException exception) {
+            return null;
+        }
     }
 }

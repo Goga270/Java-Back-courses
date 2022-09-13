@@ -81,11 +81,11 @@ class CommentServiceTest {
         when(courseRepository.find(COURSE_ID)).thenReturn(null);
 
         CourseNotFoundException exceptionInGetComment = assertThrows(CourseNotFoundException.class, () -> commentService.getCommentsByCourse(COURSE_ID));
-        CourseNotFoundException exceptionInCreateComment = assertThrows(CourseNotFoundException.class, () -> commentService.createCommentForCourse(userDetails,enteredDto));
+        CourseNotFoundException exceptionInCreateComment = assertThrows(CourseNotFoundException.class, () -> commentService.createCommentForCourse(userDetails, enteredDto));
 
         verify(courseRepository, times(2)).find(COURSE_ID);
-        assertEquals(String.format("Course with id %d not found", COURSE_ID),exceptionInGetComment.getMessage());
-        assertEquals(String.format("Course with id %d not found", COURSE_ID),exceptionInCreateComment.getMessage());
+        assertEquals(String.format("Course with id %d not found", COURSE_ID), exceptionInGetComment.getMessage());
+        assertEquals(String.format("Course with id %d not found", COURSE_ID), exceptionInCreateComment.getMessage());
     }
 
     @Test
@@ -114,11 +114,11 @@ class CommentServiceTest {
         when(lessonRepository.find(LESSON_ID)).thenReturn(null);
 
         LessonNotFoundException exceptionInGetComment = assertThrows(LessonNotFoundException.class, () -> commentService.getCommentByLesson(LESSON_ID));
-        LessonNotFoundException exceptionInCreateComment = assertThrows(LessonNotFoundException.class, () -> commentService.createCommentForLesson(userDetails,enteredDto));
+        LessonNotFoundException exceptionInCreateComment = assertThrows(LessonNotFoundException.class, () -> commentService.createCommentForLesson(userDetails, enteredDto));
 
         verify(lessonRepository, times(2)).find(LESSON_ID);
-        assertEquals(String.format("Lesson with id %d not found", LESSON_ID),exceptionInGetComment.getMessage());
-        assertEquals(String.format("Lesson with id %d not found", LESSON_ID),exceptionInCreateComment.getMessage());
+        assertEquals(String.format("Lesson with id %d not found", LESSON_ID), exceptionInGetComment.getMessage());
+        assertEquals(String.format("Lesson with id %d not found", LESSON_ID), exceptionInCreateComment.getMessage());
     }
 
 
@@ -145,7 +145,7 @@ class CommentServiceTest {
         CommentDto actual = commentService.createCommentForCourse(userDetails, enteredDto);
 
         assertNotNull(actual);
-        assertEquals(expectedDto,actual);
+        assertEquals(expectedDto, actual);
         verify(newComment).setCreated(dateNow);
         verify(commentRepository).save(newComment);
         verify(courseRepository).find(COURSE_ID);
@@ -174,7 +174,7 @@ class CommentServiceTest {
         CommentDto actual = commentService.createCommentForLesson(userDetails, enteredDto);
 
         assertNotNull(actual);
-        assertEquals(expectedDto,actual);
+        assertEquals(expectedDto, actual);
         verify(newComment).setCreated(dateNow);
         verify(commentRepository).save(newComment);
         verify(lessonRepository).find(LESSON_ID);

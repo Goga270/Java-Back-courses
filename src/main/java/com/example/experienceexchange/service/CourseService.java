@@ -26,7 +26,6 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityExistsException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -35,14 +34,13 @@ import java.util.Map;
 @Service
 public class CourseService implements ICourseService {
 
-    private static final String SUB_TO_OWN_COURSE = "Subscription to own course is not possible";
-    private static final String SUB_TO_CLOSE_COURSE = "Course is closed for subscription";
-    private static final String SUB_WITH_INCORRECT_PRICE = "Entered price is less than the fixed price";
-    private static final String NOT_ACCESS_EDIT = "No access to edit resource";
-    private static final String NOT_ACCESS_TO_COURSE = "no access to course";
-    private static final String NOT_ACCESS_TO_LESSON = "no access to lesson on course";
-    private static final String COURSE_NOT_END = "Course is not ended";
-    private static final String ILLEGAL_FILTER = "Entered search criteria is incorrect";
+    public static final String SUB_TO_OWN_COURSE = "Subscription to own course is not possible";
+    public static final String SUB_TO_CLOSE_COURSE = "Course is closed for subscription";
+    public static final String SUB_WITH_INCORRECT_PRICE = "Entered price is less than the fixed price";
+    public static final String NOT_ACCESS_EDIT = "No access to edit resource";
+    public static final String NOT_ACCESS_TO_LESSON = "no access to lesson on course";
+    public static final String COURSE_NOT_END = "Course is not ended";
+    public static final String ILLEGAL_FILTER = "Entered search criteria is incorrect";
 
     private final ICourseRepository courseRepository;
     private final IUserRepository userRepository;
@@ -102,7 +100,7 @@ public class CourseService implements ICourseService {
     public List<LessonOnCourseDto> getSchedule(JwtUserDetails userDetails) {
         log.debug("Get schedule of courses for user {}", userDetails.getId());
         Long userId = userDetails.getId();
-        List<LessonOnCourse> allLessonsOnCourseByUserId = lessonOnCourseRepository.findAllLessonsOnCourseByUserId(userId);
+        List<LessonOnCourse> allLessonsOnCourseByUserId = lessonOnCourseRepository.findAllLessonsOnSubscribedCoursesByUserId(userId);
         return lessonMapper.toLessonOnCourseDto(allLessonsOnCourseByUserId);
     }
 
@@ -120,16 +118,7 @@ public class CourseService implements ICourseService {
     public LessonOnCourseDto getLessonOnCourse(JwtUserDetails userDetails, Long courseId, Long lessonId) {
         log.debug("Get lesson {} on course {}", lessonId, courseId);
 
-        List<LessonOnCourse> lessons = lessonOnCourseRepository.findAllLessonsOnCourseByUserIdAndCourseId(userDetails.getId(), courseId);
-        if (lessons.isEmpty()) {
-            log.warn("No access to course {} for user {}", courseId, userDetails.getId());
-            throw new NotAccessException(NOT_ACCESS_TO_COURSE);
-        }
-        LessonOnCourse lessonOnCourse = lessons
-                .stream()
-                .filter(lesson -> lesson.getId().equals(lessonId))
-                .findFirst()
-                .orElse(null);
+        LessonOnCourse lessonOnCourse = lessonOnCourseRepository.findLessonInCourseForSubscriber(userDetails.getId(), courseId, lessonId);
 
         if (lessonOnCourse == null) {
             log.warn("Lesson {} is not found", lessonId);
@@ -210,13 +199,8 @@ public class CourseService implements ICourseService {
         log.debug("Delete {} course", courseId);
         Course course = getCourseById(courseId);
         checkAccessToCourseEdit(course, userDetails.getId());
-        try {
-            courseRepository.delete(course);
-            log.debug("Course {} deleted", courseId);
-        } catch (EntityExistsException e) {
-            log.warn("Course {} is not found", courseId);
-            throw new CourseNotFoundException(courseId);
-        }
+        courseRepository.delete(course);
+        log.debug("Course {} deleted", courseId);
     }
 
     @Transactional
@@ -225,11 +209,11 @@ public class CourseService implements ICourseService {
         log.debug("User {} tries to subscribe to course {}", userDetails.getId(), courseId);
         Course course = getCourseById(courseId);
 
-        User user = userRepository.find(userDetails.getId());
-        if (course.getAuthor().getId().equals(user.getId())) {
+        if (course.getAuthor().getId().equals(userDetails.getId())) {
             log.warn("User {} cannot subscribe to own course", userDetails.getId());
             throw new SubscriptionNotPossibleException(SUB_TO_OWN_COURSE);
         }
+        User user = userRepository.find(userDetails.getId());
 
         if (course.isSatisfactoryPrice(paymentDto.getPrice())) {
             if (course.isAvailableForSubscription(dateUtil.dateTimeNow())) {

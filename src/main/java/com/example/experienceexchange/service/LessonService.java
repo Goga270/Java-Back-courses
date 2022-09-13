@@ -25,7 +25,6 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityExistsException;
 import java.util.List;
 import java.util.Map;
 
@@ -33,14 +32,14 @@ import java.util.Map;
 @Service
 public class LessonService implements ILessonService {
 
-    private static final String SUB_TO_OWN_LESSON = "Subscription to own lesson is not possible";
-    private static final String SUB_TO_CLOSE_LESSON = "Lesson is closed for subscription";
-    private static final String SUB_WITH_INCORRECT_PRICE = "Entered price is less than the fixed price";
-    private static final String NOT_ACCESS_EDIT = "No access to edit resource";
-    private static final String NOT_FOUND_LESSON_IN_SUBSCRIPTIONS = "lesson not found in subscriptions";
-    private static final String LESSON_NOT_START = "lesson has not started";
-    private static final String ILLEGAL_FILTER = "Entered search criteria is incorrect";
-    private static final String LESSON_NOT_END = "Lesson is not ended";
+    public static final String SUB_TO_OWN_LESSON = "Subscription to own lesson is not possible";
+    public static final String SUB_TO_CLOSE_LESSON = "Lesson is closed for subscription";
+    public static final String SUB_WITH_INCORRECT_PRICE = "Entered price is less than the fixed price";
+    public static final String NOT_ACCESS_EDIT = "No access to edit resource";
+    public static final String NOT_FOUND_LESSON_IN_SUBSCRIPTIONS = "lesson not found in subscriptions";
+    public static final String LESSON_NOT_START = "lesson has not started";
+    public static final String ILLEGAL_FILTER = "Entered search criteria is incorrect";
+    public static final String LESSON_NOT_END = "Lesson is not ended";
 
 
     private final ILessonRepository lessonRepository;
@@ -94,11 +93,8 @@ public class LessonService implements ILessonService {
     @Override
     public LessonDto getLesson(JwtUserDetails userDetails, Long lessonId) {
         log.debug("Get lesson {} for subscriber", lessonId);
-        List<LessonSingle> lessons = lessonRepository.findAllLessonsByUserId(userDetails.getId());
-        LessonSingle lessonSingle = lessons.stream()
-                .filter(lesson -> lesson.getId().equals(lessonId))
-                .findFirst()
-                .orElse(null);
+
+        LessonSingle lessonSingle = lessonRepository.findLessonSingleByUserIdAndLessonId(userDetails.getId(), lessonId);
 
         if (lessonSingle == null) {
             log.warn("No access to lesson {} for {}", lessonId, userDetails.getId());
@@ -181,13 +177,10 @@ public class LessonService implements ILessonService {
     @Override
     public void deleteLesson(JwtUserDetails userDetails, Long id) {
         log.debug("Delete lesson {}", id);
-        try {
-            lessonRepository.deleteById(id);
-            log.debug("Lesson {} deleted", id);
-        } catch (EntityExistsException e) {
-            log.warn("Lesson {} is not found", id);
-            throw new LessonNotFoundException(id);
-        }
+        LessonSingle lesson = getLessonById(id);
+        checkAccessToLessonEdit(lesson.getAuthor().getId(), userDetails.getId());
+        lessonRepository.delete(lesson);
+        log.debug("Lesson {} deleted", id);
     }
 
     @Transactional

@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface ILessonOnCourseRepository extends GenericDao<LessonOnCourse, Long> {
 
-    List<LessonOnCourse> findAllLessonsOnCourseByUserId(Long userId);
+    List<LessonOnCourse> findAllLessonsOnSubscribedCoursesByUserId(Long userId);
 
     List<LessonOnCourse> findAllLessonsOnCourseByUserIdAndCourseId(Long userId, Long courseId);
+
+    LessonOnCourse findLessonInCourseForSubscriber(Long userId, Long courseId, Long lessonId);
 }

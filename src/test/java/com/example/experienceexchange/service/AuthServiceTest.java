@@ -144,7 +144,7 @@ class AuthServiceTest {
         EmailNotUniqueException exception = assertThrows(EmailNotUniqueException.class, () -> authService.registrationUser(userDto));
 
         verify(userRepository).findByEmail(USERNAME);
-        assertEquals(new EmailNotUniqueException().getMessage(),exception.getMessage());
+        assertEquals(new EmailNotUniqueException().getMessage(), exception.getMessage());
     }
 
     @Test
