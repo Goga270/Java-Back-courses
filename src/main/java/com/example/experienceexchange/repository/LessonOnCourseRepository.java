@@ -14,14 +14,14 @@ public class LessonOnCourseRepository extends HibernateAbstractDao<LessonOnCours
     private static final String JPQL_FIND_LESSONS_BY_USER =
             "SELECT DISTINCT ln FROM LessonOnCourse ln " +
                     "JOIN FETCH ln.course cr " +
-                    "JOIN cr.usersInCourse us " +
+                    "JOIN FETCH cr.usersInCourse us " +
                     "WHERE us.id = :userId " +
                     "ORDER BY ln.startLesson ASC";
 
     private static final String JPQL_FIND_LESSONS_BY_USER_BY_COURSE =
             "SELECT DISTINCT ln FROM LessonOnCourse ln " +
                     "JOIN FETCH ln.course cr " +
-                    "JOIN cr.usersInCourse us " +
+                    "JOIN FETCH cr.usersInCourse us " +
                     "WHERE cr.id= :courseId " +
                     "AND us.id = :userId " +
                     "ORDER BY ln.startLesson ASC";
@@ -29,11 +29,10 @@ public class LessonOnCourseRepository extends HibernateAbstractDao<LessonOnCours
     private static final String JPQL_FIND_LESSON_BY_ID_IN_COURSE =
             "SELECT DISTINCT ln FROM LessonOnCourse ln " +
                     "JOIN FETCH ln.course cr " +
-                    "JOIN cr.usersInCourse us " +
+                    "JOIN FETCH cr.usersInCourse us " +
                     "WHERE cr.id=:courseId " +
                     "AND us.id = :userId " +
-                    "AND ln.id = :lessonId " +
-                    "ORDER BY ln.startLesson ASC";
+                    "AND ln.id = :lessonId ";
 
     @Override
     public List<LessonOnCourse> findAllLessonsOnSubscribedCoursesByUserId(Long userId) {

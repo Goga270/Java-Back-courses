@@ -14,9 +14,9 @@ public class CourseRepository extends HibernateAbstractDao<Course, Long> impleme
 
     private static final String JPQL_FILTER_COURSE =
             "SELECT DISTINCT course FROM Course course " +
-                    "JOIN  course.sections section " +
-                    "JOIN  course.directions  direction " +
-                    "JOIN  course.skills skill " +
+                    "JOIN FETCH course.sections section " +
+                    "JOIN FETCH course.directions  direction " +
+                    "JOIN FETCH course.skills skill " +
                     "WHERE course.dateStart > now() " +
                     "%s";
 
