@@ -36,5 +36,4 @@ public class Direction {
 
     @ManyToMany(mappedBy = "directions")
     private Set<LessonSingle> lessons = new HashSet<>();
-
 }

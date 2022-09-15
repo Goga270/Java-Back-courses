@@ -26,8 +26,9 @@ public class SectionController {
 
     @JsonView(SectionDto.AdminDetails.class)
     @PutMapping("/{id}/settings")
-    public SectionDto editSection(@PathVariable("id") Long sectionId,
-                                  @RequestBody @Validated(SectionDto.Edit.class) SectionDto sectionDto) {
+    public SectionDto editSection(
+            @PathVariable("id") Long sectionId,
+            @RequestBody @Validated(SectionDto.Edit.class) SectionDto sectionDto) {
         return sectionService.editSection(sectionId, sectionDto);
     }
 

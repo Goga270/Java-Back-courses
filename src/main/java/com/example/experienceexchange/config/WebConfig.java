@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 @ComponentScan(basePackages = "com.example.experienceexchange.controller")
 public class WebConfig implements WebMvcConfigurer {
-    // TODO : НАДО ЛИ ЭТО ?
+
     @Bean
     public MethodValidationPostProcessor methodValidationPostProcessor() {
         return new MethodValidationPostProcessor();

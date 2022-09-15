@@ -23,6 +23,5 @@ public class DirectionDto {
     private Set<SectionDto> sections;
 
     public interface Create {
-
     }
 }

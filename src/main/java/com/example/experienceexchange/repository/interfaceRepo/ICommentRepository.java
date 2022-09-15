@@ -9,5 +9,4 @@ public interface ICommentRepository extends GenericDao<Comment, Long> {
     List<Comment> findAllCommentsByCourseId(Long userId);
 
     List<Comment> findAllCommentsByLessonId(Long userId);
-
 }

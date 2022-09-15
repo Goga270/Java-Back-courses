@@ -55,22 +55,25 @@ public class UserController {
 
     @JsonView(UserDto.Details.class)
     @PutMapping("/profile-settings")
-    public UserDto editProfile(@AuthenticationPrincipal JwtUserDetails userDetails,
-                               @RequestBody @Validated(UserDto.Edit.class) UserDto userDto) {
+    public UserDto editProfile(
+            @AuthenticationPrincipal JwtUserDetails userDetails,
+            @RequestBody @Validated(UserDto.Edit.class) UserDto userDto) {
         return userService.editAccount(userDetails, userDto);
     }
 
     @PatchMapping("/profile-settings/password")
     @ResponseStatus(HttpStatus.OK)
-    public void changePassword(@AuthenticationPrincipal JwtUserDetails jwtUserDetails,
-                               @RequestBody @Validated NewPasswordDto passwordDto) {
+    public void changePassword(
+            @AuthenticationPrincipal JwtUserDetails jwtUserDetails,
+            @RequestBody @Validated NewPasswordDto passwordDto) {
         userService.changePassword(jwtUserDetails, passwordDto);
     }
 
     @PatchMapping("/profile-settings/email")
     @ResponseStatus(HttpStatus.OK)
-    public void changeEmail(@AuthenticationPrincipal JwtUserDetails jwtUserDetails,
-                            @RequestBody @Validated NewEmailDto newEmailDto) {
+    public void changeEmail(
+            @AuthenticationPrincipal JwtUserDetails jwtUserDetails,
+            @RequestBody @Validated NewEmailDto newEmailDto) {
         userService.changeEmail(jwtUserDetails, newEmailDto);
     }
 }

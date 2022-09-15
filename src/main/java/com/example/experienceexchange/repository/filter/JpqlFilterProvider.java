@@ -28,7 +28,7 @@ public class JpqlFilterProvider implements IFilterProvider {
             return "";
         }
 
-        StringBuilder filterQuery = new StringBuilder("");
+        StringBuilder filterQuery = new StringBuilder();
         searchMap.forEach((key, value) -> {
                     if (!value.isEmpty()) {
                         filterQuery.append(FORMAT_AND).append(predicateBuilder.getGroup(value, key));
@@ -36,7 +36,6 @@ public class JpqlFilterProvider implements IFilterProvider {
                 }
         );
         return filterQuery.toString();
-
     }
 
     @Override

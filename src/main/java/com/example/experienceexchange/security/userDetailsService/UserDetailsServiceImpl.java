@@ -32,7 +32,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException(String.format(NOT_FOUND_USER, username));
         }
 
-        return userMapper.UserToUserDetails(account);
-
+        return userMapper.userToUserDetails(account);
     }
 }

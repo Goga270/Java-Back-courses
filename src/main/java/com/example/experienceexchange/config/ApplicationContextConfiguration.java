@@ -162,7 +162,7 @@ public class ApplicationContextConfiguration {
         dataSource.setDriverClassName(DRIVER_CLASS_NAME);
         dataSource.setPassword(PASSWORD);
         dataSource.setUrl(URL);
-        log.info("Selected data source for database: username:{},driver class name:{}, password:{},url:{}",USERNAME,DRIVER_CLASS_NAME,PASSWORD,URL);
+        log.info("Selected data source for database: username: {},driver class name: {}, password: {},url: {}", USERNAME, DRIVER_CLASS_NAME, PASSWORD, URL);
         return dataSource;
     }
 

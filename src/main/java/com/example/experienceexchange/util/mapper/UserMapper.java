@@ -13,7 +13,7 @@ import java.util.Date;
 public abstract class UserMapper {
 
     @Mapping(target = "validated", expression = "java(String.valueOf(user.getStatus()).equals(\"ACTIVE\"))")
-    public abstract JwtUserDetails UserToUserDetails(User user);
+    public abstract JwtUserDetails userToUserDetails(User user);
 
     public abstract User userDtoToUser(UserDto userDto);
 

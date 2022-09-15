@@ -30,14 +30,14 @@ public class DirectionController {
 
     @PostMapping("/new-direction")
     @ResponseStatus(HttpStatus.CREATED)
-    public DirectionDto createDirection(
-            @RequestBody @Validated({DirectionDto.Create.class}) DirectionDto directionDto) {
+    public DirectionDto createDirection(@RequestBody @Validated({DirectionDto.Create.class}) DirectionDto directionDto) {
         return directionService.createDirection(directionDto);
     }
 
     @PutMapping("/{id}/settings")
-    public DirectionDto editDirection(@PathVariable("id") Long directionId,
-                                      @RequestBody @Validated DirectionDto directionDto) {
+    public DirectionDto editDirection(
+            @PathVariable("id") Long directionId,
+            @RequestBody @Validated DirectionDto directionDto) {
         return directionService.editDirection(directionId, directionDto);
     }
 

@@ -77,8 +77,8 @@ public class LessonSingle extends Lesson {
                 && getEndLesson().after(nowDate);
     }
 
-    public Boolean isSatisfactoryPrice(BigDecimal EnteredPrice) {
-        return price.compareTo(EnteredPrice) <= 0;
+    public Boolean isSatisfactoryPrice(BigDecimal enteredPrice) {
+        return price.compareTo(enteredPrice) <= 0;
     }
 
     public synchronized void increaseNumberSubscriptions() {

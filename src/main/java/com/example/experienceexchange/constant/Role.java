@@ -32,10 +32,4 @@ public enum Role {
                 .map(permission -> new SimpleGrantedAuthority(permission.getPermission()))
                 .collect(Collectors.toSet());
     }
-
-    public List<String> getNamePermissions() {
-        return permissions.stream()
-                .map(Permission::getPermission)
-                .collect(Collectors.toList());
-    }
 }

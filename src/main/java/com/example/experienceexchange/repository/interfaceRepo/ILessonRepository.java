@@ -4,7 +4,7 @@ import com.example.experienceexchange.model.LessonSingle;
 
 import java.util.List;
 
-public interface ILessonRepository extends GenericDao<LessonSingle,Long> {
+public interface ILessonRepository extends GenericDao<LessonSingle, Long> {
 
     List<LessonSingle> findAllLessonsByUserId(Long userId);
 
