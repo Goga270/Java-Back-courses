@@ -29,35 +29,17 @@ public class User extends Account {
     @OneToMany(mappedBy = "author")
     private Set<Course> createdCourses = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_lesson",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "lesson_id")}
-    )
+    @ManyToMany(mappedBy = "usersInLesson")
     private Set<LessonSingle> lessonSubscriptions = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_course",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "course_id")}
-    )
+    @ManyToMany(mappedBy = "usersInCourse")
     private Set<Course> courseSubscriptions = new HashSet<>();
 
     @OneToMany(mappedBy = "costumer")
     private List<Payment> myPayments = new LinkedList<>();
 
-    public void addLesson(LessonSingle lesson) {
-        lessonSubscriptions.add(lesson);
-    }
-
     public void addPayment(Payment payment) {
         myPayments.add(payment);
-    }
-
-    public void addCourse(Course course) {
-        courseSubscriptions.add(course);
     }
 }
 

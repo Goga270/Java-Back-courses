@@ -38,7 +38,12 @@ public class LessonSingle extends Lesson {
     @Enumerated(EnumType.STRING)
     private TypeLesson typeLesson;
 
-    @ManyToMany(mappedBy = "lessonSubscriptions")
+    @ManyToMany
+    @JoinTable(
+            name = "user_lesson",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "lesson_id")}
+    )
     private Set<User> usersInLesson = new HashSet<>();
 
     @ManyToMany(cascade = {CascadeType.REFRESH})

@@ -287,7 +287,7 @@ public class CourseService implements ICourseService {
         Payment newPayment = paymentMapper.paymentDtoToPayment(paymentDto);
         newPayment.setDatePayment(dateUtil.dateTimeNow());
 
-        user.addCourse(course);
+        course.getUsersInCourse().add(user);
         user.addPayment(newPayment);
 
         newPayment.setCourse(course);

@@ -88,7 +88,12 @@ public class Course {
             CascadeType.REMOVE}, orphanRemoval = true)
     private Set<LessonOnCourse> lessons = new HashSet<>();
 
-    @ManyToMany(mappedBy = "courseSubscriptions")
+    @ManyToMany
+    @JoinTable(
+            name = "user_course",
+            joinColumns = {@JoinColumn(name = "course_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+    )
     private Set<User> usersInCourse = new HashSet<>();
 
     public void addLesson(LessonOnCourse lessonOnCourse) {

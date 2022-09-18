@@ -237,14 +237,17 @@ public class LessonService implements ILessonService {
     }
 
     private Payment subscribeToLesson(PaymentDto paymentDto, User user, LessonSingle lesson) {
-        Payment payment = paymentMapper.paymentDtoToPayment(paymentDto);
-        payment.setDatePayment(dateUtil.dateTimeNow());
-        user.addLesson(lesson);
-        user.addPayment(payment);
-        payment.setLesson(lesson);
-        payment.setCostumer(user);
+        Payment newPayment = paymentMapper.paymentDtoToPayment(paymentDto);
+        newPayment.setDatePayment(dateUtil.dateTimeNow());
+
+        lesson.getUsersInLesson().add(user);
+        user.addPayment(newPayment);
+
+        newPayment.setLesson(lesson);
+        newPayment.setCostumer(user);
+
         lesson.increaseNumberSubscriptions();
-        return payment;
+        return newPayment;
     }
 }
 
