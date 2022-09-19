@@ -22,7 +22,6 @@ public class User extends Account {
     @GeneratedValue(generator = "seq_user", strategy = GenerationType.SEQUENCE)
     private Long id;
 
-
     @OneToMany(mappedBy = "author")
     private Set<LessonSingle> createdLessons = new HashSet<>();
 

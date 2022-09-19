@@ -9,7 +9,10 @@ import com.example.experienceexchange.repository.filter.PredicateBuilder;
 import com.example.experienceexchange.repository.interfaceRepo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -30,7 +33,6 @@ import java.util.TimeZone;
 @Configuration
 @ComponentScan(basePackages = {"com.example.experienceexchange"})
 @PropertySource("classpath:/application.properties")
-@Import(SecurityConfig.class)
 @EnableTransactionManagement
 public class ApplicationContextConfiguration {
 
