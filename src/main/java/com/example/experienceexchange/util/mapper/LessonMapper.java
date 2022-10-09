@@ -20,7 +20,6 @@ public interface LessonMapper {
     LessonSingle lessonDtoToLesson(LessonDto lessonDto);
 
     @Mapping(target = "authorId", expression = "java(lessonSingle.getAuthor().getId())")
-    @Mapping(target = "currentNumberUsers", defaultValue = "0")
     LessonDto lessonToLessonDto(LessonSingle lessonSingle);
 
     @Mapping(target = "directionId", expression = "java(section.getDirection().getId())")

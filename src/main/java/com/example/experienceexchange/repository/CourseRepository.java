@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public class CourseRepository extends HibernateAbstractDao<Course, Long> implements ICourseRepository {
 
-    private static final String JPQL_FILTER_COURSE =
+    public static final String JPQL_FILTER_COURSE =
             "SELECT DISTINCT course FROM Course course " +
                     "JOIN FETCH course.sections section " +
                     "JOIN FETCH course.directions  direction " +

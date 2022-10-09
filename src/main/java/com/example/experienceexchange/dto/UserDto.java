@@ -24,7 +24,7 @@ public class UserDto {
 
     @NotNull(groups = {Registration.class})
     @Null(groups = {Edit.class})
-    @Email(groups = {Registration.class}, message = EMAIL_MESSAGE, regexp = EMAIL_MESSAGE)
+    @Email(groups = {Registration.class}, message = EMAIL_MESSAGE, regexp = EMAIL_PATTERN)
     @JsonView(Details.class)
     private String email;
 

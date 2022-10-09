@@ -125,7 +125,9 @@ public class LessonService implements ILessonService {
         User author = userRepository.find(userId);
 
         LessonSingle newLesson = lessonMapper.lessonDtoToLesson(lessonDto);
+
         newLesson.setAuthor(author);
+        newLesson.setCurrentNumberUsers(0);
 
         lessonRepository.save(newLesson);
         lessonRepository.update(newLesson);

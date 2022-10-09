@@ -168,6 +168,8 @@ public class CourseService implements ICourseService {
             newCourse.getLessons()
                     .forEach(lessonOnCourse -> lessonOnCourse.setCourse(newCourse));
         }
+        newCourse.setCurrentNumberUsers(0);
+
         courseRepository.save(newCourse);
         courseRepository.update(newCourse);
         log.debug("Created course {}", newCourse.getId());

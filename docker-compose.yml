@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_DB: experience_exchange_bd
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+       - C:\Program Files\PostgreSQL\docker\data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432" # нужно если хочу подключиться через pgAdmin4, для приложения можно не писать(проверено)
+  
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+        PGADMIN_DEFAULT_EMAIL: samojlenko-max@mail.ru
+        PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+
+  tomcat:
+    build: ./
+    container_name: tomcat_server
+    ports:
+      - "8083:8080"
+    

@@ -22,7 +22,6 @@ public interface CourseMapper {
     Course courseDtoToCourse(CourseDto courseDto);
 
     @Mapping(target = "authorId", expression = "java(course.getAuthor().getId())")
-    @Mapping(target = "currentNumberUsers", defaultValue = "0")
     CourseDto courseToCourseDto(Course course);
 
     @Mapping(target = "directionId", expression = "java(section.getDirection().getId())")

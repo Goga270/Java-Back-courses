@@ -13,19 +13,19 @@ import java.util.List;
 @Repository
 public class LessonRepository extends HibernateAbstractDao<LessonSingle, Long> implements ILessonRepository {
 
-    private static final String JPQL_FIND_LESSONS_BY_USER =
+    public static final String JPQL_FIND_LESSONS_BY_USER =
             "SELECT ln FROM LessonSingle ln " +
                     "JOIN FETCH ln.usersInLesson u " +
                     "WHERE u.id = :userId " +
                     "ORDER BY ln.startLesson ASC";
 
-    private static final String JPQL_FIND_LESSONS_BY_ID_AND_BY_USER =
+    public static final String JPQL_FIND_LESSONS_BY_ID_AND_BY_USER =
             "SELECT ln FROM LessonSingle ln " +
                     "JOIN FETCH ln.usersInLesson u " +
                     "WHERE u.id = :userId " +
                     "AND ln.id= :lessonId";
 
-    private static final String JPQL_FILTER_LESSON =
+    public static final String JPQL_FILTER_LESSON =
             "SELECT DISTINCT lesson FROM LessonSingle lesson " +
                     "JOIN  lesson.sections section " +
                     "JOIN  lesson.directions  direction " +

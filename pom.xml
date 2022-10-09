@@ -35,6 +35,8 @@
         <junit.jupiter.version>5.8.1</junit.jupiter.version>
         <log4j2.version>2.17.1</log4j2.version>
     </properties>
+<!--    TODO: ПОДКЛЮЧИТЬ Spring-test для MockMvc -->
+    <!--    TODO: Посмотреть тестирование базы данных-->
 
     <dependencies>
         <dependency>
@@ -180,6 +182,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.plugin}</version>
             </plugin>
+<!--            TODO: Для локального томката и запуска через mvn tomcat7:deploy (для докера не надо)-->
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
