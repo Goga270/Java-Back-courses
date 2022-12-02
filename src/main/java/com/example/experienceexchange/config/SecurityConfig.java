@@ -19,6 +19,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final int STRENGTH_PASSWORD_ENCODER = 8;
 
+    private static final String[] AUTH_WHITELIST = {
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/**",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui/",
+            "/swagger-ui"
+    };
+
     private final JwtConfigurer jwtConfigurer;
 
     public SecurityConfig(JwtConfigurer jwtConfigurer) {
@@ -48,6 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/directions/{id}/settings").hasAuthority(Permission.EDIT_DIRECTION.getPermission())
                 .antMatchers(HttpMethod.DELETE, "/directions/{id}").hasAuthority(Permission.EDIT_DIRECTION.getPermission())
                 .antMatchers("/sections/**").hasAuthority(Permission.EDIT_SECTION.getPermission())
+                .antMatchers(AUTH_WHITELIST).permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
