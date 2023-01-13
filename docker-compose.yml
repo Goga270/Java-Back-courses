@@ -9,7 +9,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-       - .\data:/var/lib/postgresql/data/
+      - ./ddl_experience_exchange_bd.sql:/docker-entrypoint-initdb.d/db.sql
+      - ./fill_experience_bd.sql:/docker-entrypoint-initdb.d/db_init.sql
     ports:
       - "5432:5432" # нужно если хочу подключиться через pgAdmin4, для приложения можно не писать(проверено)
   

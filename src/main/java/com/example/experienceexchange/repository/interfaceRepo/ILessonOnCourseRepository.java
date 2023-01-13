@@ -8,6 +8,8 @@ public interface ILessonOnCourseRepository extends GenericDao<LessonOnCourse, Lo
 
     List<LessonOnCourse> findAllLessonsOnSubscribedCoursesByUserId(Long userId);
 
+    List<LessonOnCourse> findAllLessonsOnCourse(Long courseId);
+
     List<LessonOnCourse> findAllLessonsOnCourseByUserIdAndCourseId(Long userId, Long courseId);
 
     LessonOnCourse findLessonInCourseForSubscriber(Long userId, Long courseId, Long lessonId);

@@ -4,6 +4,8 @@ package com.example.experienceexchange.controller;
 import com.example.experienceexchange.dto.CourseDto;
 import com.example.experienceexchange.dto.LessonOnCourseDto;
 import com.example.experienceexchange.dto.PaymentDto;
+import com.example.experienceexchange.dto.SkillDto;
+import com.example.experienceexchange.model.Skill;
 import com.example.experienceexchange.repository.filter.SearchCriteria;
 import com.example.experienceexchange.security.JwtUserDetails;
 import com.example.experienceexchange.service.interfaceService.ICourseService;
@@ -28,7 +30,7 @@ public class CourseController {
     }
 
     @JsonView({CourseDto.Details.class})
-    @GetMapping("")
+    @PostMapping("")
     public List<CourseDto> getCoursesByFilter(@RequestBody @Valid List<SearchCriteria> filters) {
         return courseService.getCourses(filters);
     }
@@ -37,6 +39,11 @@ public class CourseController {
     @GetMapping("/{id}")
     public CourseDto getCourse(@PathVariable("id") Long courseId) {
         return courseService.getCourse(courseId);
+    }
+
+    @GetMapping("/skills")
+    public List<SkillDto> getSkills() {
+        return courseService.getSkills();
     }
 
     @JsonView({LessonOnCourseDto.DetailsForSubscribe.class})
@@ -52,6 +59,12 @@ public class CourseController {
     @GetMapping("/my-schedule-courses")
     public List<LessonOnCourseDto> getSchedule(@AuthenticationPrincipal JwtUserDetails userDetails) {
         return courseService.getSchedule(userDetails);
+    }
+
+    @JsonView(LessonOnCourseDto.DetailsForTimetable.class)
+    @GetMapping("/get-lessons-on-course")
+    public List<LessonOnCourseDto> getlessonOnCourse(@RequestParam("id") Long courseId) {
+        return courseService.getlessonsByCourse(courseId);
     }
 
     @JsonView(LessonOnCourseDto.DetailsForTimetable.class)

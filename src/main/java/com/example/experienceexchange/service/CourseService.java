@@ -3,11 +3,9 @@ package com.example.experienceexchange.service;
 import com.example.experienceexchange.dto.CourseDto;
 import com.example.experienceexchange.dto.LessonOnCourseDto;
 import com.example.experienceexchange.dto.PaymentDto;
+import com.example.experienceexchange.dto.SkillDto;
 import com.example.experienceexchange.exception.*;
-import com.example.experienceexchange.model.Course;
-import com.example.experienceexchange.model.LessonOnCourse;
-import com.example.experienceexchange.model.Payment;
-import com.example.experienceexchange.model.User;
+import com.example.experienceexchange.model.*;
 import com.example.experienceexchange.repository.filter.IFilterProvider;
 import com.example.experienceexchange.repository.filter.SearchCriteria;
 import com.example.experienceexchange.repository.interfaceRepo.ICourseRepository;
@@ -20,6 +18,7 @@ import com.example.experienceexchange.util.date.DateUtil;
 import com.example.experienceexchange.util.mapper.CourseMapper;
 import com.example.experienceexchange.util.mapper.LessonOnCourseMapper;
 import com.example.experienceexchange.util.mapper.PaymentMapper;
+import com.example.experienceexchange.util.mapper.SkillMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
@@ -51,6 +50,7 @@ public class CourseService implements ICourseService {
     private final CourseMapper courseMapper;
     private final LessonOnCourseMapper lessonMapper;
     private final DateUtil dateUtil;
+    private final SkillMapper skillMapper;
 
     public CourseService(ICourseRepository courseRepository,
                          IUserRepository userRepository,
@@ -60,7 +60,7 @@ public class CourseService implements ICourseService {
                          PaymentMapper paymentMapper,
                          CourseMapper courseMapper,
                          LessonOnCourseMapper lessonMapper,
-                         DateUtil dateUtil) {
+                         DateUtil dateUtil, SkillMapper skillMapper) {
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
         this.lessonOnCourseRepository = lessonOnCourseRepository;
@@ -70,6 +70,7 @@ public class CourseService implements ICourseService {
         this.courseMapper = courseMapper;
         this.lessonMapper = lessonMapper;
         this.dateUtil = dateUtil;
+        this.skillMapper = skillMapper;
     }
 
     @Transactional(readOnly = true)
@@ -111,6 +112,20 @@ public class CourseService implements ICourseService {
         Long userId = userDetails.getId();
         List<LessonOnCourse> lessons = lessonOnCourseRepository.findAllLessonsOnCourseByUserIdAndCourseId(userId, courseId);
         return lessonMapper.toLessonOnCourseDto(lessons);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<LessonOnCourseDto> getlessonsByCourse(Long courseId) {
+        log.debug("Get lessons of course {}", courseId);
+        List<LessonOnCourse> lessons = lessonOnCourseRepository.findAllLessonsOnCourse(courseId);
+        return lessonMapper.toLessonOnCourseDto(lessons);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<SkillDto> getSkills() {
+        return skillMapper.toSkillDto(courseRepository.getSkills());
     }
 
     @Transactional(readOnly = true)

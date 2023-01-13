@@ -120,4 +120,10 @@ public class AuthService implements IAuthService {
             throw new UserNotFoundException(id);
         }
     }
+
+    @Override
+    public UserDto getUserByEmail(String email) {
+        User byEmail = userRepository.findByEmail(email);
+        return userMapper.userToUserDto(byEmail);
+    }
 }

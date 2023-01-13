@@ -1,0 +1,66 @@
+2022-12-10 11:20:42 WARN  AuthService:101 - Email is not unique, new user not registered
+2022-12-10 11:20:42 WARN  AuthService:119 - User 1 is not found
+2022-12-10 11:20:42 WARN  CommentService:105 - Lesson 2 not found
+2022-12-10 11:20:42 WARN  CommentService:105 - Lesson 2 not found
+2022-12-10 11:20:42 WARN  CommentService:96 - Course 1 is not found
+2022-12-10 11:20:42 WARN  CommentService:96 - Course 1 is not found
+2022-12-10 11:20:43 WARN  CourseService:256 - Course 1 is not found
+2022-12-10 11:20:43 WARN  CourseService:85 - Incorrect filter FILTER for query
+2022-12-10 11:20:43 WARN  CourseService:283 - Lesson 0 not available
+2022-12-10 11:20:43 WARN  CourseService:142 - Course not restarted because it hasn't finished
+2022-12-10 11:20:43 WARN  CourseService:227 - User 2 cannot subscribe to close course
+2022-12-10 11:20:43 WARN  CourseService:124 - Lesson 3 is not found
+2022-12-10 11:20:43 WARN  CourseService:215 - User 2 cannot subscribe to own course
+2022-12-10 11:20:43 WARN  CourseService:264 - User 2 does not have access to edit course 0
+2022-12-10 11:20:43 WARN  CourseService:264 - User 2 does not have access to edit course 0
+2022-12-10 11:20:43 WARN  CourseService:231 - User 2 cannot subscribe to course with incorrect price null
+2022-12-10 11:20:43 WARN  DirectionService:86 - Direction 1 is not found
+2022-12-10 11:20:43 WARN  DirectionService:94 - Direction 1 is not found
+2022-12-10 11:20:43 WARN  DirectionService:63 - Direction 1 not found
+2022-12-10 11:20:43 WARN  LessonService:149 - Lesson not restarted because it hasn't finished
+2022-12-10 11:20:43 WARN  LessonService:79 - Incorrect filter query for query
+2022-12-10 11:20:43 WARN  LessonService:105 - No access to unstarted lesson 2
+2022-12-10 11:20:43 WARN  LessonService:227 - User 1 does not have access to edit lesson
+2022-12-10 11:20:43 WARN  LessonService:227 - User 1 does not have access to edit lesson
+2022-12-10 11:20:43 WARN  LessonService:227 - User 1 does not have access to edit lesson
+2022-12-10 11:20:43 WARN  LessonService:219 - Lesson 2 not found
+2022-12-10 11:20:43 WARN  LessonService:207 - User 1 cannot subscribe to close lesson
+2022-12-10 11:20:43 WARN  LessonService:196 - User 1 cannot subscribe to own lesson
+2022-12-10 11:20:43 WARN  LessonService:211 - User 1 cannot subscribe to close lesson with incorrect price null
+2022-12-10 11:20:43 WARN  LessonService:100 - No access to lesson 2 for 1
+2022-12-10 11:20:43 WARN  SectionService:58 - Section 1 is not found
+2022-12-10 11:20:43 WARN  UserService:129 - Password not match, password not changed
+2022-12-10 11:20:43 WARN  UserService:140 - New email for user 0 is not unique, email not changed
+2022-12-10 11:42:14 WARN  AuthService:101 - Email is not unique, new user not registered
+2022-12-10 11:42:14 WARN  AuthService:119 - User 1 is not found
+2022-12-10 11:42:15 WARN  CommentService:105 - Lesson 2 not found
+2022-12-10 11:42:15 WARN  CommentService:105 - Lesson 2 not found
+2022-12-10 11:42:15 WARN  CommentService:96 - Course 1 is not found
+2022-12-10 11:42:15 WARN  CommentService:96 - Course 1 is not found
+2022-12-10 11:42:15 WARN  CourseService:264 - Course 1 is not found
+2022-12-10 11:42:15 WARN  CourseService:85 - Incorrect filter FILTER for query
+2022-12-10 11:42:15 WARN  CourseService:291 - Lesson 0 not available
+2022-12-10 11:42:15 WARN  CourseService:150 - Course not restarted because it hasn't finished
+2022-12-10 11:42:15 WARN  CourseService:235 - User 2 cannot subscribe to close course
+2022-12-10 11:42:15 WARN  CourseService:132 - Lesson 3 is not found
+2022-12-10 11:42:15 WARN  CourseService:223 - User 2 cannot subscribe to own course
+2022-12-10 11:42:15 WARN  CourseService:272 - User 2 does not have access to edit course 0
+2022-12-10 11:42:15 WARN  CourseService:272 - User 2 does not have access to edit course 0
+2022-12-10 11:42:15 WARN  CourseService:239 - User 2 cannot subscribe to course with incorrect price null
+2022-12-10 11:42:15 WARN  DirectionService:86 - Direction 1 is not found
+2022-12-10 11:42:15 WARN  DirectionService:94 - Direction 1 is not found
+2022-12-10 11:42:15 WARN  DirectionService:63 - Direction 1 not found
+2022-12-10 11:42:15 WARN  LessonService:149 - Lesson not restarted because it hasn't finished
+2022-12-10 11:42:15 WARN  LessonService:79 - Incorrect filter query for query
+2022-12-10 11:42:15 WARN  LessonService:105 - No access to unstarted lesson 2
+2022-12-10 11:42:15 WARN  LessonService:227 - User 1 does not have access to edit lesson
+2022-12-10 11:42:15 WARN  LessonService:227 - User 1 does not have access to edit lesson
+2022-12-10 11:42:15 WARN  LessonService:227 - User 1 does not have access to edit lesson
+2022-12-10 11:42:15 WARN  LessonService:219 - Lesson 2 not found
+2022-12-10 11:42:15 WARN  LessonService:207 - User 1 cannot subscribe to close lesson
+2022-12-10 11:42:15 WARN  LessonService:196 - User 1 cannot subscribe to own lesson
+2022-12-10 11:42:15 WARN  LessonService:211 - User 1 cannot subscribe to close lesson with incorrect price null
+2022-12-10 11:42:15 WARN  LessonService:100 - No access to lesson 2 for 1
+2022-12-10 11:42:15 WARN  SectionService:58 - Section 1 is not found
+2022-12-10 11:42:15 WARN  UserService:129 - Password not match, password not changed
+2022-12-10 11:42:15 WARN  UserService:140 - New email for user 0 is not unique, email not changed

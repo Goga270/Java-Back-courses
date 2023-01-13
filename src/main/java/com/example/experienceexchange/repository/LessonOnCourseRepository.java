@@ -34,6 +34,12 @@ public class LessonOnCourseRepository extends HibernateAbstractDao<LessonOnCours
                     "AND us.id = :userId " +
                     "AND ln.id = :lessonId ";
 
+    public static final String JPQL_FIND_LESSONS_BY_COURSE =
+            "SELECT DISTINCT ln FROM LessonOnCourse ln " +
+                    "JOIN FETCH ln.course cr " +
+                    "WHERE cr.id = :courseId " +
+                    "ORDER BY ln.startLesson ASC";
+
     @Override
     public List<LessonOnCourse> findAllLessonsOnSubscribedCoursesByUserId(Long userId) {
         TypedQuery<LessonOnCourse> query = entityManager.createQuery(JPQL_FIND_LESSONS_BY_USER, getClassEntity());
@@ -50,6 +56,13 @@ public class LessonOnCourseRepository extends HibernateAbstractDao<LessonOnCours
         query.setParameter("courseId", courseId);
         return query.getResultList();
     }
+     @Override
+    public List<LessonOnCourse> findAllLessonsOnCourse(Long courseId){
+         TypedQuery<LessonOnCourse> query = entityManager.createQuery(JPQL_FIND_LESSONS_BY_COURSE, getClassEntity());
+
+         query.setParameter("courseId", courseId);
+         return query.getResultList();
+     }
 
     @Override
     public LessonOnCourse findLessonInCourseForSubscriber(Long userId, Long courseId, Long lessonId) {

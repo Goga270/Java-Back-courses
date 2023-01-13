@@ -3,6 +3,8 @@ package com.example.experienceexchange.service.interfaceService;
 import com.example.experienceexchange.dto.CourseDto;
 import com.example.experienceexchange.dto.LessonOnCourseDto;
 import com.example.experienceexchange.dto.PaymentDto;
+import com.example.experienceexchange.dto.SkillDto;
+import com.example.experienceexchange.model.Skill;
 import com.example.experienceexchange.repository.filter.SearchCriteria;
 import com.example.experienceexchange.security.JwtUserDetails;
 
@@ -31,4 +33,8 @@ public interface ICourseService {
     LessonOnCourseDto getLessonOnCourse(JwtUserDetails userDetails, Long courseId, Long lessonId);
 
     CourseDto restartCourse(JwtUserDetails userDetails, CourseDto courseDto);
+
+    List<LessonOnCourseDto> getlessonsByCourse(Long courseId);
+
+    List<SkillDto> getSkills();
 }

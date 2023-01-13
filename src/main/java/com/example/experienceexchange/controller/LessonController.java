@@ -26,7 +26,7 @@ public class LessonController {
     }
 
     @JsonView({LessonDto.Details.class})
-    @GetMapping({""})
+    @PostMapping({""})
     public List<LessonDto> getLessons(@RequestBody @Valid List<SearchCriteria> filters) {
         return lessonService.getLessons(filters);
     }

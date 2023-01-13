@@ -15,4 +15,6 @@ public interface IAuthService {
     void blockUser(Long id);
 
     void unblockUser(Long id);
+
+    UserDto getUserByEmail(String email);
 }

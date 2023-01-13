@@ -46,4 +46,10 @@ public class AuthController {
     public void unblockUser(@RequestParam(name = "id") Long id) {
         authService.unblockUser(id);
     }
+
+    @GetMapping("/user-by-email")
+    @ResponseStatus(HttpStatus.OK)
+    public UserDto getUserByEmail(@RequestParam("email") String email) {
+        return authService.getUserByEmail(email);
+    }
 }
