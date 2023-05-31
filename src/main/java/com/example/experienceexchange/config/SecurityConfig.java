@@ -46,32 +46,37 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors();
-        http
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/login").permitAll()
-                .antMatchers("/auth/registration").permitAll()
-                .antMatchers("/courses").permitAll()
-                .antMatchers("/lessons").permitAll()
-                .antMatchers("/lessons/{id}").permitAll()
-                .antMatchers("/courses/{id}").permitAll()
-                .antMatchers("/courses/{id}/comments").permitAll()
-                .antMatchers("/lessons/{id}/comments").permitAll()
-                .antMatchers("/auth/registration-admin").hasAuthority(Permission.REGISTRATION_ADMIN.getPermission())
-                .antMatchers("/auth/block-user").hasAuthority(Permission.BLOCK_USER.getPermission())
-                .antMatchers(HttpMethod.GET, "/directions").hasAuthority(Permission.READ.getPermission())
-                .antMatchers(HttpMethod.GET, "/directions/{id}").hasAuthority(Permission.READ.getPermission())
-                .antMatchers("/directions/new-direction").hasAuthority(Permission.EDIT_DIRECTION.getPermission())
-                .antMatchers("/directions/{id}/settings").hasAuthority(Permission.EDIT_DIRECTION.getPermission())
-                .antMatchers(HttpMethod.DELETE, "/directions/{id}").hasAuthority(Permission.EDIT_DIRECTION.getPermission())
-                .antMatchers("/sections/**").hasAuthority(Permission.EDIT_SECTION.getPermission())
-                .antMatchers(AUTH_WHITELIST).permitAll()
                 .anyRequest()
-                .authenticated()
-                .and()
-                .apply(jwtConfigurer);
+                .permitAll();
+//        http
+//                .csrf().disable()
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and()
+//                .authorizeRequests()
+//                .antMatchers("/auth/login").permitAll()
+//                .antMatchers("/auth/registration").permitAll()
+//                .antMatchers("/courses").permitAll()
+//                .antMatchers("/lessons").permitAll()
+//                .antMatchers("/lessons/{id}").permitAll()
+//                .antMatchers("/courses/{id}").permitAll()
+//                .antMatchers("/courses/{id}/comments").permitAll()
+//                .antMatchers("/lessons/{id}/comments").permitAll()
+//                .antMatchers("/auth/registration-admin").hasAuthority(Permission.REGISTRATION_ADMIN.getPermission())
+//                .antMatchers("/auth/block-user").hasAuthority(Permission.BLOCK_USER.getPermission())
+//                .antMatchers(HttpMethod.GET, "/directions").hasAuthority(Permission.READ.getPermission())
+//                .antMatchers(HttpMethod.GET, "/directions/{id}").hasAuthority(Permission.READ.getPermission())
+//                .antMatchers("/directions/new-direction").hasAuthority(Permission.EDIT_DIRECTION.getPermission())
+//                .antMatchers("/directions/{id}/settings").hasAuthority(Permission.EDIT_DIRECTION.getPermission())
+//                .antMatchers(HttpMethod.DELETE, "/directions/{id}").hasAuthority(Permission.EDIT_DIRECTION.getPermission())
+//                .antMatchers("/sections/**").hasAuthority(Permission.EDIT_SECTION.getPermission())
+//                .antMatchers(AUTH_WHITELIST).permitAll()
+//                .anyRequest()
+//                .authenticated()
+//                .and()
+//                .apply(jwtConfigurer);
     }
 
     @Bean
