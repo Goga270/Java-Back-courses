@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
+/**
+ * Работа с комментариями
+ */
 @RestController
 public class CommentController {
 
@@ -21,18 +24,34 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    /**
+     * Достать комментарии под курсом
+     * @param courseId Идентификатор курса
+     * @return Массив комментариев
+     */
     @JsonView({CommentDto.CreateForCourse.class})
     @GetMapping("courses/{id}/comments")
     public List<CommentDto> getCommentsByCourse(@PathVariable("id") Long courseId) {
         return commentService.getCommentsByCourse(courseId);
     }
 
+    /**
+     * Достать комментарии под уроком
+     * @param lessonId Идентификатор урока
+     * @return Массив комментариев
+     */
     @JsonView({CommentDto.CreateForLesson.class})
     @GetMapping("lessons/{id}/comments")
     public List<CommentDto> getCommentsByLesson(@PathVariable("id") Long lessonId) {
         return commentService.getCommentByLesson(lessonId);
     }
 
+    /**
+     * Создать новый комментарий для курса
+     * @param userDetails Данные пользователя
+     * @param commentDto Данные комментария
+     * @return Новый комментарий
+     */
     @JsonView({CommentDto.CreateForCourse.class})
     @PostMapping("courses/new-comment")
     @ResponseStatus(HttpStatus.CREATED)
@@ -42,6 +61,12 @@ public class CommentController {
         return commentService.createCommentForCourse(userDetails, commentDto);
     }
 
+    /**
+     *  Создать новый комментарий для урока
+     * @param userDetails Данные пользователя
+     * @param commentDto Данные комментария
+     * @return Новый комментарий
+     */
     @JsonView({CommentDto.CreateForLesson.class})
     @PostMapping("lessons/new-comment")
     @ResponseStatus(HttpStatus.CREATED)

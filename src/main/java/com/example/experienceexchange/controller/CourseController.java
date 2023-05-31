@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * Работа с курсами
+ */
 @Validated
 @RestController
 @RequestMapping("/courses")
@@ -29,23 +32,44 @@ public class CourseController {
         this.courseService = courseService;
     }
 
+    /**
+     * Найти курсы по заданными фильтрам
+     * @param filters Параметры фильтрации
+     * @return Найденные курсы по фильтрам
+     */
     @JsonView({CourseDto.Details.class})
     @PostMapping("")
     public List<CourseDto> getCoursesByFilter(@RequestBody @Valid List<SearchCriteria> filters) {
         return courseService.getCourses(filters);
     }
 
+    /**
+     * Найти курс по идентификатору
+     * @param courseId Идентификатор курса
+     * @return Найденный курс
+     */
     @JsonView({CourseDto.Details.class})
     @GetMapping("/{id}")
     public CourseDto getCourse(@PathVariable("id") Long courseId) {
         return courseService.getCourse(courseId);
     }
 
+    /**
+     * Найти все навыки
+     * @return Найденные навыки
+     */
     @GetMapping("/skills")
     public List<SkillDto> getSkills() {
         return courseService.getSkills();
     }
 
+    /**
+     * Найти определенный урок на определенном курсе
+     * @param userDetails Информация о пользователе
+     * @param courseId Идентификатор курса
+     * @param lessonId Идентификатор урока
+     * @return
+     */
     @JsonView({LessonOnCourseDto.DetailsForSubscribe.class})
     @GetMapping("/{courseId}/{lessonId}")
     public LessonOnCourseDto getLessonOnCourse(
@@ -55,18 +79,34 @@ public class CourseController {
         return courseService.getLessonOnCourse(userDetails, courseId, lessonId);
     }
 
+    /**
+     * Вывести расписание уроков
+     * @param userDetails Информация о пользователе
+     * @return Расписание уроков
+     */
     @JsonView(LessonOnCourseDto.DetailsForTimetable.class)
     @GetMapping("/my-schedule-courses")
     public List<LessonOnCourseDto> getSchedule(@AuthenticationPrincipal JwtUserDetails userDetails) {
         return courseService.getSchedule(userDetails);
     }
 
+    /**
+     * Вывести все уроки на курсе
+     * @param courseId Идентификатор курса
+     * @return Найденные уроки
+     */
     @JsonView(LessonOnCourseDto.DetailsForTimetable.class)
     @GetMapping("/get-lessons-on-course")
     public List<LessonOnCourseDto> getlessonOnCourse(@RequestParam("id") Long courseId) {
         return courseService.getlessonsByCourse(courseId);
     }
 
+    /**
+     * Вывести расписание на определенном курсе
+     * @param userDetails Информация о пользователе
+     * @param courseId Идентификатор курса
+     * @return Найденные уроки на курсе
+     */
     @JsonView(LessonOnCourseDto.DetailsForTimetable.class)
     @GetMapping("/{id}/my-schedule-course")
     public List<LessonOnCourseDto> getScheduleByCourse(
@@ -75,6 +115,12 @@ public class CourseController {
         return courseService.getScheduleByCourse(userDetails, courseId);
     }
 
+    /**
+     * Создать новый курс
+     * @param userDetails Информация о пользователе
+     * @param courseDto Информация о курсе
+     * @return Новый курс
+     */
     @PostMapping("/new-course")
     @ResponseStatus(HttpStatus.CREATED)
     public CourseDto createCourse(
@@ -83,6 +129,13 @@ public class CourseController {
         return courseService.createCourse(userDetails, courseDto);
     }
 
+    /**
+     * Создать новый урок на определенном курсе
+     * @param userDetails Информация о пользователе
+     * @param courseId Идентификатор курса
+     * @param lesson Информация об уроке
+     * @return Новый урок
+     */
     @PostMapping("/{id}/settings/new-lesson")
     @ResponseStatus(HttpStatus.CREATED)
     public CourseDto createLesson(
@@ -92,6 +145,13 @@ public class CourseController {
         return courseService.createLessonOnCourse(userDetails, courseId, lesson);
     }
 
+    /**
+     * Редактировать курс
+     * @param userDetails Информация о пользователе
+     * @param id Идентификатор курса
+     * @param courseDto Редактированные данные о курсе
+     * @return От редактируемый курс
+     */
     @PutMapping("/{id}/settings")
     public CourseDto editCourse(
             @AuthenticationPrincipal JwtUserDetails userDetails,
@@ -100,6 +160,12 @@ public class CourseController {
         return courseService.editCourse(userDetails, id, courseDto);
     }
 
+    /**
+     * Перезапустить курс
+     * @param userDetails Информация о пользователе
+     * @param courseDto Информация о курсе
+     * @return От редактировнный курс
+     */
     @PutMapping("/restart-course")
     public CourseDto restartCourse(
             @AuthenticationPrincipal JwtUserDetails userDetails,
@@ -107,6 +173,13 @@ public class CourseController {
         return courseService.restartCourse(userDetails, courseDto);
     }
 
+    /**
+     * Подписаться на курс
+     * @param userDetails Информация о пользователе
+     * @param courseId Идентификатор курса
+     * @param paymentDto Данные оплаты
+     * @return Данные оплаты
+     */
     @JsonView({PaymentDto.CreateCourse.class})
     @PostMapping("/{id}/subscribe")
     @ResponseStatus(HttpStatus.CREATED)
@@ -117,6 +190,11 @@ public class CourseController {
         return courseService.subscribeToCourse(userDetails, paymentDto, courseId);
     }
 
+    /**
+     * Удалить курс
+     * @param userDetails Информация о пользователе
+     * @param courseId Идентификтор курса
+     */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteCourse(

@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Работа с разделами
+ */
 @RestController
 @RequestMapping("/sections")
 public class SectionController {
@@ -17,6 +20,11 @@ public class SectionController {
         this.sectionService = sectionService;
     }
 
+    /**
+     * Создать новый раздел
+     * @param sectionDto Информация о разделе
+     * @return Новый раздел
+     */
     @JsonView(SectionDto.AdminDetails.class)
     @PostMapping("/new-section")
     @ResponseStatus(HttpStatus.CREATED)
@@ -24,6 +32,12 @@ public class SectionController {
         return sectionService.createSection(sectionDto);
     }
 
+    /**
+     * Редактировать раздел
+     * @param sectionId Идентификатор раздела
+     * @param sectionDto Информация о разделе
+     * @return От редактируемый раздел
+     */
     @JsonView(SectionDto.AdminDetails.class)
     @PutMapping("/{id}/settings")
     public SectionDto editSection(
@@ -32,6 +46,10 @@ public class SectionController {
         return sectionService.editSection(sectionId, sectionDto);
     }
 
+    /**
+     * Удалить раздел
+     * @param sectionId Идентификатор раздела
+     */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteSection(@PathVariable("id") Long sectionId) {

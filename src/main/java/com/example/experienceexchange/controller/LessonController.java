@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * Работа с уроками
+ */
 @Validated
 @RestController
 @RequestMapping("/lessons")
@@ -25,18 +28,34 @@ public class LessonController {
         this.lessonService = lessonService;
     }
 
+    /**
+     * Найти урок по параметрам поиска
+     * @param filters Параметры поиска
+     * @return Найденный урок
+     */
     @JsonView({LessonDto.Details.class})
     @PostMapping({""})
     public List<LessonDto> getLessons(@RequestBody @Valid List<SearchCriteria> filters) {
         return lessonService.getLessons(filters);
     }
 
+    /**
+     * Найти урок по идентификатору
+     * @param lessonId Идентификатор урока
+     * @return Найденный урок
+     */
     @JsonView({LessonDto.Details.class})
     @GetMapping("/{id}")
     public LessonDto getLesson(@PathVariable("id") Long lessonId) {
         return lessonService.getLesson(lessonId);
     }
 
+    /**
+     * Посмотреть урок для подписчика
+     * @param userDetails Информация о пользователе
+     * @param lessonId Идентификатор урока
+     * @return Найденный урок
+     */
     @JsonView({LessonDto.DetailsForSubscriber.class})
     @GetMapping("/subscriptions/{id}")
     public LessonDto getLesson(
@@ -45,12 +64,23 @@ public class LessonController {
         return lessonService.getLesson(userDetails, lessonId);
     }
 
+    /**
+     * Достать расписание уроков пользователя
+     * @param userDetails Информация о пользователе
+     * @return Расписание уроков пользователя
+     */
     @JsonView({LessonDto.DetailsForTimetable.class})
     @GetMapping("/schedule-my-lessons")
     public List<LessonDto> getScheduleBySingleLesson(@AuthenticationPrincipal JwtUserDetails userDetails) {
         return lessonService.getSchedule(userDetails);
     }
 
+    /**
+     * Создать новый урок
+     * @param userDetails Информация о пользователе
+     * @param lessonDto Информация об уроке
+     * @return Новый урок
+     */
     @PostMapping("/new-lesson")
     @ResponseStatus(HttpStatus.CREATED)
     public LessonDto createLesson(
